@@ -1,38 +1,804 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!doctype html>
 
 
-{% block title %} {{ page.title }} | {{ config.title }} {% endblock %}
 
-{% block page_class %}page-post-detail{% endblock %}
+  
 
 
-{% block content %}
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="shell,zsh,terminal,终端," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="作为程序员，经常要和终端打交道。但是默认的终端bash，不仅丑，而且难用至极。 这里推荐使用zsh，被誉为终极shell，但刚安装的zsh默认状态下，也是丑与难用，需要配置一下，才能打造一款舒适的终端shell。 本文就使用zsh来配置一款简洁高效且颜值还不错的终端。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="打造一款简洁高效且比较有颜的终端">
+<meta property="og:url" content="http://coolcao.com/2021/02/19/terminal/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="作为程序员，经常要和终端打交道。但是默认的终端bash，不仅丑，而且难用至极。 这里推荐使用zsh，被誉为终极shell，但刚安装的zsh默认状态下，也是丑与难用，需要配置一下，才能打造一款舒适的终端shell。 本文就使用zsh来配置一款简洁高效且颜值还不错的终端。">
+<meta property="og:locale">
+<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1613710489_20210219114258051_2082537145.png">
+<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1613710490_20210219124808936_1513317209.png">
+<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1613710491_20210219124922250_1673500242.png">
+<meta property="article:published_time" content="2021-02-19T03:28:10.000Z">
+<meta property="article:modified_time" content="2021-02-19T05:00:56.493Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="shell">
+<meta property="article:tag" content="zsh">
+<meta property="article:tag" content="terminal">
+<meta property="article:tag" content="终端">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1613710489_20210219114258051_2082537145.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2021/02/19/terminal/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> 打造一款简洁高效且比较有颜的终端 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
 
   <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                打造一款简洁高效且比较有颜的终端
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2021-02-19T11:28:10+08:00" content="2021-02-19">
+              2021-02-19
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>作为程序员，经常要和终端打交道。但是默认的终端bash，不仅丑，而且难用至极。</p>
+<p>这里推荐使用zsh，被誉为终极shell，但刚安装的zsh默认状态下，也是丑与难用，需要配置一下，才能打造一款舒适的终端shell。</p>
+<p>本文就使用zsh来配置一款简洁高效且颜值还不错的终端。</p>
+<span id="more"></span>
+
+<h2 id="安装zsh"><a href="#安装zsh" class="headerlink" title="安装zsh"></a>安装zsh</h2><p>首先安装zsh。对于mac系统，最简单的就是使用brew进行安装：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install zsh</span><br></pre></td></tr></table></figure>
+
+<p>如果是linux系统，可使用对应的包管理工具进行安装，zsh是一个比较通用的软件，几乎所有的linux都能安装到。</p>
+<blockquote>
+<p>一般默认的shell都是bash，但有一些比较新的系统，默认将使用zsh，比如最新的mac os，arch linux等系统默认已使用zsh，所以就不需要安装了。<br>查看当前系统安装了哪些shell，可以查看 <code>/etc/shells</code> 文件：</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">       │ File: /etc/shells</span><br><span class="line">───────┼──────────────────────────────────────────────────────────────────────────</span><br><span class="line">   1   │ # List of acceptable shells for chpass(1).</span><br><span class="line">   2   │ # Ftpd will not allow users to connect who are not using</span><br><span class="line">   3   │ # one of these shells.</span><br><span class="line">   4   │</span><br><span class="line">   5   │ /bin/bash</span><br><span class="line">   6   │ /bin/csh</span><br><span class="line">   7   │ /bin/dash</span><br><span class="line">   8   │ /bin/ksh</span><br><span class="line">   9   │ /bin/sh</span><br><span class="line">  10   │ /bin/tcsh</span><br><span class="line">  11   │ /bin/zsh</span><br><span class="line">  12   │ /opt/homebrew/bin/fish</span><br></pre></td></tr></table></figure>
+
+<h2 id="切换shell为zsh"><a href="#切换shell为zsh" class="headerlink" title="切换shell为zsh"></a>切换shell为zsh</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chsh -s /bin/zsh</span><br></pre></td></tr></table></figure>
+
+<p>这样我们就切换到了所谓的终极shell： zsh 了，但如上所说，默认zsh也是非常丑，难用：</p>
+<p><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1613710489_20210219114258051_2082537145.png"></p>
+<p>如上图，默认zsh就是这么丑，和bash一样丑，需要去调整。</p>
+<h2 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h2><p>我们可以安装一些插件来优化zsh的交互性，这里推荐几个非常有用的插件：</p>
+<ol>
+<li>zsh-syntax-highlighting              语法高亮</li>
+<li>zsh-autosuggestion                   自动补全</li>
+<li>zsh-history-substring-search         history子串查询</li>
+<li>autojump                             自动跳转目录</li>
+<li>dircolors-solarized                  终端彩色显示</li>
+<li>starship                             一款友好的终端提示工具</li>
+</ol>
+<p>前4个插件，可以通过homebrew安装，安装后，注意看后面的提示，要在.zshrc文件中添加脚本激活插件。<br>比如语法高亮插件，要在.zshrc中添加：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh</span><br></pre></td></tr></table></figure>
+
+<p>zsh-autosuggestion：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh</span><br></pre></td></tr></table></figure>
+
+<p>zsh-history-substring-search:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">source /opt/homebrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh</span><br><span class="line">bindkey &#x27;^[[A&#x27; history-substring-search-up</span><br><span class="line">bindkey &#x27;^[[B&#x27; history-substring-search-down</span><br><span class="line">bindkey &#x27;^P&#x27; history-substring-search-up</span><br><span class="line">bindkey &#x27;^N&#x27; history-substring-search-down</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>下面四个bindkey为绑定快捷键，绑定上下箭头键以及CTRL+P,CTRL+N键为插件的上下翻页快捷键。</p>
+<p>autojump：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[[ -s /Users/coolcao/.autojump/etc/profile.d/autojump.sh ]] &amp;&amp; source /Users/coolcao/.autojump/etc/profile.d/autojump.sh</span><br><span class="line">autoload -U compinit &amp;&amp; compinit -u</span><br></pre></td></tr></table></figure>
+
+<h2 id="dircolors-solarized"><a href="#dircolors-solarized" class="headerlink" title="dircolors-solarized"></a>dircolors-solarized</h2><p>这个是为解决mac下终端不能彩色显示的问题。<br>首先安装coreutils：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install coreutils</span><br></pre></td></tr></table></figure>
+<p>然后将<code>https://github.com/seebi/dircolors-solarized.git</code>项目克隆到本地，将项目其中的一个色彩方案扔到 <code>~/.dir_colors</code>，然后使用下面的脚本激活并alias一下ls命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">eval `gdircolors -b $HOME/.dir_colors`</span><br><span class="line">alias ls=&#x27;gls --color=auto -l&#x27;</span><br></pre></td></tr></table></figure>
+
+<h2 id="starship"><a href="#starship" class="headerlink" title="starship"></a>starship</h2><p>虽然经过配置上面这几个插件后，zsh的交互性大大提高，但还是不美观，外观样式和上面的没有二致。<br>starship是一款优化终端提示的工具，可兼容多种shell，这里我们使用其来美化一下终端。<br>美化zsh也可以上网找一些zsh的脚本，这里我使用starship是因为这个工具可配性更高。</p>
+<p>具体的安装方法可以参见starship的<a target="_blank" rel="noopener" href="https://starship.rs/zh-cn/guide/">官网</a>。</p>
+<p>安装完成后在.zshrc种添加脚本启用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eval &quot;$(starship init zsh)&quot;</span><br></pre></td></tr></table></figure>
+
+<p>下面贴一下我的starship配置：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[character]</span> <span class="comment"># The name of the module we are configuring is &quot;character&quot;</span></span><br><span class="line"><span class="attr">error_symbol</span> = <span class="string">&quot;[](bold red) &quot;</span> </span><br><span class="line"><span class="attr">success_symbol</span> = <span class="string">&quot;[גּ](bold green)&quot;</span> <span class="comment"># The &quot;success_symbol&quot; segment is being set to &quot;➜&quot; with the color &quot;bold green&quot;</span></span><br><span class="line"><span class="attr">vicmd_symbol</span> = <span class="string">&quot;[V](bold blue) &quot;</span> </span><br><span class="line"></span><br><span class="line"><span class="section">[battery]</span></span><br><span class="line"><span class="comment">#full_symbol = &quot;🔋&quot;</span></span><br><span class="line"><span class="comment">#charging_symbol = &quot;🔌&quot;</span></span><br><span class="line"><span class="comment">#discharging_symbol = &quot;⚡️️&quot;</span></span><br><span class="line"><span class="attr">charging_symbol</span> = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="attr">discharging_symbol</span> = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="attr">full_symbol</span> = <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[[battery.display]]</span></span><br><span class="line"><span class="attr">style</span> = <span class="string">&quot;bold red&quot;</span></span><br><span class="line"><span class="attr">threshold</span> = <span class="number">30</span></span><br><span class="line"><span class="section">[[battery.display]]</span></span><br><span class="line"><span class="attr">style</span> = <span class="string">&quot;bold yellow&quot;</span></span><br><span class="line"><span class="attr">threshold</span> = <span class="number">60</span></span><br><span class="line"><span class="section">[[battery.display]]</span></span><br><span class="line"><span class="attr">style</span> = <span class="string">&quot;bold green&quot;</span></span><br><span class="line"><span class="attr">threshold</span> = <span class="number">100</span></span><br><span class="line"></span><br><span class="line"><span class="section">[cmd_duration]</span></span><br><span class="line"><span class="attr">format</span> = <span class="string">&quot; took:[$duration]($style)&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[git_branch]</span></span><br><span class="line"><span class="attr">symbol</span> = <span class="string">&quot; &quot;</span></span><br><span class="line"><span class="attr">truncation_length</span> = <span class="number">128</span></span><br><span class="line"><span class="attr">truncation_symbol</span> = <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[git_commit]</span></span><br><span class="line"><span class="attr">commit_hash_length</span> = <span class="number">128</span></span><br><span class="line"><span class="attr">tag_symbol</span> = <span class="string">&quot; &quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[hostname]</span></span><br><span class="line"><span class="attr">disabled</span> = <span class="literal">false</span></span><br><span class="line"><span class="attr">format</span> = <span class="string">&quot;on [$hostname](bold red) &quot;</span></span><br><span class="line"><span class="attr">ssh_only</span> = <span class="literal">true</span></span><br><span class="line"><span class="attr">trim_at</span> = <span class="string">&quot;.companyname.com&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[memory_usage]</span></span><br><span class="line"><span class="attr">disabled</span> = <span class="literal">false</span></span><br><span class="line"><span class="attr">format</span> = <span class="string">&quot;内存占用:[$&#123;ram_pct&#125;]($style)&quot;</span></span><br><span class="line"><span class="attr">style</span> = <span class="string">&quot;bold dimmed green&quot;</span></span><br><span class="line"><span class="attr">symbol</span> = <span class="string">&quot; &quot;</span></span><br><span class="line"><span class="attr">threshold</span> = -<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="section">[nodejs]</span></span><br><span class="line"><span class="attr">symbol</span> = <span class="string">&quot; &quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里我配置了成功失败的指示图标，配置了显示电池电量的图标以及内存占用的情况。</p>
+<p>最终效果如下：<br><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1613710490_20210219124808936_1513317209.png"></p>
+<p>如果是git项目，会相应的显示git以及项目的基本信息：<br><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1613710491_20210219124922250_1673500242.png"></p>
+<p>zsh以及starship的可玩性很高，每个人都可以配置出属于自己独一无二的终端。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/shell/" rel="tag">#shell</a>
+          
+            <a href="/tags/zsh/" rel="tag">#zsh</a>
+          
+            <a href="/tags/terminal/" rel="tag">#terminal</a>
+          
+            <a href="/tags/%E7%BB%88%E7%AB%AF/" rel="tag">#终端</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/01/19/%E3%80%90LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98%E3%80%91300.%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97/" rel="next" title="【LeetCode每日一题】300. 最长递增子序列.md">
+                <i class="fa fa-chevron-left"></i> 【LeetCode每日一题】300. 最长递增子序列.md
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/09/16/angular-http-interceptor/" rel="prev" title="angular拦截器的一些妙用">
+                angular拦截器的一些妙用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
 
     <div class="post-spread">
-      {% if theme.jiathis %}
-        {% include '_partials/share/jiathis.swig' %}
-      {% elseif theme.baidushare %}
-        {% include '_partials/share/baidushare.swig' %}
-      {% elseif theme.add_this_id %}
-        {% include '_partials/share/add-this.swig' %}
-      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
-        {% include '_partials/share/duoshuo_share.swig' %}
-      {% endif %}
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
     </div>
   </div>
 
-{% endblock %}
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
+          </div>
+          
 
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">67</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">82</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-block">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.nodejs.club/" title="Node地下铁" target="_blank">Node地下铁</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://taobaofed.org/" title="淘宝FED" target="_blank">淘宝FED</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.75team.com/" title="奇舞团" target="_blank">奇舞团</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://aotu.io/index.html" title="凹凸实验室" target="_blank">凹凸实验室</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://fex.baidu.com/" title="百度FEX" target="_blank">百度FEX</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.alloyteam.com/" title="腾讯Alloy" target="_blank">腾讯Alloy</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85zsh"><span class="nav-number">1.</span> <span class="nav-text">安装zsh</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%87%E6%8D%A2shell%E4%B8%BAzsh"><span class="nav-number">2.</span> <span class="nav-text">切换shell为zsh</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">安装插件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dircolors-solarized"><span class="nav-number">4.</span> <span class="nav-text">dircolors-solarized</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#starship"><span class="nav-number">5.</span> <span class="nav-text">starship</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+  <script type="text/javascript" src="/js/mathjax.js"></script>
+
+
+  
+
+  
+
+  
+
+
+  <script src="/js/asciinema-player.js"></script>
+
+</body>
+</html>
