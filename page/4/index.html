@@ -719,10 +719,10 @@
 
       
         
-          <p>今天在看《你不知道的js》这本书时，无意看到Object还有个方法叫做 <code>getOwnPropertySymbols()</code> ，用来获取对象的Symbol属性。记得之前看过一些文章说，可以使用Symbol来实现私有属性，如果能直接使用 <code>getOwnPropertySymbols()</code> 方法获取Symbol属性，那还是私有属性么？</p>
-<p>今天复习整理一下关于js中创建私有属性的一些问题。</p>
-<p>由于js并不是Java那种类式面向对象，因此即使es6添加了class支持，js根上还是基于原型的面向对象，不支持什么私有，公有属性的。</p>
-<p>要想实现私有属性，基于现有的js，途径只有一个： 闭包。</p>
+          <p>今天在看《你不知道的 js》这本书时，无意看到 Object 还有个方法叫做 <code>getOwnPropertySymbols()</code> ，用来获取对象的 Symbol 属性。记得之前看过一些文章说，可以使用 Symbol 来实现私有属性，如果能直接使用 <code>getOwnPropertySymbols()</code> 方法获取 Symbol 属性，那还是私有属性么？</p>
+<p>今天复习整理一下关于 js 中创建私有属性的一些问题。</p>
+<p>由于 js 并不是 Java 那种类式面向对象，因此即使 es6 添加了 class 支持，js 根上还是基于原型的面向对象，不支持什么私有，公有属性的。</p>
+<p>要想实现私有属性，基于现有的 js，途径只有一个： 闭包。</p>
           <div class="post-more-link text-center">
             <a class="btn" href="/2017/08/14/private-property-in-js/#more" rel="contents">
               阅读全文 &raquo;
