@@ -69,7 +69,7 @@
 <link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="算法,LeetCode,二分查找," />
+  <meta name="keywords" content="Angular,RxJS," />
 
 
 
@@ -87,30 +87,19 @@
 
 
 
-<meta name="description" content="LeetCode 11.盛最多水的容器  给你 n 个非负整数 a1，a2，…，an，每个数代表坐标中的一个点 (i, ai) 。在坐标内画 n 条垂直线，垂直线 i 的两个端点分别为(i, ai) 和 (i, 0) 。找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。说明：你不能倾斜容器。示例 1：输入：[1,8,6,2,5,4,8,3,7]输出：49解释：图中垂直线代表输">
+<meta name="description" content="How to RxJS in Angular  经过几年的 Angular 前端开发和 RxJS 的大量使用，我决定把我个人的一些关键经验写成一篇简洁的文章。在这篇文章中，我假设你已经对 Observable-streams 以及不同的 Subject-types 的工作方式有了一些基本的了解。如果是这样的话，这可能会帮助你掌握 Angular 中 RxJS 的最常见的使用情况。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【LeetCode每日一题】11.盛最多水的容器.md">
-<meta property="og:url" content="http://coolcao.com/2021/01/04/%E3%80%90LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98%E3%80%9111.%E7%9B%9B%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/index.html">
+<meta property="og:title" content="Angular中使用RxJS的几种常用方法（翻译）">
+<meta property="og:url" content="http://coolcao.com/2022/09/27/how-to-rxjs-in-angular/index.html">
 <meta property="og:site_name" content="coolcao的小站">
-<meta property="og:description" content="LeetCode 11.盛最多水的容器  给你 n 个非负整数 a1，a2，…，an，每个数代表坐标中的一个点 (i, ai) 。在坐标内画 n 条垂直线，垂直线 i 的两个端点分别为(i, ai) 和 (i, 0) 。找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。说明：你不能倾斜容器。示例 1：输入：[1,8,6,2,5,4,8,3,7]输出：49解释：图中垂直线代表输">
+<meta property="og:description" content="How to RxJS in Angular  经过几年的 Angular 前端开发和 RxJS 的大量使用，我决定把我个人的一些关键经验写成一篇简洁的文章。在这篇文章中，我假设你已经对 Observable-streams 以及不同的 Subject-types 的工作方式有了一些基本的了解。如果是这样的话，这可能会帮助你掌握 Angular 中 RxJS 的最常见的使用情况。">
 <meta property="og:locale">
-<meta property="og:image" content="https://images.unsplash.com/photo-1638467611417-c5437577fcd4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80">
-<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1609755698_20210104181147641_416578513.png">
-<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1609755699_20210104181325218_638378771.png">
-<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1609755700_20210104181603597_403703785.png">
-<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1609755700_20210104181734230_1148673622.png">
-<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1609755701_20210104181746888_2027062071.png">
-<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1609755702_20210104181758478_1151651289.png">
-<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1609755702_20210104181809496_533103812.png">
-<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1609755703_20210104181819061_573993000.png">
-<meta property="article:published_time" content="2021-01-04T09:15:29.000Z">
-<meta property="article:modified_time" content="2021-12-04T09:25:19.756Z">
+<meta property="article:published_time" content="2022-09-27T08:41:41.000Z">
+<meta property="article:modified_time" content="2022-09-27T09:01:17.152Z">
 <meta property="article:author" content="coolcao">
-<meta property="article:tag" content="算法">
-<meta property="article:tag" content="LeetCode">
-<meta property="article:tag" content="二分查找">
+<meta property="article:tag" content="Angular">
+<meta property="article:tag" content="RxJS">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://images.unsplash.com/photo-1638467611417-c5437577fcd4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80">
 
 
 
@@ -131,12 +120,12 @@
 
 
 
-  <link rel="canonical" href="http://coolcao.com/2021/01/04/【LeetCode每日一题】11.盛最多水的容器/"/>
+  <link rel="canonical" href="http://coolcao.com/2022/09/27/how-to-rxjs-in-angular/"/>
 
 
 <link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
 
-  <title> 【LeetCode每日一题】11.盛最多水的容器.md | coolcao的小站 </title>
+  <title> Angular中使用RxJS的几种常用方法（翻译） | coolcao的小站 </title>
 <meta name="generator" content="Hexo 6.2.0"></head>
 
 <body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
@@ -276,7 +265,7 @@
             
             
               
-                【LeetCode每日一题】11.盛最多水的容器.md
+                Angular中使用RxJS的几种常用方法（翻译）
               
             
           </h1>
@@ -288,8 +277,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2021-01-04T17:15:29+08:00" content="2021-01-04">
-              2021-01-04
+            <time itemprop="dateCreated" datetime="2022-09-27T16:41:41+08:00" content="2022-09-27">
+              2022-09-27
             </time>
           </span>
 
@@ -314,8 +303,8 @@
 
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/" itemprop="url" rel="index">
-                    <span itemprop="name">LeetCode每日一题</span>
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%BF%BB%E8%AF%91/" itemprop="url" rel="index">
+                    <span itemprop="name">翻译</span>
                   </a>
                 </span>
 
@@ -347,34 +336,46 @@
       
 
       
-        <p><img src="https://images.unsplash.com/photo-1638467611417-c5437577fcd4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"></p>
-<p> <a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/container-with-most-water/description/">LeetCode 11.盛最多水的容器</a></p>
-<blockquote>
-<p>给你 n 个非负整数 a1，a2，…，an，每个数代表坐标中的一个点 (i, ai) 。在坐标内画 n 条垂直线，垂直线 i 的两个端点分别为(i, ai) 和 (i, 0) 。找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。<br>说明：你不能倾斜容器。<br>示例 1：<br>输入：[1,8,6,2,5,4,8,3,7]<br>输出：49<br>解释：图中垂直线代表输入数组 [1,8,6,2,5,4,8,3,7]。在此情况下，容器能够容纳水（表示为蓝色部分）的最大值为 49。<br>示例 2：<br>输入：height &#x3D; [1,1]<br>输出：1<br>示例 3：<br>输入：height &#x3D; [4,3,2,1,4]<br>输出：16<br>示例 4：<br>输入：height &#x3D; [1,2,1]<br>输出：2<br>提示：</p>
-<ul>
-<li>n &#x3D; height.length</li>
-<li>2 &lt;&#x3D; n &lt;&#x3D; 3 * 10^4</li>
-<li>0 &lt;&#x3D; height[i] &lt;&#x3D; 3 * 10^4</li>
-</ul>
+        <blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.matthiasmeier.io/blog/how-to-rxjs-in-angular/">How to RxJS in Angular</a></p>
 </blockquote>
+<p>经过几年的 Angular 前端开发和 RxJS 的大量使用，我决定把我个人的一些关键经验写成一篇简洁的文章。在这篇文章中，我假设你已经对 Observable-streams 以及不同的 Subject-types 的工作方式有了一些基本的了解。如果是这样的话，这可能会帮助你掌握 Angular 中 RxJS 的最常见的使用情况。</p>
 <span id="more"></span>
-<p>这个题目要求计算能够盛放的最多的水，这里其实是求的面积。</p>
-<p>我们知道面积公式为： 面积&#x3D;长*高</p>
-<p>而在该题目中，长度和高度都是变量，所以，最直观，最简单的想法是，将长度和高度作为两个变量，穷举出所有可能的容器，计算所有容器能够盛的水，取其最大的即可。<br>这样的话，我们就需要双层循环遍历，时间复杂度为 O(n^2)。这个题目被设计成中等难度，显然这个穷举法不是题目要考察的。</p>
-<p>我们该怎么把这由于两个变量导致的两层循环给优化一下呢？</p>
-<p>如果我们能定住其中一个变量，或者将另外一个变量的变化引起的作用，不能实质改变问题的求解，让问题的解只和其中一个变量发生作用，就可以减掉一层循环，将复杂度降到O(n)。</p>
-<p>由于面积&#x3D;长度*高度，而在本题中，长度和高度，都不是固定的，所以上面说的定住一个变量，恐怕难以实现。</p>
-<p>那我们能不能改变一下思路，让其中一个变量“失去”作用，最终的最大盛水量只和其中一个变量有关呢？</p>
-<p>面积&#x3D;长度*高度。其中高度就是给的一个数组，其中每个元素都是一个高度，而长度就是两个高度之间的距离。</p>
-<p>如果我们将长度不断缩小，那么要求最大面积，最大面积就只和高度相关了，因为长度不断缩小，要想面积增大，那么只能是高度不断增大。</p>
-<p>我们取长度最大的两个高度作为容器的边界，即height[0]和height[length-1]，然后不断缩小长度。<br>那缩小长度时，怎么确定是移动左边界还是右边界呢？依据就是上面说的，由于长度缩小，要想面积增大，那只能是高度增加，我们应该移动左右边界中，小的那一个边界，这样才有可能遇到更大的边界，面积才有可能变大。</p>
-<p>其操作过程如下：</p>
-<p><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1609755698_20210104181147641_416578513.png"></p>
-<p>取height[0]和height[8]为左右边界，这时面积为8.</p>
-<p><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1609755699_20210104181325218_638378771.png"><br>由于height[0]&lt;height[8]，因此移动左边界，这时面积为7*7&#x3D;49.<br>根据此逻辑，不断移动左右边界，计算出相应的面积，选取最大面积即可。<br><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1609755700_20210104181603597_403703785.png"><br><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1609755700_20210104181734230_1148673622.png"><br><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1609755701_20210104181746888_2027062071.png"><br><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1609755702_20210104181758478_1151651289.png"><br><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1609755702_20210104181809496_533103812.png"><br><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1609755703_20210104181819061_573993000.png"></p>
-<p>这样我们只需要O(n)复杂度即可完成实现。</p>
-<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">max</span><span class="params">(a, b <span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &gt; b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt; b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">maxArea</span><span class="params">(height []<span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	length := <span class="built_in">len</span>(height)</span><br><span class="line">	start, end := <span class="number">0</span>, length<span class="number">-1</span></span><br><span class="line">	maxArea := <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> start &lt; end &#123;</span><br><span class="line">		area := (end - start) * min(height[start], height[end])</span><br><span class="line">		maxArea = max(area, maxArea)</span><br><span class="line">		<span class="keyword">if</span> height[start] &lt; height[end] &#123;</span><br><span class="line">			start++</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			end--</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> maxArea</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p>当你的组件输入的值随时间变化时，你可能想在你的组件内对这些数据做一些处理。所以你通常做的是实现 <code>NgOnChanges</code> 方法来对这些变化做出反应。现在，当你依赖其他异步数据时，这就变得有点模糊了，这正是 RxJS 出现的地方。不幸的是，目前还不支持组件的输入流。</p>
+<p>因此，每当我需要 RxJS 在改变组件输入上的能力时，我就会使用这种模式。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Input</span>() <span class="keyword">public</span> <span class="attr">amount</span>: <span class="built_in">number</span>;</span><br><span class="line"><span class="keyword">public</span> amount$ = <span class="keyword">new</span> <span class="title class_">Subject</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="title function_">ngOnChanges</span>(<span class="attr">changes</span>: <span class="title class_">SimpleChanges</span>): <span class="built_in">void</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (changes.<span class="property">amount</span> &amp;&amp; changes.<span class="property">amount</span>.<span class="property">currentValue</span> !== <span class="literal">undefined</span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">amount$</span>.<span class="title function_">next</span>(changes.<span class="property">amount</span>.<span class="property">currentValue</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="按钮点击（Button-Click）"><a href="#按钮点击（Button-Click）" class="headerlink" title="按钮点击（Button Click）"></a>按钮点击（Button Click）</h2><p>假设你有一些基于 RxJS 的计数器，你想在点击 “重置 “按钮时重置这个计数器。最直接的方法（我知道）是，创建一个新的<code>onReset$</code>主题，然后你可以把它编入你的计数器流设置。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">button</span> (<span class="attr">click</span>)=<span class="string">&quot;onReset$.next()&quot;</span>&gt;</span>Reset<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Http-Requests"><a href="#Http-Requests" class="headerlink" title="Http Requests"></a>Http Requests</h2><p>对于数据服务的基本设置，你可以遵循 <a target="_blank" rel="noopener" href="https://angular.io/guide/http">Angular 指南</a>。<br>但通常情况下，有些用例中，检索数据并不那么简单。很多时候，你要依靠其他的异步数据。所以这方面的心理模型可以是。</p>
+<blockquote>
+<p>一旦我得到数据 X，我想加载数据 Y（它与 X 有关）。</p>
+</blockquote>
+<p>很多时候，你可以用以下方式来扩展上述语句</p>
+<blockquote>
+<p>如果仍有一个开放的 Y 请求（与<strong>之前的</strong>X 有关），我想取消那个请求。</p>
+</blockquote>
+<p>如果是这样，那么 RxJS 的 <code>switchMap</code> 操作符正是你想要找的。考虑一下下面的例子，检索我们当前用户的书签。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> bookmarks$ = <span class="variable language_">this</span>.<span class="property">currentUser$</span>.<span class="title function_">pipe</span>(</span><br><span class="line">  <span class="title function_">switchMap</span>(<span class="function"><span class="params">user</span> =&gt;</span> <span class="variable language_">this</span>.<span class="property">bookmarksService</span>.<span class="title function_">getBookmarks</span>(user.<span class="property">id</span>)),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h2 id="Async-Pipe"><a href="#Async-Pipe" class="headerlink" title="Async Pipe"></a>Async Pipe</h2><p>Angular 包含了一个非常有用的 <code>async-pipe</code>，这使得在模板中消费你的可观察流变得容易。因此，与其在你的 TypeScript 组件中订阅并将值分配给一个公共属性，你可以直接使用 <code>async-pipe</code> 来检索你的异步值。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">li</span> *<span class="attr">ngFor</span>=<span class="string">&quot;let bookmark of bookmarks$|async&quot;</span>&gt;</span>&#123;&#123;bookmark&#125;&#125;<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Sharing-Expensive-Data"><a href="#Sharing-Expensive-Data" class="headerlink" title="Sharing Expensive Data"></a>Sharing Expensive Data</h2><p>使用上面提到的技术，你可以继续使用 <code>async-pipe</code> 多次订阅你的 bookmarks$流。当看一下你的网络控制台时，你很快就会意识到，多个请求正在进行。这不是我们想要的。相反，我们希望与任何对它感兴趣的人分享响应。</p>
+<p>有多种方法可以实现这一点。其中之一是 <code>publishReplay</code>操作符，它将源流作为 ReplaySubject 发布，然后是 <code>refCount</code>操作符，它处理（取消）订阅，只要有至少一个监听器。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> bookmarks$ = <span class="variable language_">this</span>.<span class="property">currentUser$</span>.<span class="title function_">pipe</span>(</span><br><span class="line">  <span class="title function_">switchMap</span>(<span class="function"><span class="params">user</span> =&gt;</span> <span class="variable language_">this</span>.<span class="property">bookmarksService</span>.<span class="title function_">getBookmarks</span>(user.<span class="property">id</span>)),</span><br><span class="line">  <span class="title function_">publishReplay</span>(<span class="number">1</span>),</span><br><span class="line">  <span class="title function_">refCount</span>(),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h2 id="Unsubscribing"><a href="#Unsubscribing" class="headerlink" title="Unsubscribing"></a>Unsubscribing</h2><p>关于这篇文章的最后一点。如果你总是使用 <code>async-pipe</code>，就不需要担心取消订阅的问题，因为管道会自己处理这个问题。所以，当然，尽可能地使用它是非常有意义的。但在某些情况下，你可能需要手动订阅可观察流。在这些情况下，重要的是你要正确地取消订阅，否则你会遇到内存泄漏。使用 <code>takeUntil</code>操作符 是我发现的完成这个任务的最干净的方法。</p>
+<p>前面的设置看起来像这样。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> unsubscribe$ = <span class="keyword">new</span> <span class="title class_">Subject</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="title function_">ngOnDestroy</span>(): <span class="built_in">void</span> &#123;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">unsubscribe$</span>.<span class="title function_">next</span>();</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">unsubscribe$</span>.<span class="title function_">complete</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因此，在任何需要关闭的流上，你可以在调用 “subscribe “之前使用 <code>takeUntil</code>，当你的组件即将被销毁时，你的订阅就会被关闭。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">this</span>.<span class="property">bookmarks$</span>.<span class="title function_">pipe</span>(<span class="title function_">takeUntil</span>(<span class="variable language_">this</span>.<span class="property">unsubscribe$</span>)).<span class="title function_">subscribe</span>(<span class="function">(<span class="params">bookmarks</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// do something</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>我真的希望这能帮助你们中的一些人开始进入 Angular 和 RxJS 的世界，因为一开始它可能是相当吓人的。</p>
+<p>我们非常欢迎任何问题和建议。更多的内容将陆续推出。</p>
 
       
     </div>
@@ -397,11 +398,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">#算法</a>
+            <a href="/tags/Angular/" rel="tag">#Angular</a>
           
-            <a href="/tags/LeetCode/" rel="tag">#LeetCode</a>
-          
-            <a href="/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/" rel="tag">#二分查找</a>
+            <a href="/tags/RxJS/" rel="tag">#RxJS</a>
           
         </div>
       
@@ -410,17 +409,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/12/30/reverse-link-list/" rel="next" title="链表反转.md">
-                <i class="fa fa-chevron-left"></i> 链表反转.md
+              <a href="/2022/09/27/angular-loading/" rel="next" title="Angular使用RxJS实现全局loading">
+                <i class="fa fa-chevron-left"></i> Angular使用RxJS实现全局loading
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2021/01/05/%E3%80%90LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98%E3%80%9133.%E6%90%9C%E7%B4%A2%E6%97%8B%E8%BD%AC%E6%8E%92%E5%BA%8F%E6%95%B0%E7%BB%84/" rel="prev" title="【LeetCode每日一题】33.搜索旋转排序数组.md">
-                【LeetCode每日一题】33.搜索旋转排序数组.md <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -618,7 +613,7 @@
               
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%89%E9%92%AE%E7%82%B9%E5%87%BB%EF%BC%88Button-Click%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">按钮点击（Button Click）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Http-Requests"><span class="nav-number">2.</span> <span class="nav-text">Http Requests</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Async-Pipe"><span class="nav-number">3.</span> <span class="nav-text">Async Pipe</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sharing-Expensive-Data"><span class="nav-number">4.</span> <span class="nav-text">Sharing Expensive Data</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Unsubscribing"><span class="nav-number">5.</span> <span class="nav-text">Unsubscribing</span></a></li></ol></div>
             
           </div>
         </section>
