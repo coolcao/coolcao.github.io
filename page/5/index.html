@@ -264,6 +264,136 @@
             
               
                 
+                <a class="post-title-link" href="/2017/08/14/private-property-in-js/" itemprop="url">
+                  js中模拟实现私有属性
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-08-14T15:14:50+08:00" content="2017-08-14">
+              2017-08-14
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>今天在看《你不知道的 js》这本书时，无意看到 Object 还有个方法叫做 <code>getOwnPropertySymbols()</code> ，用来获取对象的 Symbol 属性。记得之前看过一些文章说，可以使用 Symbol 来实现私有属性，如果能直接使用 <code>getOwnPropertySymbols()</code> 方法获取 Symbol 属性，那还是私有属性么？</p>
+<p>今天复习整理一下关于 js 中创建私有属性的一些问题。</p>
+<p>由于 js 并不是 Java 那种类式面向对象，因此即使 es6 添加了 class 支持，js 根上还是基于原型的面向对象，不支持什么私有，公有属性的。</p>
+<p>要想实现私有属性，基于现有的 js，途径只有一个： 闭包。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2017/08/14/private-property-in-js/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2017/07/06/intelli-sense-in-vscode/" itemprop="url">
                   增强vscode中js代码提示
                 </a>
@@ -1406,139 +1536,6 @@ mdblog-->
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/11/29/deploy-hexo-using-travis/" itemprop="url">
-                  使用travis自动构建部署Hexo博客至github pages
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-11-29T19:25:16+08:00" content="2016-11-29">
-              2016-11-29
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
-                    <span itemprop="name">技术博客</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
-                    <span itemprop="name">原创</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>使用hexo搭建博客，然后将生成的静态网页托管到github pages上，需要三个步骤：</p>
-<ul>
-<li>编写markdown博客</li>
-<li>hexo生成并发布</li>
-<li>将markdown源码推送到github备份</li>
-</ul>
-<p>这个步骤还是有点繁琐，因为，使用需要手动生成静态网页，手动推送markdown源码。<br>那么，能不能将两个步骤合在一起呢？<br>当然可以，使用Travis自动化构建。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/11/29/deploy-hexo-using-travis/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1584,7 +1581,7 @@ mdblog-->
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">73</span>
+              <span class="site-state-item-count">74</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
