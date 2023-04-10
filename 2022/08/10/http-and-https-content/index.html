@@ -87,18 +87,18 @@
 
 
 
-<meta name="description" content="目录 打开浏览器对于混合内容的限制 服务器端使用nginx进行转发">
+<meta name="description" content="目录 混合内容访问 打开浏览器对于混合内容的限制 服务器端使用nginx进行转发">
 <meta property="og:type" content="article">
 <meta property="og:title" content="解决HTTPS应用访问HTTP图片被禁止的问题">
 <meta property="og:url" content="http://coolcao.com/2022/08/10/http-and-https-content/index.html">
 <meta property="og:site_name" content="coolcao的小站">
-<meta property="og:description" content="目录 打开浏览器对于混合内容的限制 服务器端使用nginx进行转发">
+<meta property="og:description" content="目录 混合内容访问 打开浏览器对于混合内容的限制 服务器端使用nginx进行转发">
 <meta property="og:locale">
 <meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/blog/image_loFXESaSKs.png">
 <meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/blog/image_avBDz1io0p.png">
 <meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/blog/image_98CvgMjj9C.png">
 <meta property="article:published_time" content="2022-08-10T01:22:55.000Z">
-<meta property="article:modified_time" content="2023-04-10T01:28:14.789Z">
+<meta property="article:modified_time" content="2023-04-10T01:34:39.503Z">
 <meta property="article:author" content="coolcao">
 <meta property="article:tag" content="https">
 <meta property="article:tag" content="http">
@@ -342,12 +342,13 @@
 
       
         <h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li><a href="#%E6%B7%B7%E5%90%88%E5%86%85%E5%AE%B9">混合内容访问</a></li>
 <li><a href="#%E6%89%93%E5%BC%80%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%B9%E4%BA%8E%E6%B7%B7%E5%90%88%E5%86%85%E5%AE%B9%E7%9A%84%E9%99%90%E5%88%B6">打开浏览器对于混合内容的限制</a></li>
 <li><a href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E4%BD%BF%E7%94%A8nginx%E8%BF%9B%E8%A1%8C%E8%BD%AC%E5%8F%91">服务器端使用nginx进行转发</a></li>
 </ul>
 <span id="more"></span>
 
-<p>在部署为HTPTS的应用里，有一些HTTP的图片无法正常显示，终端显示的错误如下：</p>
+<h2 id="混合内容"><a href="#混合内容" class="headerlink" title="混合内容"></a>混合内容</h2><p>在部署为HTPTS的应用里，有一些HTTP的图片无法正常显示，终端显示的错误如下：</p>
 <p><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/blog/image_loFXESaSKs.png"></p>
 <p>出现这个错误是由<code>混合内容</code> 造成的。</p>
 <blockquote>
@@ -593,7 +594,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95"><span class="nav-number">1.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%93%E5%BC%80%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%B9%E4%BA%8E%E6%B7%B7%E5%90%88%E5%86%85%E5%AE%B9%E7%9A%84%E9%99%90%E5%88%B6"><span class="nav-number">2.</span> <span class="nav-text">打开浏览器对于混合内容的限制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E4%BD%BF%E7%94%A8nginx%E8%BF%9B%E8%A1%8C%E8%BD%AC%E5%8F%91"><span class="nav-number">3.</span> <span class="nav-text">服务器端使用nginx进行转发</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95"><span class="nav-number">1.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E5%86%85%E5%AE%B9"><span class="nav-number">2.</span> <span class="nav-text">混合内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%93%E5%BC%80%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%B9%E4%BA%8E%E6%B7%B7%E5%90%88%E5%86%85%E5%AE%B9%E7%9A%84%E9%99%90%E5%88%B6"><span class="nav-number">3.</span> <span class="nav-text">打开浏览器对于混合内容的限制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E4%BD%BF%E7%94%A8nginx%E8%BF%9B%E8%A1%8C%E8%BD%AC%E5%8F%91"><span class="nav-number">4.</span> <span class="nav-text">服务器端使用nginx进行转发</span></a></li></ol></div>
             
           </div>
         </section>
