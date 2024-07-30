@@ -99,12 +99,15 @@
 <meta property="og:image" content="https://img.coolcao.site/file/67d3c9cb909f34ad35ba9.png">
 <meta property="og:image" content="https://img.coolcao.site/file/a34f95475ef1e56de4592.png">
 <meta property="og:image" content="https://img.coolcao.site/file/b63cfd8f5650a7d2c76b3.png">
+<meta property="og:image" content="https://img.coolcao.site/file/63d26d71da0965cd4f039.png">
+<meta property="og:image" content="https://img.coolcao.site/file/e2011a9068463b75ac01f.png">
+<meta property="og:image" content="https://img.coolcao.site/file/391080afc415a6838e4e0.png">
 <meta property="og:image" content="https://img.coolcao.site/file/68c0846af62fd6dcb30ec.png">
 <meta property="og:image" content="https://img.coolcao.site/file/6479ede323050e21b0e63.png">
 <meta property="og:image" content="https://img.coolcao.site/file/e64e5472f8a64e5d715cf.png">
 <meta property="og:image" content="https://img.coolcao.site/file/adc805309f602c45dd0b1.png">
 <meta property="article:published_time" content="2023-04-29T02:40:50.000Z">
-<meta property="article:modified_time" content="2024-07-30T01:40:33.514Z">
+<meta property="article:modified_time" content="2024-07-30T02:06:01.790Z">
 <meta property="article:author" content="coolcao">
 <meta property="article:tag" content="算法与数据结构">
 <meta property="article:tag" content="动态规划">
@@ -395,9 +398,9 @@
 <ol>
 <li><code>word1[i-1]==word2[j-1]</code>，此时说明遇到相同元素，则说明<code>word1[i-1]</code>和<code>word2[j-1]</code>都不用删除，最小操作数<code>dp[i][j]</code>直接等于<code>dp[i-1][j-1]</code>，即直接在子串<code>word1[:i-2]</code>和<code>word2[:j-2]</code>中操作即可</li>
 <li><code>word1[i-1]!=word2[j-1]</code>，此时有三种情况：<ol>
-<li>两次删除操作，删除<code>word1[i-1]</code>和<code>word2[j-1]</code>，此时 <code>dp[i][j]=dp[i-1][j-1]+2</code></li>
-<li>一次删除操作，删除<code>word1[i-1]</code>，此时 <code>dp[i][j]=dp[i-1][j]+1</code></li>
-<li>一次删除操作，删除<code>word2[j-1]</code>，此时<code>dp[i][j]=dp[i][j-1]+1</code></li>
+<li>两次删除操作，删除<code>word1[i-1]</code>和<code>word2[j-1]</code>，此时 <code>dp[i][j]=dp[i-1][j-1]+2</code><br><img src="https://img.coolcao.site/file/63d26d71da0965cd4f039.png"></li>
+<li>一次删除操作，删除<code>word1[i-1]</code>，此时 <code>dp[i][j]=dp[i-1][j]+1</code><br><img src="https://img.coolcao.site/file/e2011a9068463b75ac01f.png"></li>
+<li>一次删除操作，删除<code>word2[j-1]</code>，此时<code>dp[i][j]=dp[i][j-1]+1</code><br><img src="https://img.coolcao.site/file/391080afc415a6838e4e0.png"></li>
 <li>三种情况中取最小的一个，即 <code>dp[i][j]=min(dp[i-1][j-1]+2, dp[i][j]=dp[i-1][j]+1, dp[i][j]=dp[i][j-1]+1)</code></li>
 </ol>
 </li>
@@ -412,7 +415,7 @@
 <p><img src="https://img.coolcao.site/file/68c0846af62fd6dcb30ec.png" alt="不同的子序列"></p>
 </blockquote>
 <p>本题要求 s 中有多少子序列包含 t，其实就相当于是对 s 做多少删除操作能够得到 t，也算是编辑距离，或者说上面两个字符串的删除题目的简化版。</p>
-<h3 id="状态定义-1"><a href="#状态定义-1" class="headerlink" title="状态定义"></a>状态定义</h3><p>我们定义 <code>dp[i][j]</code> 为字符串 s 中以 i-1 为结尾的子串<code>s[:i-1]</code>中出现以 j-1 为结尾的 t<code>t[:j-1]</code>的个数，那么最终要求的结果便是 <code>dp[s.length][t.length]</code></p>
+<h3 id="状态定义-1"><a href="#状态定义-1" class="headerlink" title="状态定义"></a>状态定义</h3><p>我们定义 <code>dp[i][j]</code> 为字符串 s 中以 i-1 为结尾的子串<code>s[:i-1]</code>中出现以 j-1 为结尾的 <code>t[:j-1]</code>的个数，那么最终要求的结果便是 <code>dp[s.length][t.length]</code></p>
 <blockquote>
 <p>我们定义 <code>s[:i-1]</code> 表示以 i-1 为结尾的 s 的子串，<code>t[:j-1]</code> 表示以 j-1 为结尾的 t 的子串</p>
 </blockquote>
