@@ -1,0 +1,758 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="加密,非对称加密,RSA," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="素数，又称质数，我们在小数数学课上就已经学习到其概念：是指在大于1的自然数中，除了1和该数自身外，无法被其他自然数整除的数。 素数的概念简单至极，但对其的研究，却是数学家们终其一生的目的。当然，本篇文章不是讨论数学中对素数的研究，而是素数在现代密码学中的应用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="公钥加密算法的基石：大素数">
+<meta property="og:url" content="http://coolcao.com/2018/07/26/basic-of-rsa-big-prime-number/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="素数，又称质数，我们在小数数学课上就已经学习到其概念：是指在大于1的自然数中，除了1和该数自身外，无法被其他自然数整除的数。 素数的概念简单至极，但对其的研究，却是数学家们终其一生的目的。当然，本篇文章不是讨论数学中对素数的研究，而是素数在现代密码学中的应用。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2018-07-26T12:15:24.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.953Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="加密">
+<meta property="article:tag" content="非对称加密">
+<meta property="article:tag" content="RSA">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2018/07/26/basic-of-rsa-big-prime-number/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> 公钥加密算法的基石：大素数 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                公钥加密算法的基石：大素数
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-26T20:15:24+08:00" content="2018-07-26">
+              2018-07-26
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%A7%91%E6%99%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">科普</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>素数，又称质数，我们在小数数学课上就已经学习到其概念：是指在大于1的自然数中，除了1和该数自身外，无法被其他自然数整除的数。</p>
+<p>素数的概念简单至极，但对其的研究，却是数学家们终其一生的目的。当然，本篇文章不是讨论数学中对素数的研究，而是素数在现代密码学中的应用。</p>
+<span id="more"></span>
+
+<h2 id="RSA定理基础"><a href="#RSA定理基础" class="headerlink" title="RSA定理基础"></a>RSA定理基础</h2><p>RSA公钥加密算法就是素数的一个典型应用。RSA为非对称加密，其加密与解密使用了不同的密钥。而对称加密是加密解密过程使用同一个密钥，更详细的读者可自行搜索。</p>
+<h3 id="RSA定理"><a href="#RSA定理" class="headerlink" title="RSA定理"></a>RSA定理</h3><p>在 RSA算法中，最基础的一个定理就是RSA定理，描述如下：</p>
+<blockquote>
+<p>若P和Q是两个相素数，另有正整数R和M，其中M的值与<code>(P-1)*(Q-1)</code>的值互质，并使得<code>(R*M) mod (P-1)*(Q-1)=1</code>。有正整数A,且A&lt;P*Q，设：</p>
+</blockquote>
+<blockquote>
+<p><code>C=A^R mod P*Q</code></p>
+</blockquote>
+<blockquote>
+<p><code>B=C^M mod P*Q</code></p>
+</blockquote>
+<blockquote>
+<p>则有： A&#x3D;B<br>mod表示取余运算</p>
+</blockquote>
+<h3 id="RSA算法的基础操作步骤："><a href="#RSA算法的基础操作步骤：" class="headerlink" title="RSA算法的基础操作步骤："></a>RSA算法的基础操作步骤：</h3><ul>
+<li>生成公钥和私钥<ol>
+<li>随意选择两个大的素数P和Q，P不等于Q</li>
+<li>将P和Q两个素数相乘得到一个整数N，即 N&#x3D;P*Q</li>
+<li>将P,Q分别减1，再相乘，得到一个整数T，即 T&#x3D;(P-1)*(Q-1)</li>
+<li>选择一个整数E，作为一个密钥，使E与T互质（即E与T的最大公约数为1），并且E必须小于T</li>
+<li>根据公式 <code>D*E mode T = 1</code>，计算出D的值，作为另一个密钥。</li>
+<li>通过以上步骤计算得出N，E，D这3个数据，其中 (N, E) 作为公钥，(N, D) 作为私钥（当然，公钥和私钥可以互换）</li>
+<li>生成公钥和私钥后，就可以将公钥对外公布了</li>
+</ol>
+</li>
+<li>用公钥加密信息<br>  发送信息的一方收到公钥PK后，就可以通过公钥PK对数据进行加密，加密步骤如下：其中M为明文，加密后得到密文为C，公钥为 (N, E)<ul>
+<li>明文： M</li>
+<li>加密： M^E mod N &#x3D; C</li>
+<li>密文： C</li>
+</ul>
+</li>
+<li>用私钥解密信息<br>  接收方持有私钥(N, D)，在接收到密文C后，即可通过私钥进行解密，得到明文M。过程如下：<ul>
+<li>密文： C</li>
+<li>解密： C^D mod N &#x3D; M</li>
+<li>明文： M</li>
+</ul>
+</li>
+</ul>
+<h2 id="RSA算法实践"><a href="#RSA算法实践" class="headerlink" title="RSA算法实践"></a>RSA算法实践</h2><p>下面我们手动选两个数，进行RSA算法的实践，看看这里面计算的奥秘。</p>
+<ol>
+<li><p>生成公钥和私钥</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">取 P=7, Q=11</span><br><span class="line">则 N=P*Q=7*11=77</span><br><span class="line">   T=(P-1)*(Q-1)=6*10=60</span><br><span class="line">取 E=7</span><br><span class="line">由 D*E mod T = 1</span><br><span class="line">   D*7 mod 60 = 1</span><br><span class="line">得 D=43</span><br><span class="line">则： 公钥(77, 7)，私钥(77,43)</span><br></pre></td></tr></table></figure></li>
+<li><p>加密</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">计算过程：</span><br><span class="line">明文：  M=2</span><br><span class="line">加密：  C=M^E mod N</span><br><span class="line">        =2^7 mod 77</span><br><span class="line">        = 51</span><br><span class="line">密文： 51</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解密<br>收到密文30后，通过私钥(77, 43)进行解密，过程：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">密文：   C=51</span><br><span class="line">解密：   M=C^D mod N</span><br><span class="line">         =51^43 mod 77</span><br><span class="line">         =2</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>从上面计算过程来看，我们使用的是最小的素数，7和11，计算过程中涉及到很大的幂运算(51^43)，结果是一个非常大的数。在实际应用中，P,Q要取很大值的素数，则得到的N,D,E值也很大，所以运算时的中间结果也很大，程序语言中提供的基本数据类型没办法使用，这里我在计算时使用的是BigNumber库计算的。</p>
+<blockquote>
+<p>对极大整数做因数分解的难度决定了RSA算法的可靠性。换言之，对一极大整数做因数分解愈困难，RSA算法愈可靠。假如有人找到一种快速因数分解的算法的话，那么用RSA加密的信息的可靠性就肯定会极度下降。但找到这样的算法的可能性是非常小的。今天只有短的RSA钥匙才可能被强力方式解破。到目前为止，世界上还没有任何可靠的攻击RSA算法的方式。只要其钥匙的长度足够长，用RSA加密的信息实际上是不能被解破的。<br>– 选自 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/RSA%E5%8A%A0%E5%AF%86%E6%BC%94%E7%AE%97%E6%B3%95">维基百科</a></p>
+</blockquote>
+<p>至此，RSA算法中如何用素数进行加密解密计算已完成，以上内容均从《程序员的数学思维修炼》一书中摘录，有兴趣的同学可以看看这本书，作为程序员，还是有必要了解一下基础数学知识。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E5%8A%A0%E5%AF%86/" rel="tag">#加密</a>
+          
+            <a href="/tags/%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86/" rel="tag">#非对称加密</a>
+          
+            <a href="/tags/RSA/" rel="tag">#RSA</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/24/Salted-Password-Hashing/" rel="next" title="如何正确对用户密码进行加密？">
+                <i class="fa fa-chevron-left"></i> 如何正确对用户密码进行加密？
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/04/matrix/" rel="prev" title="线性代数复习之矩阵">
+                线性代数复习之矩阵 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#RSA定理基础"><span class="nav-number">1.</span> <span class="nav-text">RSA定理基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RSA定理"><span class="nav-number">1.1.</span> <span class="nav-text">RSA定理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RSA算法的基础操作步骤："><span class="nav-number">1.2.</span> <span class="nav-text">RSA算法的基础操作步骤：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RSA算法实践"><span class="nav-number">2.</span> <span class="nav-text">RSA算法实践</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

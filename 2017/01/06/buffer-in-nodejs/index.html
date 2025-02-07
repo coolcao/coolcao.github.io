@@ -1,0 +1,767 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="js,nodejs," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="nodejs的优势在于编写高性能的网络服务，而网络请求中，Stream和Buffer是其基础，因此理解这两个概念至关重要。而Buffer又是Stream的基础，所以，先来看看Buffer吧。然后再去搞Steam。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="理解nodejs中的Buffer">
+<meta property="og:url" content="http://coolcao.com/2017/01/06/buffer-in-nodejs/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="nodejs的优势在于编写高性能的网络服务，而网络请求中，Stream和Buffer是其基础，因此理解这两个概念至关重要。而Buffer又是Stream的基础，所以，先来看看Buffer吧。然后再去搞Steam。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2017-01-06T08:56:01.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.953Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="js">
+<meta property="article:tag" content="nodejs">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2017/01/06/buffer-in-nodejs/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> 理解nodejs中的Buffer | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                理解nodejs中的Buffer
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-06T16:56:01+08:00" content="2017-01-06">
+              2017-01-06
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>nodejs的优势在于编写高性能的网络服务，而网络请求中，Stream和Buffer是其基础，因此理解这两个概念至关重要。<br>而Buffer又是Stream的基础，所以，先来看看Buffer吧。然后再去搞Steam。</p>
+<span id="more"></span>
+
+<h2 id="Buffer是什么"><a href="#Buffer是什么" class="headerlink" title="Buffer是什么"></a>Buffer是什么</h2><p>Buffer是一个类数组对象，里面存储的是字节，有点类似于字节数组，主要用于操作字节的。</p>
+<p>来个例子：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> str = <span class="string">&#x27;Hello World!&#x27;</span>;</span><br><span class="line"><span class="keyword">let</span> buffer = <span class="title class_">Buffer</span>.<span class="title function_">from</span>(str);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(buffer);</span><br></pre></td></tr></table></figure>
+
+<p>将输出<code>&lt;Buffer 48 65 6c 6c 6f 20 57 6f 72 6c 64 21&gt;</code></p>
+<p>我们可以看出其是十六进制的字节编码。Buffer.from(string[,encoding])方法接收两个参数，第二个是编码方法，如果不传，默认将使用UTF-8编码。<br>要想了解更多关于编码的内容，推荐阮老师的文章：<a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html">《字符编码笔记：ASCII，Unicode和UTF-8》</a></p>
+<p>为什么说Buffer是一个类数组对象呢？<br>因为Buffer有几个和数组相似的属性和方法，比如length属性，indexOf()方法，includes()方法等等。最重要的是它有一个length属性，以及可以直接使用下标访问，例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(buffer.<span class="property">length</span>); <span class="comment">//12</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(buffer[<span class="number">0</span>]);     <span class="comment">//72</span></span><br></pre></td></tr></table></figure>
+
+<p>上面例子中，buffer的长度是12，有12个字节。位置0的字节值为72，对应16进制的 48 。</p>
+<p>Buffer中的每一个元素（Buffer不是数组，因此严格意义上说，‘每一个元素’这种描述是错的，这里方便描述）都是一个16进制的二位数，因此它的大小在0<del>255之间。<br>为什么呢？刚才说过了Buffer存的是字节，一个字节是由8个位组成的，因此它的大小是0</del>255之前，而使用16进制表示出来就是2位。</p>
+<p>nodejs的Buffer有丰富的接口供使用，例如分配空间，填充Buffer，赋值等等，具体可参阅<a target="_blank" rel="noopener" href="https://nodejs.org/dist/latest-v7.x/docs/api/buffer.html">官方文档</a>。</p>
+<p>Buffer的每个元素都是0~255的整数，那么如果赋值给小数甚至负数会怎样呢？例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> bf2 = <span class="title class_">Buffer</span>.<span class="title function_">alloc</span>(<span class="number">2</span>);</span><br><span class="line">bf2[<span class="number">0</span>] = <span class="number">72.5</span>;  </span><br><span class="line">bf2[<span class="number">1</span>] = -<span class="number">72</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(bf2); <span class="comment">//&lt;Buffer 48 b8&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>它的两个元素分别是<code>0x48</code>和<code>0xb8</code>，对应十进制是 72,184。可以看出，如果赋值小数，则直接截断为整数，负数的话，184和-72啥关系呢？哦，-72+256&#x3D;184。</p>
+<blockquote>
+<p>给元素赋值如果小于0，就将该值逐次加256，直到得到一个0到255之间的整数。如果赋值大于255，就逐次减去256，直到得到0到255区间内的数值。如果是小数，舍弃小数部分，只保留整数部分。</p>
+</blockquote>
+<h2 id="Buffer与字符串的转换"><a href="#Buffer与字符串的转换" class="headerlink" title="Buffer与字符串的转换"></a>Buffer与字符串的转换</h2><p>字符串可以通过Buffer.from(string[,encoding])来转换为Buffer，如果不指定encoding，默认使用utf-8编码。</p>
+<p>目前支持的编码有如下几种:</p>
+<ul>
+<li>ASCII</li>
+<li>UTF-8</li>
+<li>UTF-16LE&#x2F;UCS-2</li>
+<li>Base64</li>
+<li>Binary</li>
+<li>Hex</li>
+</ul>
+<p>由于nodejs内置的转换编码并不支持GBK，因此如果要处理编码为GBK的文档，要借助第三方的插件，推荐<a target="_blank" rel="noopener" href="https://github.com/ashtuchkin/iconv-lite">iconv-lite</a>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> str = <span class="string">&#x27;Hello,你好&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">Buffer</span>.<span class="title function_">from</span>(str,<span class="string">&#x27;utf-8&#x27;</span>));</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">Buffer</span>.<span class="title function_">from</span>(str,<span class="string">&#x27;ascii&#x27;</span>));</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">Buffer</span>.<span class="title function_">from</span>(str,<span class="string">&#x27;utf-16le&#x27;</span>));</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">Buffer</span>.<span class="title function_">from</span>(str,<span class="string">&#x27;base64&#x27;</span>));</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">Buffer</span>.<span class="title function_">from</span>(str,<span class="string">&#x27;binary&#x27;</span>));</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">Buffer</span>.<span class="title function_">from</span>(str,<span class="string">&#x27;hex&#x27;</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">//&lt;Buffer 48 65 6c 6c 6f 2c e4 bd a0 e5 a5 bd&gt;</span></span><br><span class="line"><span class="comment">//&lt;Buffer 48 65 6c 6c 6f 2c 60 7d&gt;</span></span><br><span class="line"><span class="comment">//&lt;Buffer 48 00 65 00 6c 00 6c 00 6f 00 2c 00 60 4f 7d 59&gt;</span></span><br><span class="line"><span class="comment">//&lt;Buffer 1d e9 65 a3&gt;</span></span><br><span class="line"><span class="comment">//&lt;Buffer 48 65 6c 6c 6f 2c 60 7d&gt;</span></span><br><span class="line"><span class="comment">//&lt;Buffer &gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>注意最后一个，hex出来怎么是空呢？因为hex只支持十六进制的字符串。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">Buffer</span>.<span class="title function_">from</span>(<span class="string">&#x27;48656c6c6f2ce4bda0e5a5bd&#x27;</span>,<span class="string">&#x27;hex&#x27;</span>).<span class="title function_">toString</span>(<span class="string">&#x27;utf-8&#x27;</span>)); <span class="comment">//Hello,你好</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Buffer的拼接"><a href="#Buffer的拼接" class="headerlink" title="Buffer的拼接"></a>Buffer的拼接</h2><p>上面例子我们看出了，字符串和Buffer的转换和编码息息相关。而且即使是相同编码，如果Buffer被截断，那么也有可能出现乱码。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> str = <span class="string">&#x27;Hello,你好&#x27;</span>;</span><br><span class="line"><span class="keyword">let</span> bf = <span class="title class_">Buffer</span>.<span class="title function_">from</span>(str);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(bf.<span class="title function_">slice</span>(<span class="number">0</span>,<span class="number">7</span>).<span class="title function_">toString</span>());  <span class="comment">//Hello,��</span></span><br></pre></td></tr></table></figure>
+
+<p>从上面例子中我们看出，’你好’两个汉字，分别占用3个字节，这里我取bf的前8个字节，很明显是将’你’字的3个字节给分开了，只取了前2个字节，那么，在转换为字符串时，由于不能正确识别出现乱码。</p>
+<p>我们在做网络请求或者使用流读取文件时，由于可能会读取多次，不可避免的出现这种情况，一个汉字的字节被截断，导出出现乱码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&#x27;use strict&#x27;</span>;</span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//test.txt</span></span><br><span class="line"><span class="comment">//Hello,你好</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> rs = fs.<span class="title function_">createReadStream</span>(<span class="string">&#x27;./test.txt&#x27;</span>, &#123;</span><br><span class="line">    <span class="attr">highWaterMark</span>: <span class="number">7</span></span><br><span class="line">&#125;);</span><br><span class="line"><span class="keyword">let</span> txt = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">rs.<span class="title function_">on</span>(<span class="string">&#x27;data&#x27;</span>,<span class="function">(<span class="params">chunk</span>) =&gt;</span> &#123;</span><br><span class="line">    txt += chunk;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">rs.<span class="title function_">on</span>(<span class="string">&#x27;end&#x27;</span>,<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(txt);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">//Hello,���好</span></span><br></pre></td></tr></table></figure>
+
+<p>这里出现乱码了，是因为<code>txt += chunk</code>隐含了一个操作，即 <code>chunk.toString()</code>，因为txt是String类型的。因此相当于是<code>txt += chunk.toString()</code>。<br>由于每次限定只读取7个字节，因此’你’字被截断，解析时成乱码。</p>
+<p>使用http发送网络请求时，也是同样的原理。</p>
+<p>不要紧，这里我们可以直接将chunk拼接成一个大的Buffer,然后再转换成字符串。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> bfs = [];</span><br><span class="line">rs.<span class="title function_">on</span>(<span class="string">&#x27;data&#x27;</span>,<span class="function"><span class="params">chunk</span> =&gt;</span> &#123;</span><br><span class="line">    bfs.<span class="title function_">push</span>(chunk);</span><br><span class="line">&#125;);</span><br><span class="line">rs.<span class="title function_">on</span>(<span class="string">&#x27;end&#x27;</span>,<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(bfs.<span class="title function_">toString</span>());</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>如果是网络请求这样做还好，因为每次请求的数据不会太大，不至于出现内存不够的情况。但是如果是读取一个大的文件，比如几百M或者几个G的情况下，很明显不能这样拼接了，因为内存可能不够。</p>
+<p>例如，有一个很大的纯文本文件，utf-8编码，如何正确读取其内容然后显示在终端？</p>
+<p>这个问题只能分段读取，然后分段显示。那么，问题又来了，上面的乱码问题该如何解决？</p>
+<p>nodejs有一个神奇的string_decoder模块，神奇在哪，来个实验：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">StringDecoder</span> = <span class="built_in">require</span>(<span class="string">&#x27;string_decoder&#x27;</span>).<span class="property">StringDecoder</span>;</span><br><span class="line"><span class="keyword">const</span> decoder = <span class="keyword">new</span> <span class="title class_">StringDecoder</span>(<span class="string">&#x27;utf-8&#x27;</span>);</span><br><span class="line"><span class="keyword">let</span> str = <span class="string">&#x27;Hello,你好&#x27;</span>;</span><br><span class="line"><span class="keyword">let</span> bf = <span class="title class_">Buffer</span>.<span class="title function_">from</span>(str);</span><br><span class="line"><span class="keyword">let</span> bf1 = bf.<span class="title function_">slice</span>(<span class="number">0</span>,<span class="number">7</span>);</span><br><span class="line"><span class="keyword">let</span> bf2 = bf.<span class="title function_">slice</span>(<span class="number">7</span>,bf.<span class="property">length</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(bf1.<span class="title function_">toString</span>());</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(bf2.<span class="title function_">toString</span>());</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(decoder.<span class="title function_">write</span>(bf1));</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(decoder.<span class="title function_">write</span>(bf2));</span><br><span class="line"></span><br><span class="line"><span class="comment">//Hello,�</span></span><br><span class="line"><span class="comment">//��好</span></span><br><span class="line"><span class="comment">//Hello,</span></span><br><span class="line"><span class="comment">//你好</span></span><br></pre></td></tr></table></figure>
+
+<p>bf1和bf2分别是bf的前后两段，但是直接toString输出乱码，使用string_decoder输出则正常？何解？</p>
+<p>将Buffer传给StringDecoder解析写入时，前面<code>Hello,</code>能够正常解析，最后一个字节不能解析，留在decoder里，第二次解析bf2时，会和bf2拼接起来一起解析，因此’你’在第二次解析中输出。</p>
+<p>但是string_decoder有个问题，只能处理utf-8，base64，和UCS-2&#x2F;UTF-16LE三种编码。对于其他编码无能为力。因此，如果是其他编码的，不能直接使用它。</p>
+<p>对于GBK编码的文件或者网络请求，我们该如何处理呢？上面提到一个第三方的转换插件iconv-lite模块，我们可以使用这个模块进行转换。</p>
+<p>例如，再有一个很大的文本文件，编码是GBK的，如何正确读取并显示在终端？</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&#x27;use strict&#x27;</span>;</span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> iconv = <span class="built_in">require</span>(<span class="string">&#x27;iconv-lite&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> rs = fs.<span class="title function_">createReadStream</span>(<span class="string">&#x27;./中文测试.md&#x27;</span>, &#123;</span><br><span class="line">    <span class="attr">highWaterMark</span>: <span class="number">7</span></span><br><span class="line">&#125;);</span><br><span class="line"><span class="keyword">let</span> <span class="title class_">StringDecoder</span> = <span class="built_in">require</span>(<span class="string">&#x27;string_decoder&#x27;</span>).<span class="property">StringDecoder</span>;</span><br><span class="line"><span class="keyword">let</span> decoder = <span class="keyword">new</span> <span class="title class_">StringDecoder</span>(<span class="string">&#x27;utf-8&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> readable = rs.<span class="title function_">pipe</span>(iconv.<span class="title function_">decodeStream</span>(<span class="string">&#x27;GBK&#x27;</span>))</span><br><span class="line">    .<span class="title function_">pipe</span>(iconv.<span class="title function_">encodeStream</span>(<span class="string">&#x27;utf-8&#x27;</span>));</span><br><span class="line"></span><br><span class="line">readable.<span class="title function_">on</span>(<span class="string">&#x27;readable&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">var</span> chunk;</span><br><span class="line">  <span class="keyword">while</span> (<span class="literal">null</span> !== (chunk = readable.<span class="title function_">read</span>())) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(decoder.<span class="title function_">write</span>(chunk));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>中文测试.md是一个GBK编码的纯文本文件，我们创建一个读取流rs，然后通过管道将该流扔给iconv，iconv使用GBK编码解码流，并将其转换成utf-8编码的流，最后通过string_decoder输出。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>对于Buffer的操作，一定要注意几点：</p>
+<ul>
+<li>编码一定要统一。不管是网络服务还是文件读取，一定要统一编码。如果编码不统一，则先进行转码。</li>
+<li>注意字节完整性。对于多字节的字符，千万不要出现截断字节的情况。否则会乱码。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/js/" rel="tag">#js</a>
+          
+            <a href="/tags/nodejs/" rel="tag">#nodejs</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/05/writing-native-nodejs-modules/" rel="next" title="使用C/C++编写nodejs原生模块">
+                <i class="fa fa-chevron-left"></i> 使用C/C++编写nodejs原生模块
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/13/data-structure-fee-view/" rel="prev" title="前端开发视角看数据结构-记一次项目中数据结构的选择">
+                前端开发视角看数据结构-记一次项目中数据结构的选择 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Buffer是什么"><span class="nav-number">1.</span> <span class="nav-text">Buffer是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Buffer与字符串的转换"><span class="nav-number">2.</span> <span class="nav-text">Buffer与字符串的转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Buffer的拼接"><span class="nav-number">3.</span> <span class="nav-text">Buffer的拼接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">4.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

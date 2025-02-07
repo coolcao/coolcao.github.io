@@ -1,0 +1,733 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="js,es6," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="Javascript 团体的每个人都喜欢新的API,语法更新以及特性，它们提供了更好的，更智能，更有效的方式以完成重要的任务。ES6提供了大量新的好的东西，在过去的一年内，浏览器提供商做了大量的辛勤工作将新的语言特性更新到他们的浏览器中。尽管有重大的更新，很多小的语言更新另我眼前一亮，下面6条就是我最爱的Javascript新特性：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【译】ES6中6个小的却令人惊叹的特性">
+<meta property="og:url" content="http://coolcao.com/2016/11/16/Six-Tiny-But-Awesome-ES6-Features/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="Javascript 团体的每个人都喜欢新的API,语法更新以及特性，它们提供了更好的，更智能，更有效的方式以完成重要的任务。ES6提供了大量新的好的东西，在过去的一年内，浏览器提供商做了大量的辛勤工作将新的语言特性更新到他们的浏览器中。尽管有重大的更新，很多小的语言更新另我眼前一亮，下面6条就是我最爱的Javascript新特性：">
+<meta property="og:locale">
+<meta property="article:published_time" content="2016-11-16T14:04:20.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.951Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="js">
+<meta property="article:tag" content="es6">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2016/11/16/Six-Tiny-But-Awesome-ES6-Features/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> 【译】ES6中6个小的却令人惊叹的特性 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                【译】ES6中6个小的却令人惊叹的特性
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-16T22:04:20+08:00" content="2016-11-16">
+              2016-11-16
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%BF%BB%E8%AF%91/" itemprop="url" rel="index">
+                    <span itemprop="name">翻译</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Javascript 团体的每个人都喜欢新的API,语法更新以及特性，它们提供了更好的，更智能，更有效的方式以完成重要的任务。ES6提供了大量新的好的东西，在过去的一年内，浏览器提供商做了大量的辛勤工作将新的语言特性更新到他们的浏览器中。尽管有重大的更新，很多小的语言更新另我眼前一亮，下面6条就是我最爱的Javascript新特性：</p>
+<span id="more"></span>
+
+<h2 id="Object-key-语法"><a href="#Object-key-语法" class="headerlink" title="Object[key] 语法"></a>Object[key] 语法</h2><p>一个有经验的Javascript开发者，在字面量定义对象时，也不能够将变量作为对象的键值，你必须定义完对象后再添加键&#x2F;值对：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// *Very* reduced example</span></span><br><span class="line"><span class="keyword">let</span> myKey = <span class="string">&#x27;key3&#x27;</span>;</span><br><span class="line"><span class="keyword">let</span> obj = &#123;</span><br><span class="line">    <span class="attr">key1</span>: <span class="string">&#x27;One&#x27;</span>,</span><br><span class="line">    <span class="attr">key2</span>: <span class="string">&#x27;Two&#x27;</span></span><br><span class="line">&#125;;</span><br><span class="line">obj[myKey] = <span class="string">&#x27;Three&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>往好了说，这种模式是不方便的，往坏了说，它是混乱和丑陋的。ES6提供了一种新的方式用以消除这种混乱：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> myKey = <span class="string">&#x27;variableKey&#x27;</span>;</span><br><span class="line"><span class="keyword">let</span> obj = &#123;</span><br><span class="line">    <span class="attr">key1</span>: <span class="string">&#x27;One&#x27;</span>,</span><br><span class="line">    <span class="attr">key2</span>: <span class="string">&#x27;Two&#x27;</span>,</span><br><span class="line">    [myKey]: <span class="string">&#x27;Three&#x27;</span> <span class="comment">/* yay! */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这种将变量作为对象的键使用<code>[]</code>包起来的方式使得开发者能够在一条语句中就能完成。</p>
+<h2 id="箭头函数（Arrow-Functions）"><a href="#箭头函数（Arrow-Functions）" class="headerlink" title="箭头函数（Arrow Functions）"></a>箭头函数（Arrow Functions）</h2><p>你不必关注ES6的每一个变化来了解箭头函数，他们曾是Javascript开发者争论和混乱的源头。我会发布多篇博文来解释箭头函数每个特性。我将会指出箭头函数是如何提供方法简化代码的。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Adds a 10% tax to total</span></span><br><span class="line"><span class="keyword">let</span> <span class="title function_">calculateTotal</span> = total =&gt; total * <span class="number">1.1</span>;</span><br><span class="line"><span class="title function_">calculateTotal</span>(<span class="number">10</span>) <span class="comment">// 11</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Cancel an event -- another tiny task</span></span><br><span class="line"><span class="keyword">let</span> <span class="title function_">brickEvent</span> = e =&gt; e.<span class="title function_">preventDefault</span>();</span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;div&#x27;</span>).<span class="title function_">addEventListener</span>(<span class="string">&#x27;click&#x27;</span>, brickEvent);</span><br></pre></td></tr></table></figure>
+
+<p>没有<code>function</code>或<code>return</code>关键字，有时甚至不需要<code>()</code>，箭头函数在代码上比普通函数更简化。</p>
+<h2 id="find-x2F-findIndex"><a href="#find-x2F-findIndex" class="headerlink" title="find&#x2F;findIndex"></a>find&#x2F;findIndex</h2><p>Javascript提供了<code>Array.prototype.indexOf</code>用以获取数组中给定项的索引，但是<code>indexOf</code>没有提供方法来计算想要的项的条件。比如你需要搜索一个更准确的值。<code>find</code>和<code>findIndex</code>两个方法用来搜索数组中第一个匹配计算结果的项：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> ages = [<span class="number">12</span>, <span class="number">19</span>, <span class="number">6</span>, <span class="number">4</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> firstAdult = ages.<span class="title function_">find</span>(<span class="function"><span class="params">age</span> =&gt;</span> age &gt;= <span class="number">18</span>); <span class="comment">// 19</span></span><br><span class="line"><span class="keyword">let</span> firstAdultIndex = ages.<span class="title function_">findIndex</span>(<span class="function"><span class="params">age</span> =&gt;</span> age &gt;= <span class="number">18</span>); <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
+<p>find和findIndex通过允许计算值搜索，防止不必要的副作用以及循环通过可能的值。</p>
+<h2 id="展开操作符-…"><a href="#展开操作符-…" class="headerlink" title="展开操作符 …"></a>展开操作符 …</h2><p>展开操作符将数组或可遍历对象切分为独立的参数，下面是一些例子：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Pass to function that expects separate multiple arguments</span></span><br><span class="line"><span class="comment">// Much like Function.prototype.apply() does</span></span><br><span class="line"><span class="keyword">let</span> numbers = [<span class="number">9</span>, <span class="number">4</span>, <span class="number">7</span>, <span class="number">1</span>];</span><br><span class="line"><span class="title class_">Math</span>.<span class="title function_">min</span>(...numbers); <span class="comment">// 1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Convert NodeList to Array</span></span><br><span class="line"><span class="keyword">let</span> divsArray = [...<span class="variable language_">document</span>.<span class="title function_">querySelectorAll</span>(<span class="string">&#x27;div&#x27;</span>)];</span><br><span class="line"></span><br><span class="line"><span class="comment">// Convert Arguments to Array</span></span><br><span class="line"><span class="keyword">let</span> argsArray = [...<span class="variable language_">arguments</span>];</span><br></pre></td></tr></table></figure>
+
+<p>令人敬畏的好处是，能够转换可遍历对象（如NodeList,arguments等）为真正的数组，我们用Array.from或其他技术做了很长时间的事。</p>
+<h2 id="模板字符串"><a href="#模板字符串" class="headerlink" title="模板字符串"></a>模板字符串</h2><p>多行字符串，一直以来，我们一直<a target="_blank" rel="noopener" href="https://davidwalsh.name/multiline-javascript-strings">使用连接符或<code>\</code>符</a>，这两种方法都不好维护。有很多开发者，甚至是框架的发起者滥用<code>&lt;script&gt;</code>标签来包含多行模板，其他人使用Dom创建了元素，然后使用outerHTML来获取元素的html作为字符串。<br>ES6提供了<a target="_blank" rel="noopener" href="https://davidwalsh.name/template-literals">模板字符串</a>，你可以简单的使用反逗号（&#96;）符创建多行字符串。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Multiline String</span></span><br><span class="line"><span class="keyword">let</span> myString = <span class="string">`Hello</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">I&#x27;m a new line`</span>; <span class="comment">// No error!</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Basic interpolation</span></span><br><span class="line"><span class="keyword">let</span> obj = &#123; <span class="attr">x</span>: <span class="number">1</span>, <span class="attr">y</span>: <span class="number">2</span> &#125;;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Your total is: <span class="subst">$&#123;obj.x + obj.y&#125;</span>`</span>); <span class="comment">// Your total is: 3</span></span><br></pre></td></tr></table></figure>
+
+<p>当然，模板字符串的功能可不仅仅是允许你创建多行字符串，像简单到高级的插值，但只有创建多行字符串的能力让我兴奋。</p>
+<h2 id="默认参数"><a href="#默认参数" class="headerlink" title="默认参数"></a>默认参数</h2><p>很多服务器端的语言，像 python和php都提供函数的默认参数值，现在javascript也有了这种能力：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Basic usage</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">greet</span>(<span class="params">name = <span class="string">&#x27;Anon&#x27;</span></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Hello <span class="subst">$&#123;name&#125;</span>!`</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">greet</span>(); <span class="comment">// Hello Anon!</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// You can have a function too!</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">greet</span>(<span class="params">name = <span class="string">&#x27;Anon&#x27;</span>, callback = <span class="keyword">function</span>()&#123;&#125;</span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Hello <span class="subst">$&#123;name&#125;</span>!`</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// No more &quot;callback &amp;&amp; callback()&quot; (no conditional)</span></span><br><span class="line">  <span class="title function_">callback</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Only set a default for one parameter</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">greet</span>(<span class="params">name, callback = <span class="keyword">function</span>()&#123;&#125;</span>) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其他编程语言中，如果没有为参数提供默认值，可能会抛出警告，但是在javascript里，它会继续运行，并且将这些参数的值设置为<code>undefined</code>。</p>
+<p>我这里所列出的6个特性，只是es6提供给开发者的很小的一部分，但确实我们可能想都不想就经常用的。这些微小的补充，往往不会得到注意，但却成了我们编码的核心。</p>
+<h2 id="讨论"><a href="#讨论" class="headerlink" title="讨论"></a>讨论</h2><h3 id="cmwd-对于默认参数，我经常用以下小技巧："><a href="#cmwd-对于默认参数，我经常用以下小技巧：" class="headerlink" title="cmwd:对于默认参数，我经常用以下小技巧："></a><a target="_blank" rel="noopener" href="http://cmwd.github.io/">cmwd</a>:对于默认参数，我经常用以下小技巧：</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">isRequired</span> = (<span class="params"></span>) =&gt; &#123; <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">&#x27;param is required&#x27;</span>); &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">hello</span> = (<span class="params">name = isRequired()</span>) =&gt; &#123; <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`hello <span class="subst">$&#123;name&#125;</span>`</span>) &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Dimitar-1-不过为了更好的可读性，使用-getter-比-更好："><a href="#Dimitar-1-不过为了更好的可读性，使用-getter-比-更好：" class="headerlink" title="Dimitar:+1,不过为了更好的可读性，使用 getter 比 ()更好："></a><a target="_blank" rel="noopener" href="http://fragged.org/">Dimitar</a>:+1,不过为了更好的可读性，使用 getter 比 ()更好：</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> is = &#123;</span><br><span class="line">  <span class="keyword">get</span> <span class="title function_">required</span>()&#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">&#x27;Required argument&#x27;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; is &#125; <span class="keyword">from</span> <span class="string">&#x27;utils&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">foo</span>(name = is.<span class="property">required</span>)=&gt;<span class="title class_">Array</span>.<span class="title function_">from</span>(name)</span><br></pre></td></tr></table></figure>
+
+<p>英文原文链接：<a target="_blank" rel="noopener" href="https://davidwalsh.name/es6-features">Six Tiny But Awesome ES6 Features</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/js/" rel="tag">#js</a>
+          
+            <a href="/tags/es6/" rel="tag">#es6</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/10/linux%E6%88%96mac%E4%BD%BF%E7%94%A8dd%E5%91%BD%E4%BB%A4%E7%83%A7%E5%BD%95%E5%90%AF%E5%8A%A8U%E7%9B%98/" rel="next" title="linux或mac使用dd命令烧录启动U盘">
+                <i class="fa fa-chevron-left"></i> linux或mac使用dd命令烧录启动U盘
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/20/tools-for-developer/" rel="prev" title="开发必备工具">
+                开发必备工具 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Object-key-语法"><span class="nav-number">1.</span> <span class="nav-text">Object[key] 语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#箭头函数（Arrow-Functions）"><span class="nav-number">2.</span> <span class="nav-text">箭头函数（Arrow Functions）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#find-x2F-findIndex"><span class="nav-number">3.</span> <span class="nav-text">find&#x2F;findIndex</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#展开操作符-…"><span class="nav-number">4.</span> <span class="nav-text">展开操作符 …</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模板字符串"><span class="nav-number">5.</span> <span class="nav-text">模板字符串</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#默认参数"><span class="nav-number">6.</span> <span class="nav-text">默认参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#讨论"><span class="nav-number">7.</span> <span class="nav-text">讨论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#cmwd-对于默认参数，我经常用以下小技巧："><span class="nav-number">7.1.</span> <span class="nav-text">cmwd:对于默认参数，我经常用以下小技巧：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Dimitar-1-不过为了更好的可读性，使用-getter-比-更好："><span class="nav-number">7.1.1.</span> <span class="nav-text">Dimitar:+1,不过为了更好的可读性，使用 getter 比 ()更好：</span></a></li></ol></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

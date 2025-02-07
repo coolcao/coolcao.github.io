@@ -1,0 +1,775 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="MySQL,事务隔离," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="1. MySQL事务隔离级别学习笔记1.1. 隔离级别 READ UNCOMMITTED 未提交读  在READ UNCOMMITTED级别，事务中的修改，即使没有提交，对其他事务也都是可见的。事务可以读取未提交的数据，这也被称作脏读。这个级别会导致很多问题，从性能上来说，READ UNCOMMITTED不会比其他的级别好太多，但确缺乏其他级别的很多好处，除非真的有必要的理由，在实际应用中一般很少">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL事务隔离级别学习">
+<meta property="og:url" content="http://coolcao.com/2018/08/10/mysql-transaction-isolation-level/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="1. MySQL事务隔离级别学习笔记1.1. 隔离级别 READ UNCOMMITTED 未提交读  在READ UNCOMMITTED级别，事务中的修改，即使没有提交，对其他事务也都是可见的。事务可以读取未提交的数据，这也被称作脏读。这个级别会导致很多问题，从性能上来说，READ UNCOMMITTED不会比其他的级别好太多，但确缺乏其他级别的很多好处，除非真的有必要的理由，在实际应用中一般很少">
+<meta property="og:locale">
+<meta property="article:published_time" content="2018-08-10T14:40:27.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.958Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="事务隔离">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2018/08/10/mysql-transaction-isolation-level/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> MySQL事务隔离级别学习 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                MySQL事务隔离级别学习
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-10T22:40:27+08:00" content="2018-08-10">
+              2018-08-10
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">笔记</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E7%AC%94%E8%AE%B0/mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">mysql</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="1-MySQL事务隔离级别学习笔记"><a href="#1-MySQL事务隔离级别学习笔记" class="headerlink" title="1. MySQL事务隔离级别学习笔记"></a>1. MySQL事务隔离级别学习笔记</h1><h2 id="1-1-隔离级别"><a href="#1-1-隔离级别" class="headerlink" title="1.1. 隔离级别"></a>1.1. 隔离级别</h2><ol>
+<li><p>READ UNCOMMITTED 未提交读</p>
+<p> 在READ UNCOMMITTED级别，事务中的修改，即使没有提交，对其他事务也都是可见的。事务可以读取未提交的数据，这也被称作脏读。这个级别会导致很多问题，从性能上来说，READ UNCOMMITTED不会比其他的级别好太多，但确缺乏其他级别的很多好处，除非真的有必要的理由，在实际应用中一般很少使用。</p>
+</li>
+<li><p>READ COMMITED 提交读</p>
+<p> 大多数数据库系统的默认隔离级别是 READ COMMITED（但mysql不是）。READ COMMITED满足前面提到的隔离性简单定义：一个事务开始时，只能看见已经提交的事务所做的修改。换句话说，一个事务从开始直到提交之前，所做的任何修改对其他事务都是不可见的。这个级别有时候也叫做不可重复读，因为两次执行同样的查询，可能会得到不一样的结果。</p>
+<blockquote>
+<p>这里的原因是，在两次执行同样的查询中间，可能由其他事务修改了影响查询结果的数据。在 Read Commited级别下，会发生这种情况。</p>
+</blockquote>
+</li>
+<li><p>REPEATABLE READ 可重复读</p>
+<p> MySQL的默认事务隔离级别。<br> REPEATABLE READ解决了脏读的问题。该级别保证了在同一个事务中多次读取同样的记录的结果是一致的。但是理论上，可重复读隔离级别还是无法解决另一个幻读的问题。所谓幻读，指的是当某个事务在读取某个范围内的记录时，另外一个事务又在该范围内插入了新的记录，当之前的事务再次读取该范围的记录时，会产生幻行。InnoDB存储引擎通过多版本并发控制（MVCC）解决了幻读的问题。</p>
+<blockquote>
+<p>在一个事务未提交前，多次查询相同的查询，都会返回相同的结果。即使在此期间有其他事务已提交了影响该查询的数据。</p>
+</blockquote>
+</li>
+<li><p>SERIALIZABLE 可串行化</p>
+<p> SERIALIZABLE 是最高的隔离级别。它通过强事务串行执行，避免了前面说的幻读的问题。简单来说，SERIALIZABLE会在曲度的每一行数据都加上锁，所以可能导致大量的超时和锁争用的问题。实际应用中也很少用到这个隔离级别，只有在非常需要确保数据一致性而且可以接受没有并发的情况下，才考虑使用该级别。</p>
+</li>
+</ol>
+<span id="more"></span>
+
+<h2 id="1-2-实验"><a href="#1-2-实验" class="headerlink" title="1.2. 实验"></a>1.2. 实验</h2><p>上面是摘自《高性能MySQL》一书，光这么看，可能也理解不到多少东西，不如直接做实验亲身体验一下，加深理解。</p>
+<p>我们先简单创建一个表 users，结构如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">+------------+------------------+------+-----+-------------------+----------------+</span><br><span class="line">| Field      | Type             | Null | Key | Default           | Extra          |</span><br><span class="line">+------------+------------------+------+-----+-------------------+----------------+</span><br><span class="line">| id         | int(11) unsigned | NO   | PRI | &lt;null&gt;            | auto_increment |</span><br><span class="line">| name       | varchar(50)      | NO   |     |                   |                |</span><br><span class="line">| created_at | datetime         | NO   |     | CURRENT_TIMESTAMP |                |</span><br><span class="line">| updated_at | datetime         | NO   |     | CURRENT_TIMESTAMP |                |</span><br><span class="line">| deleted_at | datetime         | YES  |     | &lt;null&gt;            |                |</span><br><span class="line">+------------+------------------+------+-----+-------------------+----------------+</span><br></pre></td></tr></table></figure>
+
+<p>实现插入三条数据：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">+----+-------------+---------------------+---------------------+------------+</span><br><span class="line">| id | name        | created_at          | updated_at          | deleted_at |</span><br><span class="line">+----+-------------+---------------------+---------------------+------------+</span><br><span class="line">| 1  | coolcao2018 | 2018-05-28 12:48:43 | 2018-05-28 12:48:43 | &lt;null&gt;     |</span><br><span class="line">| 2  | tom         | 2018-05-28 13:24:28 | 2018-05-28 13:24:28 | &lt;null&gt;     |</span><br><span class="line">| 3  | lili        | 2018-05-31 08:54:28 | 2018-05-31 08:54:28 | &lt;null&gt;     |</span><br><span class="line">+----+-------------+---------------------+---------------------+------------+</span><br></pre></td></tr></table></figure>
+
+<p>然后打开两个终端，A和B分别表示两个用户同时在操作。</p>
+<h3 id="1-2-1-READ-UNCOMMITTED-未提交读"><a href="#1-2-1-READ-UNCOMMITTED-未提交读" class="headerlink" title="1.2.1. READ UNCOMMITTED 未提交读"></a>1.2.1. READ UNCOMMITTED 未提交读</h3><p>对于用户A，操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">mysql root@localhost:test&gt; set session transaction isolation level read uncommitted;</span><br><span class="line">mysql root@localhost:test&gt; start transaction;</span><br><span class="line">mysql root@localhost:test&gt; select * from users;</span><br><span class="line"></span><br><span class="line">+----+-------------+---------------------+---------------------+------------+</span><br><span class="line">| id | name        | created_at          | updated_at          | deleted_at |</span><br><span class="line">+----+-------------+---------------------+---------------------+------------+</span><br><span class="line">| 1  | coolcao2018 | 2018-05-28 12:48:43 | 2018-05-28 12:48:43 | &lt;null&gt;     |</span><br><span class="line">| 2  | tom         | 2018-05-28 13:24:28 | 2018-05-28 13:24:28 | &lt;null&gt;     |</span><br><span class="line">| 3  | lili        | 2018-05-31 08:54:28 | 2018-05-31 08:54:28 | &lt;null&gt;     |</span><br><span class="line">+----+-------------+---------------------+---------------------+------------+</span><br></pre></td></tr></table></figure>
+<p>然后，用户B操作，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql root@localhost:test&gt; set session transaction isolation level read uncommitted;</span><br><span class="line">mysql root@localhost:test&gt; start transaction;</span><br><span class="line">mysql root@localhost:test&gt; update users set name=&#x27;coolcao&#x27; where id=1;</span><br></pre></td></tr></table></figure>
+<p>此时，用户B并未提交事务，用户A进行查询操作看看：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql root@localhost:test&gt; select * from users;</span><br><span class="line"></span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br><span class="line">| id | name    | created_at          | updated_at          | deleted_at |</span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br><span class="line">| 1  | coolcao | 2018-05-28 12:48:43 | 2018-05-28 12:48:43 | &lt;null&gt;     |</span><br><span class="line">| 2  | tom     | 2018-05-28 13:24:28 | 2018-05-28 13:24:28 | &lt;null&gt;     |</span><br><span class="line">| 3  | lili    | 2018-05-31 08:54:28 | 2018-05-31 08:54:28 | &lt;null&gt;     |</span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br></pre></td></tr></table></figure>
+<p>从整个过程来看，用户B还并未提交事务，但是A却已经能够直接读到B的更新。</p>
+<blockquote>
+<p>从上面实验结果来看，不难理解上面对于 READ UNCOMMITTED级别的描述：<strong>在READ UNCOMMITTED级别，事务中的修改，即使没有提交，对其他事务也都是可见的。</strong></p>
+</blockquote>
+<h3 id="1-2-2-READ-COMMITTED-提交读"><a href="#1-2-2-READ-COMMITTED-提交读" class="headerlink" title="1.2.2. READ COMMITTED 提交读"></a>1.2.2. READ COMMITTED 提交读</h3><p>同时将A，B两个终端的事务级别设置为 read committed:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 在A，B两个终端都执行</span><br><span class="line">set session transaction isolation level read committed;</span><br></pre></td></tr></table></figure>
+<p>对于A，我们开启一个事务，然后更新一下数据，但并不提交事务：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">mysql root@localhost:test&gt;  set session transaction isolation level read committed;</span><br><span class="line">mysql root@localhost:test&gt; start transaction;</span><br><span class="line">mysql root@localhost:test&gt; select * from users;</span><br><span class="line"></span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br><span class="line">| id | name    | created_at          | updated_at          | deleted_at |</span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br><span class="line">| 1  | coolcao | 2018-05-28 12:48:43 | 2018-05-28 12:48:43 | &lt;null&gt;     |</span><br><span class="line">| 2  | tom     | 2018-05-28 13:24:28 | 2018-05-28 13:24:28 | &lt;null&gt;     |</span><br><span class="line">| 3  | lili    | 2018-05-31 08:54:28 | 2018-05-31 08:54:28 | &lt;null&gt;     |</span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br><span class="line"></span><br><span class="line">mysql root@localhost:test&gt; update users set name=&#x27;coolcao222&#x27; where id=1;</span><br><span class="line">mysql root@localhost:test&gt; select * from users;</span><br><span class="line"></span><br><span class="line">+----+------------+---------------------+---------------------+------------+</span><br><span class="line">| id | name       | created_at          | updated_at          | deleted_at |</span><br><span class="line">+----+------------+---------------------+---------------------+------------+</span><br><span class="line">| 1  | coolcao222 | 2018-05-28 12:48:43 | 2018-05-28 12:48:43 | &lt;null&gt;     |</span><br><span class="line">| 2  | tom        | 2018-05-28 13:24:28 | 2018-05-28 13:24:28 | &lt;null&gt;     |</span><br><span class="line">| 3  | lili       | 2018-05-31 08:54:28 | 2018-05-31 08:54:28 | &lt;null&gt;     |</span><br><span class="line">+----+------------+---------------------+---------------------+------------+</span><br></pre></td></tr></table></figure>
+
+<p>然后，在B终端，开启另外一个事务，进行数据查询：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">mysql root@localhost:test&gt; set session transaction isolation level read committed;</span><br><span class="line">mysql root@localhost:test&gt; start transaction;</span><br><span class="line">mysql root@localhost:test&gt; select * from users;</span><br><span class="line"></span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br><span class="line">| id | name    | created_at          | updated_at          | deleted_at |</span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br><span class="line">| 1  | coolcao | 2018-05-28 12:48:43 | 2018-05-28 12:48:43 | &lt;null&gt;     |</span><br><span class="line">| 2  | tom     | 2018-05-28 13:24:28 | 2018-05-28 13:24:28 | &lt;null&gt;     |</span><br><span class="line">| 3  | lili    | 2018-05-31 08:54:28 | 2018-05-31 08:54:28 | &lt;null&gt;     |</span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br></pre></td></tr></table></figure>
+
+<p>然后，将A事务提交：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">commit;</span><br></pre></td></tr></table></figure>
+
+<p>这时，再在B查询 ：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql root@localhost:test&gt; select * from users;</span><br><span class="line"></span><br><span class="line">+----+------------+---------------------+---------------------+------------+</span><br><span class="line">| id | name       | created_at          | updated_at          | deleted_at |</span><br><span class="line">+----+------------+---------------------+---------------------+------------+</span><br><span class="line">| 1  | coolcao222 | 2018-05-28 12:48:43 | 2018-05-28 12:48:43 | &lt;null&gt;     |</span><br><span class="line">| 2  | tom        | 2018-05-28 13:24:28 | 2018-05-28 13:24:28 | &lt;null&gt;     |</span><br><span class="line">| 3  | lili       | 2018-05-31 08:54:28 | 2018-05-31 08:54:28 | &lt;null&gt;     |</span><br><span class="line">+----+------------+---------------------+---------------------+------------+</span><br></pre></td></tr></table></figure>
+
+<p>从结果来看，也不难理解 read committed级别，<strong>对于一个事务，只能读取到当前事务的数据和其他已经提交的事务的数据，对于其他未提交事务的数据，读不到。</strong><br>而且，从上面的实验结果中，我们也看到了，会话B在会话A提交事务前后查询的结果并不一致，这也就是上面所说的，不可重复读。</p>
+<h3 id="1-2-3-REPEATABLE-READ-可重复读"><a href="#1-2-3-REPEATABLE-READ-可重复读" class="headerlink" title="1.2.3. REPEATABLE READ 可重复读"></a>1.2.3. REPEATABLE READ 可重复读</h3><p>我们将会话A设置为REPEATABLE READ :</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">mysql root@localhost:test&gt; set session transaction isolation level repeatable read;</span><br><span class="line">mysql root@localhost:test&gt; start transaction;</span><br><span class="line">mysql root@localhost:test&gt; select * from users;</span><br><span class="line"></span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br><span class="line">| id | name    | created_at          | updated_at          | deleted_at |</span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br><span class="line">| 1  | coolcao | 2018-08-10 15:21:02 | 2018-08-10 15:21:02 | &lt;null&gt;     |</span><br><span class="line">| 2  | tom     | 2018-08-10 15:21:07 | 2018-08-10 15:21:07 | &lt;null&gt;     |</span><br><span class="line">| 3  | lili    | 2018-08-10 15:21:11 | 2018-08-10 15:21:11 | &lt;null&gt;     |</span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br></pre></td></tr></table></figure>
+
+<p>此时，我们在B终端插入一条数据：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">mysql root@localhost:test&gt; insert into users (id,name) values (4,&#x27;coco&#x27;);</span><br><span class="line">mysql root@localhost:test&gt; commit;</span><br><span class="line">mysql root@localhost:test&gt; select * from users;</span><br><span class="line"></span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br><span class="line">| id | name    | created_at          | updated_at          | deleted_at |</span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br><span class="line">| 1  | coolcao | 2018-08-10 15:21:02 | 2018-08-10 15:21:02 | &lt;null&gt;     |</span><br><span class="line">| 2  | tom     | 2018-08-10 15:21:07 | 2018-08-10 15:21:07 | &lt;null&gt;     |</span><br><span class="line">| 3  | lili    | 2018-08-10 15:21:11 | 2018-08-10 15:21:11 | &lt;null&gt;     |</span><br><span class="line">| 4  | coco    | 2018-08-10 15:23:50 | 2018-08-10 15:23:50 | &lt;null&gt;     |</span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br></pre></td></tr></table></figure>
+
+<p>在终端B中，插入一条记录，并提交，这时id&#x3D;4的用户已经被插入到数据库。</p>
+<p>此时，再回到终端A，查询：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql root@localhost:test&gt; select * from users;</span><br><span class="line"></span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br><span class="line">| id | name    | created_at          | updated_at          | deleted_at |</span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br><span class="line">| 1  | coolcao | 2018-08-10 15:21:02 | 2018-08-10 15:21:02 | &lt;null&gt;     |</span><br><span class="line">| 2  | tom     | 2018-08-10 15:21:07 | 2018-08-10 15:21:07 | &lt;null&gt;     |</span><br><span class="line">| 3  | lili    | 2018-08-10 15:21:11 | 2018-08-10 15:21:11 | &lt;null&gt;     |</span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br></pre></td></tr></table></figure>
+
+<p>哎，查询的结果中，没有B刚插入的id&#x3D;4的用户，这也就是说该级别的事务隔离，保证了在同一个事务中多次读取同样的记录的结果是一致的。这时，我们在A中插入一条记录：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql root@localhost:test&gt; insert into users (id,name) values (4,&#x27;coco&#x27;);</span><br><span class="line">(1062, u&quot;Duplicate entry &#x27;4&#x27; for key &#x27;PRIMARY&#x27;&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>哎，这个时候，数据库报错了，提示主键重复。明明我在这个事务中，查询的数据只有1,2,3，为什么插入4的时候提示主键冲突呢？是发生幻觉了么？是的，发生“幻读”了。<strong>由于REPEATABLE READ级别的隔离，在一个事务中，多次读取同样记录的结果是一致的，在这多次读取之间，被别的事务插入了新的数据，这时前一个事务再插入数据，必然会导致错误。</strong></p>
+<p><strong>在一个事务未提交前，多次查询相同的查询，返回的结果是相同的，即使在此期间，其他事务已经提交了影响该查询的数据。</strong></p>
+<h3 id="1-2-4-SERIALIZABLE-可串行化"><a href="#1-2-4-SERIALIZABLE-可串行化" class="headerlink" title="1.2.4. SERIALIZABLE 可串行化"></a>1.2.4. SERIALIZABLE 可串行化</h3><p>我们将A，B同时设置为SERIALIZABLE, 然后在A开启是个事务，做一个简单查询：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql root@localhost:test&gt; set session transaction isolation level serializable;</span><br><span class="line">mysql root@localhost:test&gt; start transaction;</span><br><span class="line">mysql root@localhost:test&gt; select * from users where id&lt;10;</span><br><span class="line"></span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br><span class="line">| id | name    | created_at          | updated_at          | deleted_at |</span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br><span class="line">| 1  | coolcao | 2018-08-10 15:21:02 | 2018-08-10 15:21:02 | &lt;null&gt;     |</span><br><span class="line">| 2  | tom     | 2018-08-10 15:21:07 | 2018-08-10 15:21:07 | &lt;null&gt;     |</span><br><span class="line">| 3  | lili    | 2018-08-10 15:21:11 | 2018-08-10 15:21:11 | &lt;null&gt;     |</span><br><span class="line">| 4  | coco    | 2018-08-10 15:23:50 | 2018-08-10 15:23:50 | &lt;null&gt;     |</span><br><span class="line">| 5  | juli    | 2018-08-10 15:31:32 | 2018-08-10 15:31:32 | &lt;null&gt;     |</span><br><span class="line">+----+---------+---------------------+---------------------+------------+</span><br></pre></td></tr></table></figure>
+
+<p>此时，A事务并未提交，然后在B再开启一个事务，进行插入操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mysql root@localhost:test&gt; set session transaction isolation level serializable;</span><br><span class="line">mysql root@localhost:test&gt; start transaction;</span><br><span class="line">mysql root@localhost:test&gt; insert into users (id,name) values (6,&#x27;kate&#x27;);</span><br><span class="line">(1205, u&#x27;Lock wait timeout exceeded; try restarting transaction&#x27;)</span><br></pre></td></tr></table></figure>
+<p>你会发现，哎我去，B事务被挂住了，然后过了一段时间，提示了错误 <code>(1205, u&#39;Lock wait timeout exceeded; try restarting transaction&#39;)</code>，说等待锁超时。<br>是的，在串行化级别，会在读取的每一行数据都加上锁，也就是说，上面A事务在读取时，已经加了锁，此时B事务在插入操作时，得等待锁的放开，时间一长，A锁未放开，B就报错了。<br>从实验中可以看出，可串行化级别，由于要保证避免幻读而加了锁导致效率以及可能会触发的等待锁超时等错误，实际应用中，该级别的事务隔离也很少使用。</p>
+<p>对照着实验结果，来理解上面四个隔离级别，就容易理解了。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/MySQL/" rel="tag">#MySQL</a>
+          
+            <a href="/tags/%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB/" rel="tag">#事务隔离</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/06/https/" rel="next" title="https运行原理解析笔记">
+                <i class="fa fa-chevron-left"></i> https运行原理解析笔记
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/22/web-fe-spider-anti-canvas/" rel="prev" title="一种基于Canvas和对称加密的Web前端隐私数据保护方式">
+                一种基于Canvas和对称加密的Web前端隐私数据保护方式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-MySQL事务隔离级别学习笔记"><span class="nav-number">1.</span> <span class="nav-text">1. MySQL事务隔离级别学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-隔离级别"><span class="nav-number">1.1.</span> <span class="nav-text">1.1. 隔离级别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-实验"><span class="nav-number">1.2.</span> <span class="nav-text">1.2. 实验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-1-READ-UNCOMMITTED-未提交读"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.2.1. READ UNCOMMITTED 未提交读</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-2-READ-COMMITTED-提交读"><span class="nav-number">1.2.2.</span> <span class="nav-text">1.2.2. READ COMMITTED 提交读</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-3-REPEATABLE-READ-可重复读"><span class="nav-number">1.2.3.</span> <span class="nav-text">1.2.3. REPEATABLE READ 可重复读</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-4-SERIALIZABLE-可串行化"><span class="nav-number">1.2.4.</span> <span class="nav-text">1.2.4. SERIALIZABLE 可串行化</span></a></li></ol></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

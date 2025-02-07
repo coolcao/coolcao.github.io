@@ -1,0 +1,720 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="算法与数据结构,并查集," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="在并查集的实现里面有提到，并查集两种实现方式：  一种是使用数组，索引作为元素，数组值作为集合，这种方式适合快速查询。 一种是基于森林实现，不过也是使用数组结构，索引作为元素，数组值存储其父节点的方式。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="并查集拓展">
+<meta property="og:url" content="http://coolcao.com/2022/10/20/unionset-ext/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="在并查集的实现里面有提到，并查集两种实现方式：  一种是使用数组，索引作为元素，数组值作为集合，这种方式适合快速查询。 一种是基于森林实现，不过也是使用数组结构，索引作为元素，数组值存储其父节点的方式。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2022-10-20T10:18:33.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.960Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="算法与数据结构">
+<meta property="article:tag" content="并查集">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2022/10/20/unionset-ext/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> 并查集拓展 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                并查集拓展
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2022-10-20T18:18:33+08:00" content="2022-10-20">
+              2022-10-20
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在<a href="/2022/10/18/unionset">并查集</a>的实现里面有提到，并查集两种实现方式：</p>
+<ul>
+<li>一种是使用数组，索引作为元素，数组值作为集合，这种方式适合快速查询。</li>
+<li>一种是基于森林实现，不过也是使用数组结构，索引作为元素，数组值存储其父节点的方式。</li>
+</ul>
+<span id="more"></span>
+
+<p>在一般使用并查集的场景中，基本上都是采用第二种，基于森林的实现方式。</p>
+<p>不过在真实业务场景中，元素可能不仅仅是数字类型，也有可能是字符串类型，或者对象类型。</p>
+<p>所以，在实现上，需要换一种结构实现。</p>
+<h2 id="基于哈希表实现"><a href="#基于哈希表实现" class="headerlink" title="基于哈希表实现"></a>基于哈希表实现</h2><p>如果元素是字符串或对象类型，我们可以直接使用Map代替数组来实现查并集。</p>
+<p>其中元素作为Map的键key，而其所属的集合名作为Map的value值。</p>
+<blockquote>
+<p>初始情况下，元素的所属集合（即parent节点）为自己。</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">UnionFindSet</span> &#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">names</span>) &#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">nameMap</span> = <span class="keyword">new</span> <span class="title class_">Map</span>();</span><br><span class="line">        <span class="keyword">if</span> (names) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">const</span> name <span class="keyword">of</span> names) &#123;</span><br><span class="line">                <span class="variable language_">this</span>.<span class="property">nameMap</span>.<span class="title function_">set</span>(name, name);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 查找元素，属于哪个集合</span></span><br><span class="line">    <span class="title function_">find</span>(<span class="params">name</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> root = <span class="variable language_">this</span>.<span class="property">nameMap</span>.<span class="title function_">get</span>(name);</span><br><span class="line">        <span class="keyword">while</span> (root &amp;&amp; root != <span class="variable language_">this</span>.<span class="property">nameMap</span>.<span class="title function_">get</span>(root)) &#123;</span><br><span class="line">            root = <span class="variable language_">this</span>.<span class="property">nameMap</span>.<span class="title function_">get</span>(root);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> root;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="comment">// 添加元素</span></span><br><span class="line">    <span class="title function_">add</span>(<span class="params">name</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> root = <span class="variable language_">this</span>.<span class="title function_">find</span>(name);</span><br><span class="line">        <span class="keyword">if</span> (!root) &#123;</span><br><span class="line">            <span class="variable language_">this</span>.<span class="property">nameMap</span>.<span class="title function_">set</span>(name, name);</span><br><span class="line">            root = name;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> root;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 合并操作，将集合x和集合y合并成一个集合</span></span><br><span class="line">    <span class="title function_">union</span>(<span class="params">x, y</span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> rootX = <span class="variable language_">this</span>.<span class="title function_">add</span>(x);</span><br><span class="line">        <span class="keyword">const</span> rootY = <span class="variable language_">this</span>.<span class="title function_">add</span>(y);</span><br><span class="line">        <span class="keyword">if</span> (rootX == rootY) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (rootX &lt; rootY) &#123;</span><br><span class="line">            <span class="variable language_">this</span>.<span class="property">nameMap</span>.<span class="title function_">set</span>(rootY, rootX);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="variable language_">this</span>.<span class="property">nameMap</span>.<span class="title function_">set</span>(rootX, rootY);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 查询操作：判断x和y是否同属于 一个集合</span></span><br><span class="line">    <span class="title function_">isConnected</span>(<span class="params">x, y</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="title function_">find</span>(x) == <span class="variable language_">this</span>.<span class="title function_">find</span>(y);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="基于对象节点"><a href="#基于对象节点" class="headerlink" title="基于对象节点"></a>基于对象节点</h2><p>由于并查集是一个树的结构，因此，我们可以采用对象节点的方式来实现，就像实现二叉树一样，定义一个节点对象，然后通过parent指针指向其父节点，一次来达到树的节点引用。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ItemNode</span> &#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">val</span>) &#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">val</span> = val;</span><br><span class="line">        <span class="comment">// 初始情况下，parent指向自己</span></span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">parent</span> = <span class="variable language_">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UnionFindSet</span> &#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">names</span>) &#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">map</span> = <span class="keyword">new</span> <span class="title class_">Map</span>();</span><br><span class="line">        <span class="keyword">if</span> (names) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">const</span> name <span class="keyword">of</span> names) &#123;</span><br><span class="line">                <span class="keyword">const</span> node = <span class="keyword">new</span> <span class="title class_">ItemNode</span>(name);</span><br><span class="line">                <span class="variable language_">this</span>.<span class="property">map</span>.<span class="title function_">set</span>(name, node);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 查找元素，属于哪个集合</span></span><br><span class="line">    <span class="title function_">find</span>(<span class="params">name</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> node = <span class="variable language_">this</span>.<span class="property">map</span>.<span class="title function_">get</span>(name);</span><br><span class="line">        <span class="keyword">while</span> (node &amp;&amp; node != node.<span class="property">parent</span>) &#123;</span><br><span class="line">            node = node.<span class="property">parent</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> node;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">add</span>(<span class="params">name</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> root = <span class="variable language_">this</span>.<span class="title function_">find</span>(name);</span><br><span class="line">        <span class="keyword">if</span> (!root) &#123;</span><br><span class="line">            <span class="keyword">const</span> node = <span class="keyword">new</span> <span class="title class_">ItemNode</span>(name);</span><br><span class="line">            <span class="variable language_">this</span>.<span class="property">map</span>.<span class="title function_">set</span>(name, node);</span><br><span class="line">            root = node;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> root;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 合并操作，将集合x和集合y合并成一个集合</span></span><br><span class="line">    <span class="title function_">union</span>(<span class="params">x, y</span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> rootX = <span class="variable language_">this</span>.<span class="title function_">add</span>(x);</span><br><span class="line">        <span class="keyword">const</span> rootY = <span class="variable language_">this</span>.<span class="title function_">add</span>(y);</span><br><span class="line">        <span class="keyword">if</span> (rootX == rootY) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (rootX.<span class="property">val</span> &lt; rootY.<span class="property">val</span>) &#123;</span><br><span class="line">            rootY.<span class="property">parent</span> = rootX;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            rootX.<span class="property">parent</span> = rootY;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 查询操作：判断x和y是否同属于 一个集合</span></span><br><span class="line">    <span class="title function_">isConnected</span>(<span class="params">x, y</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="title function_">find</span>(x) == <span class="variable language_">this</span>.<span class="title function_">find</span>(y);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>此两种实现方式，在使用上可能更具通用性，不管要处理的数据类型是什么，都可以应对。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">#算法与数据结构</a>
+          
+            <a href="/tags/%E5%B9%B6%E6%9F%A5%E9%9B%86/" rel="tag">#并查集</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/10/19/java-stream-groupingBy/" rel="next" title="深入理解Java Stream中groupingBy分组统计">
+                <i class="fa fa-chevron-left"></i> 深入理解Java Stream中groupingBy分组统计
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/12/02/angular2-httpparams-encode/" rel="prev" title="Angular 中 HttpParameterCodec 对 + 编码的 bug">
+                Angular 中 HttpParameterCodec 对 + 编码的 bug <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基于哈希表实现"><span class="nav-number">1.</span> <span class="nav-text">基于哈希表实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于对象节点"><span class="nav-number">2.</span> <span class="nav-text">基于对象节点</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

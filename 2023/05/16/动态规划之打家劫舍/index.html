@@ -1,0 +1,758 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="算法与数据结构,动态规划," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="在leetcode上打家劫舍这个系列也是动态规划的题目，分支变形，难度逐渐加大。今天整理一下这个系列的题目，做个记录。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="动态规划之打家劫舍">
+<meta property="og:url" content="http://coolcao.com/2023/05/16/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="在leetcode上打家劫舍这个系列也是动态规划的题目，分支变形，难度逐渐加大。今天整理一下这个系列的题目，做个记录。">
+<meta property="og:locale">
+<meta property="og:image" content="https://img.coolcao.site/file/6e55d4a3221475adaf8b1.png">
+<meta property="og:image" content="https://img.coolcao.site/file/6ad4dd0bba2e4eb39f389.png">
+<meta property="og:image" content="https://img.coolcao.site/file/21e715603d55f6edac7af.png">
+<meta property="article:published_time" content="2023-05-16T04:21:50.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.961Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="算法与数据结构">
+<meta property="article:tag" content="动态规划">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.coolcao.site/file/6e55d4a3221475adaf8b1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2023/05/16/动态规划之打家劫舍/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> 动态规划之打家劫舍 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                动态规划之打家劫舍
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2023-05-16T12:21:50+08:00" content="2023-05-16">
+              2023-05-16
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在leetcode上打家劫舍这个系列也是动态规划的题目，分支变形，难度逐渐加大。今天整理一下这个系列的题目，做个记录。</p>
+<span id="more"></span>
+
+<h2 id="打家劫舍"><a href="#打家劫舍" class="headerlink" title="打家劫舍"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/house-robber/description/">打家劫舍</a></h2><blockquote>
+<p><img src="https://img.coolcao.site/file/6e55d4a3221475adaf8b1.png" alt="打家劫舍"></p>
+</blockquote>
+<p>小偷在偷窃时，唯一的限制就是，不能同时偷相邻的两个房屋。</p>
+<p>我们定义 <code>dp[i]</code> 为偷到第i家时能偷到的最大金额，那么偷到第i家时可能有两种情况：</p>
+<ol>
+<li>第i-1家偷过，那么当前第i家就不能再偷了，此时 <code>dp[i]=dp[i-1]</code></li>
+<li>第i-1家没偷过，那么当前第i家是可以偷的，此时 <code>dp[i]=dp[i-2]+nums[i]</code></li>
+<li>这两种情况，取最大值便是偷到第i家时能够偷到的最大金额</li>
+</ol>
+<p>因此，相应的状态转移公式为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dp[i]= Math.max(dp[i-1], dp[i-2]+nums[i])</span><br></pre></td></tr></table></figure>
+
+<p>对于初始状态，<code>dp[0]=nums[0]</code> ，<code>dp[1]=Math.max(nums[0], nums[1])</code></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">rob</span>(<span class="params">nums: <span class="built_in">number</span>[]</span>): <span class="built_in">number</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> dp = [nums[<span class="number">0</span>], <span class="title class_">Math</span>.<span class="title function_">max</span>(nums[<span class="number">0</span>], nums[<span class="number">1</span>])];</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">2</span>; i &lt; nums.<span class="property">length</span>; i++) &#123;</span><br><span class="line">    dp[i] = <span class="title class_">Math</span>.<span class="title function_">max</span>(dp[i - <span class="number">1</span>], dp[i - <span class="number">2</span>] + nums[i]);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> dp[nums.<span class="property">length</span> - <span class="number">1</span>];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="打家劫舍II"><a href="#打家劫舍II" class="headerlink" title="打家劫舍II"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/house-robber-ii/description/">打家劫舍II</a></h2><blockquote>
+<p><img src="https://img.coolcao.site/file/6ad4dd0bba2e4eb39f389.png" alt="2"></p>
+</blockquote>
+<p>这个题目相比较打家劫舍I而言，多了一个限制，数组为循环数组。也就是说，第一家和最后一家在物理上是挨着的，不能同时偷窃。</p>
+<p>因此这个时候有两种情况需要考虑：</p>
+<ol>
+<li>考虑第一个房子，但不考虑最后一个房子(抢第一个房子，不抢最后一个房子)</li>
+</ol>
+<ul>
+<li>抢第一个房子，不抢最后一个房子，相当于在 <code>nums[0]...nums[n-2]</code> 中进行打家劫舍</li>
+</ul>
+<ol start="2">
+<li>考虑最后一个房子，但不考虑第一个房子(抢最后一个房子，不抢第一个房子)</li>
+</ol>
+<ul>
+<li>抢最后一个房子，不抢第一个房子，相当于在 <code>nums[1]...nums[n-1]</code> 中进行打家劫舍</li>
+</ul>
+<ol start="3">
+<li>两种情况取最大值即可</li>
+</ol>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">rob</span>(<span class="params">nums: <span class="built_in">number</span>[]</span>): <span class="built_in">number</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (nums.<span class="property">length</span> == <span class="number">1</span>) <span class="keyword">return</span> nums[<span class="number">0</span>];</span><br><span class="line">  <span class="keyword">let</span> max = -<span class="number">1</span>;</span><br><span class="line">  <span class="keyword">const</span> dp = <span class="keyword">new</span> <span class="title class_">Array</span>(nums.<span class="property">length</span>).<span class="title function_">fill</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 考虑第一家，不考虑最后一家</span></span><br><span class="line">  dp[<span class="number">0</span>] = nums[<span class="number">0</span>], dp[<span class="number">1</span>] = <span class="title class_">Math</span>.<span class="title function_">max</span>(nums[<span class="number">0</span>], nums[<span class="number">1</span>]);</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">2</span>; i &lt; nums.<span class="property">length</span> - <span class="number">1</span>; i++) &#123;</span><br><span class="line">    dp[i] = <span class="title class_">Math</span>.<span class="title function_">max</span>(</span><br><span class="line">      dp[i - <span class="number">2</span>] + nums[i],</span><br><span class="line">      dp[i - <span class="number">1</span>]</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  max = dp[nums.<span class="property">length</span> - <span class="number">2</span>];</span><br><span class="line">  <span class="comment">// 考虑最后一家，不考虑第一家</span></span><br><span class="line">  dp[<span class="number">1</span>] = nums[<span class="number">1</span>], dp[<span class="number">2</span>] = <span class="title class_">Math</span>.<span class="title function_">max</span>(nums[<span class="number">1</span>], nums[<span class="number">2</span>]);</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">3</span>; i &lt; nums.<span class="property">length</span>; i++) &#123;</span><br><span class="line">    dp[i] = <span class="title class_">Math</span>.<span class="title function_">max</span>(</span><br><span class="line">      dp[i - <span class="number">2</span>] + nums[i],</span><br><span class="line">      dp[i-<span class="number">1</span>]</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">  max = <span class="title class_">Math</span>.<span class="title function_">max</span>(max, dp[nums.<span class="property">length</span>-<span class="number">1</span>]);</span><br><span class="line">  <span class="keyword">return</span> max;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="打家劫舍III"><a href="#打家劫舍III" class="headerlink" title="打家劫舍III"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/house-robber-iii/description/">打家劫舍III</a></h2><blockquote>
+<p><img src="https://img.coolcao.site/file/21e715603d55f6edac7af.png" alt="3"></p>
+</blockquote>
+<p>这个题目是打家劫舍I和打家劫舍II的升级版，由原来的线性结构升级为二叉树结构。</p>
+<p>和上面一样，对于每个节点（房屋），都有两种状态：偷和不偷。</p>
+<p>我们用 <code>f(n)</code> 表示偷n节点的情况下，n节点的子树上能够偷到的最大值。<br>用<code>g(n)</code>表示不偷n节点的情况下，n节点的子树上偷到的最大值。<br>l和r表示n的左右子树。</p>
+<ul>
+<li>当n被选偷时，n的左右孩子都不能被偷，故n被选中的情况下子树上被选中点的最大权值和为l和r不被选中的最大值和相加，即 <code>f(n)=g(l)+g(r)</code></li>
+<li>当n不被偷时，n的左右孩子可以被偷，也可以不被偷。对于n的某个具体的孩子x，它对n的贡献值是x被选中和不被选中情况下权值和的较大值。故 <code>g(n)=max(f(l),g(l))+max(f(r),g(r))</code><blockquote>
+<p>注意这里，当n不被偷时，n的左右孩子即可能被偷，也可能不被偷。因为只要求说被偷的房子不连在一起即可，而不是必须间隔。</p>
+</blockquote>
+</li>
+</ul>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">rob</span>(<span class="params">root: TreeNode | <span class="literal">null</span></span>): <span class="built_in">number</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> f = <span class="keyword">new</span> <span class="title class_">Map</span>();</span><br><span class="line">  <span class="keyword">const</span> g = <span class="keyword">new</span> <span class="title class_">Map</span>();</span><br><span class="line">  <span class="comment">// 深度优先遍历</span></span><br><span class="line">  <span class="keyword">const</span> <span class="title function_">dfs</span> = (<span class="params">node: TreeNode | <span class="literal">null</span></span>) =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (node == <span class="literal">null</span>) <span class="keyword">return</span>;</span><br><span class="line">    <span class="comment">// 先进行深度优先遍历，遍历完后才能根据子节点计算父节点的值</span></span><br><span class="line">    <span class="title function_">dfs</span>(node.<span class="property">left</span>);</span><br><span class="line">    <span class="title function_">dfs</span>(node.<span class="property">right</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> gLeft = g.<span class="title function_">get</span>(node.<span class="property">left</span>) || <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">const</span> gRight = g.<span class="title function_">get</span>(node.<span class="property">right</span>) || <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">const</span> fLeft = f.<span class="title function_">get</span>(node.<span class="property">left</span>) || <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">const</span> fRight = f.<span class="title function_">get</span>(node.<span class="property">right</span>) || <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">    f.<span class="title function_">set</span>(node, node.<span class="property">val</span> + gLeft + gRight);</span><br><span class="line">    g.<span class="title function_">set</span>(node,</span><br><span class="line">      <span class="title class_">Math</span>.<span class="title function_">max</span>(fLeft, gLeft) + <span class="title class_">Math</span>.<span class="title function_">max</span>(fRight, gRight)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">dfs</span>(root);</span><br><span class="line">  <span class="keyword">return</span> <span class="title class_">Math</span>.<span class="title function_">max</span>(f.<span class="title function_">get</span>(root) || <span class="number">0</span>, g.<span class="title function_">get</span>(root) || <span class="number">0</span>)</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">#算法与数据结构</a>
+          
+            <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" rel="tag">#动态规划</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2023/04/29/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E7%BC%96%E8%BE%91%E8%B7%9D%E7%A6%BB/" rel="next" title="动态规划之编辑距离系列">
+                <i class="fa fa-chevron-left"></i> 动态规划之编辑距离系列
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2023/05/21/angular16-signals/" rel="prev" title="Angular16新特性-Signals初体验">
+                Angular16新特性-Signals初体验 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#打家劫舍"><span class="nav-number">1.</span> <span class="nav-text">打家劫舍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#打家劫舍II"><span class="nav-number">2.</span> <span class="nav-text">打家劫舍II</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#打家劫舍III"><span class="nav-number">3.</span> <span class="nav-text">打家劫舍III</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

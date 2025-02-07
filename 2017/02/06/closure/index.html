@@ -1,0 +1,769 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="js,闭包," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="闭包是js中一个晦涩难懂的一个概念，网上关于闭包的文章也是抓一大把，每个人的文章却又不尽相同，或者说，每个人的理解都不一样。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="我所理解的闭包">
+<meta property="og:url" content="http://coolcao.com/2017/02/06/closure/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="闭包是js中一个晦涩难懂的一个概念，网上关于闭包的文章也是抓一大把，每个人的文章却又不尽相同，或者说，每个人的理解都不一样。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2017-02-06T06:41:05.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.953Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="js">
+<meta property="article:tag" content="闭包">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2017/02/06/closure/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> 我所理解的闭包 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                我所理解的闭包
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-02-06T14:41:05+08:00" content="2017-02-06">
+              2017-02-06
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <!--mdblog
+{
+    "title":"我所理解的闭包",
+    "time":"2017-02-06 14:41:05",
+    "tags":"[js,闭包]"
+}
+mdblog-->
+
+<p>闭包是js中一个晦涩难懂的一个概念，网上关于闭包的文章也是抓一大把，每个人的文章却又不尽相同，或者说，每个人的理解都不一样。</p>
+<span id="more"></span>
+
+<h2 id="什么是闭包"><a href="#什么是闭包" class="headerlink" title="什么是闭包"></a>什么是闭包</h2><p>阮一峰老师的<a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2009/08/learning_javascript_closures.html">一篇文章</a>中说：<strong>闭包就是能够读取其他函数内部变量的函数。可以把闭包简单理解成”定义在一个函数内部的函数”。<br>在本质上，闭包就是将函数内部和函数外部连接起来的一座桥梁。</strong><br>这个解释不能说错，但觉得有点片面。阮老师是从函数内部变量的角度去看闭包。<br>也有一个国外的哥们的<a target="_blank" rel="noopener" href="http://www.zcfy.cc/article/master-the-javascript-interview-what-is-a-closure-2127.html">一篇文章</a>，是这么说的： <strong>闭包是由函数引用其周边状态（词法环境）绑在一起形成的（封装）组合结构。</strong></p>
+<p>我们来看一下<a target="_blank" rel="noopener" href="https://developer.mozilla.org/cn/docs/Web/JavaScript/Closures#Creating_closures_in_loops_A_common_mistake">MDN</a>上对于闭包的解释：<strong>闭包是指那些能够访问独立(自由)变量的函数 (变量在本地使用，但定义在一个封闭的作用域中)。换句话说，这些函数可以“记忆”它被创建时候的环境。</strong></p>
+<p>好吧，这个解释更难懂。。。。</p>
+<p>在阮老师的解读中，一个点就是，<em>在函数外部读取函数内部的变量</em>，阮老师所说的闭包就是将函数内部和外部链接起来的一座桥梁也有失偏颇。</p>
+<p>在《你不知道的js》这本书的《闭包作用域》这一章节中，有这样的描述：</p>
+<blockquote>
+<p>“当函数可以记住并访问所在的词法作用域时，就产生了闭包，即使函数是在当前词法作用域之外执行。”<br>摘录来自: Kyle Simpson、赵望野、梁杰. “你不知道的JavaScript（上卷）”。 iBooks. </p>
+</blockquote>
+<p>这个描述中，有两个关键的点：一个是，<strong>函数</strong>，一个是<strong>记住并访问所在的词法作用域</strong>。这也和MDN上对于闭包的解释相吻合。我们来看一下MDN上的关于闭包的其他描述：</p>
+<blockquote>
+<p> 闭包是一种特殊的对象。它由两部分构成：函数，以及创建该函数的环境。环境由闭包创建时在作用域中的任何局部变量组成。</p>
+</blockquote>
+<p>所以，到这里，我们可以看出，要理解闭包，我们要抓住两个点：一个是函数，另一个就是创建该函数的环境，所在的词法作用域。</p>
+<h2 id="闭包的案例说明"><a href="#闭包的案例说明" class="headerlink" title="闭包的案例说明"></a>闭包的案例说明</h2><p>关于闭包的概念上的描述，就差不多如上面，可能光看上面的描述还是不能理解什么是闭包。<br>那就找两个例子来说明一下。</p>
+<p>来一个最简单的例子，也是大家举的最多的例子：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> fn = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> a = <span class="string">&#x27;a in fn&#x27;</span>;</span><br><span class="line">    <span class="keyword">var</span> b = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> a;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> f = <span class="title function_">fn</span>();</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">f</span>());</span><br></pre></td></tr></table></figure>
+
+<p>这个例子估计是大家用来解释闭包用到的最多的例子。在函数fn()内部，定义了另外一个函数b()，函数b()能够访问fn()内部的变量a，是因为b在fn()的词法作用域内。然后我们将b()作为返回值返回，并赋值给变量f,实质上f和b两个都是指向了同一个函数，只是标识符不同而已。因为这个函数能够访问fn()内部的词法作用域，能访问fn()内部的变量a，因此，f()执行的时候就能访问fn()内部的变量a，这就是闭包。</p>
+<p>好了，我们用上面说的两个关键点来慢慢分析闭包：<br>首先，一个关键点函数，函数是哪个？b还是f?都是，因为这两个实质是两个标识符指向了同一个函数。第二个关键点，记住函数所在的词法作用域。作用域是哪个，就是函数fn()的词法作用域。当函数fn()执行完毕后，f()还能继续访问fn()内的变量a，这里b()或者f()就是闭包。</p>
+<p>到这里，可能有人就开始喷了，你妹的，这不就是阮老师说的闭包是能够读取其他函数内部变量的函数嘛！！！是的，阮老师的说法并没有错，只是有点片面，为何？</p>
+<p>我们来看下个例子：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">wait</span>(<span class="params">message</span>) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">setTimeout</span>( <span class="keyword">function</span> <span class="title function_">timer</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>( message );</span><br><span class="line">    &#125;, <span class="number">1000</span> );</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">wait</span>( <span class="string">&quot;Hello, closure!&quot;</span> );</span><br></pre></td></tr></table></figure>
+
+<p>在函数wait()内部，将一个函数timer()传递给定时器。这里timer具有涵盖wait(..)作用域的闭包，因此还保有对变量message的引用。</p>
+<p>当wait()执行1000毫秒后，它的内部作用域并没消失，timer()函数依然保持有对wait()函数作用域的闭包。</p>
+<p>比如，再来一个例子，就是在for循环中的闭包。这个例子被经常用作考察es6的let和var的区别，说实话已经用烂了。。。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>;i&lt;<span class="number">5</span>;i++)&#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(i);</span><br><span class="line">    &#125;,i*<span class="number">1000</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>很明显，上面代码每隔1秒输出一个5。可能在面试的时候，面试官会要求写出一个代码，从1开始，每隔1秒输出2，3，一直到5。或者怎样，哈哈，反正就是类似的吧。</p>
+<p>大家对于上面这个代码估计也已经烂熟了，肯定不会这么写。可是，大家有没有想过为什么结果是这样呢？有的人可能会说 ，很明显嘛，我们设置了5个定时器，但这5个定时器里函数是异步执行的，当for循环结束时，i是5，所以输出的都是5。</p>
+<p>这说法吧，对，但没说到根上，因为呢，es6添加了个let就不这样：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="number">0</span>;i&lt;<span class="number">5</span>;i++)&#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(i);</span><br><span class="line">    &#125;,i*<span class="number">1000</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个代码，输出的就是每隔1秒输出一个i，而不是5个5。</p>
+<p>为什么？我们就说说这个问题的根源。</p>
+<p>先说var这个。</p>
+<p>我们传递给setTimeout()的函数，形成一个闭包，我们总共设置了5个setTimeout()共形成5个闭包，这5个闭包共享一个全局的词法作用域，因此共享一个i。当循环结束后，实际上传递给这5个定时器的i是同一个，都是5。</p>
+<p>而对于let，由于let的块级作用域，for循环头部的let不仅将i绑定到了for循环的块中，事实上它将其重新绑定到了循环的每一个迭代中，确保使用上一个循环迭代结束时的值重新进行赋值。也就是说，对于这5个闭包而言，每次i都是重新赋值，因此不会存在var上面的问题。</p>
+<p>关于let和var的具体区别，请参考：<a target="_blank" rel="noopener" href="http://www.infoq.com/cn/articles/es6-in-depth-let-and-const">深入浅出ES6（十四）：let和const</a></p>
+<p>对，这里的根就和闭包有关系。</p>
+<p>在let之前，可能有的人会提出如下的方案：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>;i&lt;<span class="number">5</span>;i++)&#123;</span><br><span class="line">    (<span class="keyword">function</span> (<span class="params">i</span>) &#123;</span><br><span class="line">        <span class="built_in">setTimeout</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(i);</span><br><span class="line">        &#125;,i*<span class="number">1000</span>);</span><br><span class="line">    &#125;)(i)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里我们就是用的闭包的作用解决的var的问题。我们用自执行函数IIFE为每个循环生成一个新的作用域，每个循环的setTimeout()内的函数的作用域封闭在每个循环内部。也就是，我们为每个循环生成了一个新的块级作用域，这样使得每次循环都能取得正确的值。let就是这个原理，只不过是简化了代码而已。</p>
+<p>可能有的人还在迷糊，这里有两层函数，哪个是闭包呢？</p>
+<p>为方便分析，我们给函数加上标识符：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>;i&lt;<span class="number">5</span>;i++)&#123;</span><br><span class="line">    (<span class="keyword">function</span> <span class="title function_">iife</span>(<span class="params">i</span>) &#123;</span><br><span class="line">        <span class="built_in">setTimeout</span>(<span class="keyword">function</span> <span class="title function_">timer</span>(<span class="params"></span>) &#123;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(i);</span><br><span class="line">        &#125;,i*<span class="number">1000</span>);</span><br><span class="line">    &#125;)(i)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>每次循环的自执行函数，我们命名为iife()，定时器中的函数我们命名为timer()。这里的闭包是timer()函数形成了对iife()函数作用域的闭包。</p>
+<p>我们说过，要分析闭包，就要搞清楚两个关键点：函数，和其所在的作用域。<br>函数，是timer()函数，其所在的作用域就是iife()函数作用域。当函数iife()函数执行完，定义完成立即执行（自执行），其每个timer()函数在定时器内还是能够访问其作用域内的变量，因此，timer()就是闭包，对每个iiff()函数作用域的闭包。</p>
+<blockquote>
+<p>本质上无论何时何地，如果将函数（访问它们各自的词法作用域）当作第一级的值类型并到处传递，你就会看到闭包在这些函数中的应用。在定时器、事件监听器、Ajax请求、跨窗口通信、Web Workers或者任何其他的异步（或者同步）任务中，只要使用了回调函数，实际上就是在使用闭包！<br>摘录来自: Kyle Simpson、赵望野、梁杰. “你不知道的JavaScript（上卷）”。 iBooks. </p>
+</blockquote>
+<p>再来一个实际的例子：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">process</span>(<span class="params">data</span>)&#123;</span><br><span class="line">    <span class="comment">//做一些有趣的事</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> someReallyBigData = &#123;..&#125;;</span><br><span class="line"><span class="title function_">process</span>(someReallyBigData);</span><br><span class="line"><span class="keyword">var</span> btn = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;mybtn&#x27;</span>)</span><br><span class="line">btn.<span class="title function_">addEventListener</span>(<span class="string">&#x27;click&#x27;</span>,<span class="keyword">function</span> <span class="title function_">click</span>(<span class="params">evt</span>)&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;button clicked&#x27;</span>);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>click点击函数并不需要someReallyBigData变量，当process()执行完后，在内存中占用大量空间的数据结构就可以被垃圾回收了。但是，由于click函数形了一个覆盖整个作用域的闭包，javascript引擎极有可能依然保存着这个结构（这取决于具体实现）。</p>
+<p>上面这个例子是《你不知道的js》中解释块级作用域的一个例子。当然放在这里用说明对于事件监听形成的闭包的一个简单例子。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>闭包是什么，可以直接用MDN上对于闭包的说明进行回答。但是，如要想要真正理解闭包，请从两个关键点去分析：函数，和其创建时所在的词法作用域。<br>函数能够记住其所在的词法作用域，即使在其作用域之外执行，这就形成了闭包。</p>
+<p>作为一个合格的面试官，请不要直接问“什么是闭包”这种问题了，估计没有人都说清楚。要想考察对于闭包的理解，可以模拟几个用闭包解决的场景来考察，比如上面的几个例子。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/js/" rel="tag">#js</a>
+          
+            <a href="/tags/%E9%97%AD%E5%8C%85/" rel="tag">#闭包</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/13/data-structure-fee-view/" rel="next" title="前端开发视角看数据结构-记一次项目中数据结构的选择">
+                <i class="fa fa-chevron-left"></i> 前端开发视角看数据结构-记一次项目中数据结构的选择
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/06/intelli-sense-in-vscode/" rel="prev" title="增强vscode中js代码提示">
+                增强vscode中js代码提示 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是闭包"><span class="nav-number">1.</span> <span class="nav-text">什么是闭包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#闭包的案例说明"><span class="nav-number">2.</span> <span class="nav-text">闭包的案例说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

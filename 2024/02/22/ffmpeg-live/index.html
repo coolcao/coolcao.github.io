@@ -1,0 +1,786 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ffmpeg,推流,直播," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="现在的直播，大体分两种场景，一是人站在摄像头前直播，还有一种是使用推流软件，将视频，音乐，图片等进行推流直播。第一种场景需要有人一直在镜头前进行直播，而第二种方式，推流的是静态资源，视频，音乐，图片等都是固定的资源，只是不停的轮播而已。那有没有一种方式，既可以无人守护，又可以推流动态资源呢？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用FFMPEG做一些有意思的推流直播">
+<meta property="og:url" content="http://coolcao.com/2024/02/22/ffmpeg-live/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="现在的直播，大体分两种场景，一是人站在摄像头前直播，还有一种是使用推流软件，将视频，音乐，图片等进行推流直播。第一种场景需要有人一直在镜头前进行直播，而第二种方式，推流的是静态资源，视频，音乐，图片等都是固定的资源，只是不停的轮播而已。那有没有一种方式，既可以无人守护，又可以推流动态资源呢？">
+<meta property="og:locale">
+<meta property="og:image" content="https://img.coolcao.site/file/8d945bd6f2505f7eaa2c5.png">
+<meta property="article:published_time" content="2024-02-22T00:57:41.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.955Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="ffmpeg">
+<meta property="article:tag" content="推流">
+<meta property="article:tag" content="直播">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.coolcao.site/file/8d945bd6f2505f7eaa2c5.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2024/02/22/ffmpeg-live/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> 使用FFMPEG做一些有意思的推流直播 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                使用FFMPEG做一些有意思的推流直播
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2024-02-22T08:57:41+08:00" content="2024-02-22">
+              2024-02-22
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>现在的直播，大体分两种场景，一是人站在摄像头前直播，还有一种是使用推流软件，将视频，音乐，图片等进行推流直播。<br>第一种场景需要有人一直在镜头前进行直播，而第二种方式，推流的是静态资源，视频，音乐，图片等都是固定的资源，只是不停的轮播而已。<br>那有没有一种方式，既可以无人守护，又可以推流动态资源呢？</p>
+<span id="more"></span>
+<p>今天就介绍一下我探索出来的一种方法，使用ffmpeg推流动态资源的方法。<br>其实原理很简单，就是将动态资源做成网页资源，然后使用浏览器访问该资源显示，最后使用ffmpeg将浏览器推流出来即可。<br>此方法需要有编程基础，做动态网页，安装所需软件等。</p>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>首先，我们需要一台服务器，vps，或者私人小主机都可以，不需要公网ip，但需要一直开机进行推流直播。</p>
+<p>然后在vps上安装下面所需软件：</p>
+<table>
+<thead>
+<tr>
+<th>软件名称</th>
+<th>安装命令</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ffmpeg</td>
+<td>apt install ffmpeg</td>
+<td>直播推流软件</td>
+</tr>
+<tr>
+<td>xvfb</td>
+<td>apt install xvfb</td>
+<td>xvfb虚拟桌面软件，用以运行浏览器</td>
+</tr>
+<tr>
+<td>chromium</td>
+<td>apt install chromium</td>
+<td>chrome浏览器开源版本，展示网页动态数据</td>
+</tr>
+<tr>
+<td>fonts-wqy-zenhei</td>
+<td>apt install fonts-wqy-zenhei</td>
+<td>开源字体，如果不安装中文字体，浏览器中文乱码</td>
+</tr>
+<tr>
+<td>tmux</td>
+<td>apt install tmux</td>
+<td>终端复用工具，可以保持会话不退出</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>以上软件为在 ubuntu linux 上的安装示例命令，其他linux可以上网查阅相关命令。</p>
+</blockquote>
+<h2 id="动态网页制作"><a href="#动态网页制作" class="headerlink" title="动态网页制作"></a>动态网页制作</h2><p>这一步就是开发一套网页系统，用以显示需要动态展示内容的web页面，这里可以根据需要自行开发，可以简单到只有一个静态web页，也可以复杂到前端web+后端接口系统这种web系统。</p>
+<p>这里简单起见，我只搭建一个简单地前端页面，用以显示当前时间。大体显示效果如下：<br><img src="https://img.coolcao.site/file/8d945bd6f2505f7eaa2c5.png"></p>
+<h2 id="关闭防火墙"><a href="#关闭防火墙" class="headerlink" title="关闭防火墙"></a>关闭防火墙</h2><p>首先，查看防火墙状态：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ufw status</span><br><span class="line"></span><br><span class="line">Status: active</span><br><span class="line"></span><br><span class="line">To                         Action      From</span><br><span class="line">--                         ------      ----</span><br><span class="line">22/tcp                     ALLOW       Anywhere</span><br><span class="line">22/tcp (v6)                ALLOW       Anywhere (v6)</span><br></pre></td></tr></table></figure>
+
+<p>说明防火墙是开启的。</p>
+<p>可以使用 <code>ufw disable</code> 关闭</p>
+<h2 id="xvfb启动虚拟显示器"><a href="#xvfb启动虚拟显示器" class="headerlink" title="xvfb启动虚拟显示器"></a>xvfb启动虚拟显示器</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Xvfb :99 -screen 0 1920x1080x24</span><br></pre></td></tr></table></figure>
+
+<p>以上命令启动一个分辨率为 1920*1080 刷新率 24Hz的虚拟显示器，用以支持浏览器chrome展示页面。</p>
+<h2 id="运行浏览器"><a href="#运行浏览器" class="headerlink" title="运行浏览器"></a>运行浏览器</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DISPLAY=:99 chromium 127.0.0.1:4200/clock --user-data-dir=/root/chrome-profile --no-sandbox --disable-gpu --disable-remote-fonts --disable-features=RendererCodeIntegrity --remote-debugging-port=9222 --incognito  --kiosk --window-size=1920,1080 --start-fullscreen</span><br></pre></td></tr></table></figure>
+
+<p>以上命令在虚拟显示器上运行chromium浏览器，并打开网页 <code>127.0.0.1:4200/clock</code> 。</p>
+<p>这里使用 <code>—no-sandbox</code> 和 <code>—disable-gpu</code> 参数来禁用沙箱和GPU加速，因为在没有桌面环境的服务器上运行chromium时，这些功能无法正常工作。</p>
+<p><code>--incognito</code> 参数开启无痕模式。</p>
+<p><code>--kiosk</code> 参数开启chromium演示模式，即全屏显示</p>
+<p><code>--window-size=1920,1080</code> 指定浏览器启动后窗口大小为 1920*1080，即和屏幕大小一致</p>
+<blockquote>
+<p>💡 既然已经是全屏运行chromium，为啥还要指定 window-size 参数？<br>Xvfb 只提供了虚拟的显示屏，不会影响实际的显示设置或物理显示设备。对于浏览器全屏显示的问题，仍然需要检查操作系统、浏览器设置以及其他相关因素，以确保浏览器在全屏模式下使用所需的分辨率。</p>
+</blockquote>
+<blockquote>
+<p>💡 如果启动浏览器时需要黑色模式，则直接在启动命令后添加 <code>--force-dark-mode</code> ，即最终命令如下：<br><code>DISPLAY=:99 /usr/bin/google-chrome --force-dark-mode https://cn.piliapp.com/time/?theme=flip --user-data-dir=/root/chrome-profile --no-sandbox --disable-gpu --disable-remote-fonts --disable-features=RendererCodeIntegrity --remote-debugging-port=9222 --incognito  --kiosk --window-size=1920,1080 --start-fullscreen</code></p>
+</blockquote>
+<h2 id="使用ffmpeg进行推流"><a href="#使用ffmpeg进行推流" class="headerlink" title="使用ffmpeg进行推流"></a>使用ffmpeg进行推流</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -f x11grab -video_size 1920x1080 -draw_mouse 0  -i :99 -stream_loop -1 -i /root/tuesday.mp3 -c:v libx264 -c:a aac -preset ultrafast -qp 0 -shortest -f flv &quot;rtmp://直播链接&quot;</span><br></pre></td></tr></table></figure>
+
+<p>参数说明：</p>
+<ul>
+<li><code>-video_size 1920x1080</code> 指定推流视频大小为 1920x1080，经测试在xvfb虚拟显示器上分辨率这样，具体如何修改更大分辨率暂时还未找到方法</li>
+<li><code>-draw_mouse 0</code> 该参数指定不显示鼠标指针</li>
+<li><code>-i :99</code> 指定输入为 <code>:99</code> 的xvfb开启的虚拟显示器上。这个 <code>:99</code> 即是上面 <code>Xvfb :99 -screen 0 1920x1080x24</code> 指定的虚拟显示器编号</li>
+<li><code>-stream_loop -1</code> 指定直播流一直循环</li>
+<li><code>-i /root/tuesday.mp3</code> 指定推流背景音乐</li>
+<li><code>-c:v libx264</code> 指定视频编码</li>
+<li><code>-c:a aac</code> 指定音频编码</li>
+</ul>
+<h2 id="无间断推流"><a href="#无间断推流" class="headerlink" title="无间断推流"></a>无间断推流</h2><p>上面命令只是简单的在终端使用ffmpeg启动了推流，但可能会由于各种原因，比如网络不畅，导致推流异常中断退出。解决这个问题，我们可以写一个shell脚本来解决，当推流退出时，我们重新启动推流即可。<br>shell脚本如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">推流地址</span></span><br><span class="line">RTMP_URL=&quot;rtmp://推流地址&quot;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">输入音乐</span></span><br><span class="line">INPUT=&quot;/home/ubuntu/tuesday.mp3&quot;</span><br><span class="line"></span><br><span class="line">while true; do</span><br><span class="line">  ffmpeg -f x11grab -video_size 1920x1080 -draw_mouse 0  -i :99 -stream_loop -1 -i $INPUT -c:v libx264 -c:a aac -preset ultrafast -qp 0 -shortest -f flv $RTMP_URL</span><br><span class="line">  if [ $? -ne 0 ]; then</span><br><span class="line">    echo &quot;FFmpeg exited with an error. Restarting...&quot;</span><br><span class="line">    sleep 3</span><br><span class="line">  fi</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ffmpeg/" rel="tag">#ffmpeg</a>
+          
+            <a href="/tags/%E6%8E%A8%E6%B5%81/" rel="tag">#推流</a>
+          
+            <a href="/tags/%E7%9B%B4%E6%92%AD/" rel="tag">#直播</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2024/01/23/NodeJS%E6%8A%80%E6%9C%AF%E6%A0%88%E5%A4%84%E7%90%86SSE/" rel="next" title="NodeJs技术栈处理SSE">
+                <i class="fa fa-chevron-left"></i> NodeJs技术栈处理SSE
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2024/03/30/android-termux-obsidian/" rel="prev" title="Obsidian安卓端如何与PC端项目进行同步">
+                Obsidian安卓端如何与PC端项目进行同步 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#环境搭建"><span class="nav-number">1.</span> <span class="nav-text">环境搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态网页制作"><span class="nav-number">2.</span> <span class="nav-text">动态网页制作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关闭防火墙"><span class="nav-number">3.</span> <span class="nav-text">关闭防火墙</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xvfb启动虚拟显示器"><span class="nav-number">4.</span> <span class="nav-text">xvfb启动虚拟显示器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运行浏览器"><span class="nav-number">5.</span> <span class="nav-text">运行浏览器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用ffmpeg进行推流"><span class="nav-number">6.</span> <span class="nav-text">使用ffmpeg进行推流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#无间断推流"><span class="nav-number">7.</span> <span class="nav-text">无间断推流</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

@@ -1,0 +1,1053 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="js,ecmasrcipt," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="做js的时候，也没仔细的研究过&#x3D;&#x3D;和&#x3D;&#x3D;&#x3D;两个操作符之间的具体区别，但是本着实事求是的态度，今天上网查了一下他们两个的区别，最后得出的结论是： 12&#96;&#x3D;&#x3D;&#x3D;&#96; 严格相等，会比较两个值的类型和值&#96;&#x3D;&#x3D;&#96;  抽象相等，比较时，会先进行类型转换，然后再比较值  然后我就更迷惑了，先类型转换，我擦，怎么转换，左边转换成右边类型还是右边转换成左边类型？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="js中&#x3D;&#x3D;和&#x3D;&#x3D;&#x3D;的区别">
+<meta property="og:url" content="http://coolcao.com/2016/08/06/js%E4%B8%AD-%E5%92%8C-%E7%9A%84%E5%8C%BA%E5%88%AB/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="做js的时候，也没仔细的研究过&#x3D;&#x3D;和&#x3D;&#x3D;&#x3D;两个操作符之间的具体区别，但是本着实事求是的态度，今天上网查了一下他们两个的区别，最后得出的结论是： 12&#96;&#x3D;&#x3D;&#x3D;&#96; 严格相等，会比较两个值的类型和值&#96;&#x3D;&#x3D;&#96;  抽象相等，比较时，会先进行类型转换，然后再比较值  然后我就更迷惑了，先类型转换，我擦，怎么转换，左边转换成右边类型还是右边转换成左边类型？">
+<meta property="og:locale">
+<meta property="article:published_time" content="2016-08-06T03:17:03.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.956Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="js">
+<meta property="article:tag" content="ecmasrcipt">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2016/08/06/js中-和-的区别/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> js中==和===的区别 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                js中==和===的区别
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-06T11:17:03+08:00" content="2016-08-06">
+              2016-08-06
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>做js的时候，也没仔细的研究过&#x3D;&#x3D;和&#x3D;&#x3D;&#x3D;两个操作符之间的具体区别，但是本着实事求是的态度，今天上网查了一下他们两个的区别，最后得出的结论是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">`===` 严格相等，会比较两个值的类型和值</span><br><span class="line">`==`  抽象相等，比较时，会先进行类型转换，然后再比较值</span><br></pre></td></tr></table></figure>
+
+<p>然后我就更迷惑了，先类型转换，我擦，怎么转换，左边转换成右边类型还是右边转换成左边类型？</p>
+<span id="more"></span>
+
+<p>先看几个例子：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>([<span class="number">10</span>] == <span class="number">10</span>);                <span class="comment">//true</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;10&#x27;</span> == <span class="number">10</span>);                <span class="comment">//true</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>([] == <span class="number">0</span>);                   <span class="comment">//true</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="literal">true</span> == <span class="number">1</span>);                 <span class="comment">//true</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>([] == <span class="literal">false</span>);               <span class="comment">//true</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(![] == <span class="literal">false</span>);              <span class="comment">//true</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;&#x27;</span> == <span class="number">0</span>);                   <span class="comment">//true</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;&#x27;</span> == <span class="literal">false</span>);               <span class="comment">//true</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="literal">null</span> == <span class="literal">false</span>);             <span class="comment">//false</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(!<span class="literal">null</span> == <span class="literal">true</span>);             <span class="comment">//true</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="literal">null</span> == <span class="literal">undefined</span>);         <span class="comment">//true</span></span><br></pre></td></tr></table></figure>
+
+<p>看完这几个例子，我更迷糊了，啥，不是说好先进行类型转换嘛，怎么转换？除了 <code>null==false</code>是false外，其他的都是true?但是 <code>!null==true</code>却是true?这是为啥？</p>
+<p>没辙，越查越迷糊，乖乖去看ECMA的规范吧，看看标准是怎么规定的。</p>
+<h3 id="Strict-Equality-Comparison"><a href="#Strict-Equality-Comparison" class="headerlink" title="Strict Equality Comparison"></a>Strict Equality Comparison</h3><blockquote>
+<p>The comparison x &#x3D;&#x3D;&#x3D; y, where x and y are values, produces true or false. Such a comparison is performed as follows:</p>
+<ol>
+<li>If Type(x) is different from Type(y), return false.</li>
+<li>If Type(x) is Number, then<ul>
+<li>a. If x is NaN, return false.</li>
+<li>b. If y is NaN, return false.</li>
+<li>c. If x is the same Number value as y, return true.</li>
+<li>d. If x is <code>+0</code> and y is <code>‐0</code>,return true.</li>
+<li>e. If x is ‐0 and y is +0, return true.</li>
+<li>f. Return false.</li>
+</ul>
+</li>
+<li>Return SameValueNonNumber(x, y).<br><strong>NOTE</strong> This algorithm differs from the SameValue Algorithm in its treatment of signed zeroes and NaNs.</li>
+</ol>
+</blockquote>
+<h3 id="x3D-x3D-x3D"><a href="#x3D-x3D-x3D" class="headerlink" title="&#x3D;&#x3D;&#x3D;"></a>&#x3D;&#x3D;&#x3D;</h3><ul>
+<li>如果Type(x)和Type(y)不同，返回false</li>
+<li>如果Type(x)和Type(y)相同<ul>
+<li>如果Type(x)是Undefined，返回true</li>
+<li>如果Type(x)是Null，返回true</li>
+<li>如果Type(x)是String，当且仅当x,y字符序列完全相同（长度相同，每个位置上的字符也相同）时返回true，否则返回false</li>
+<li>如果Type(x)是Boolean，如果x,y都是true或x,y都是false返回true，否则返回false</li>
+<li>如果Type(x)是Symbol，如果x,y是相同的Symbol值，返回true,否则返回false</li>
+<li>如果Type(x)是Number类型<ul>
+<li>如果x是NaN，返回false</li>
+<li>如果y是NaN，返回false</li>
+<li>如果x的数字值和y相等，返回true</li>
+<li>如果x是+0，y是-0，返回true</li>
+<li>如果x是-0，y是+0，返回true</li>
+<li>其他返回false</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Abstract-Equality-Comparison"><a href="#Abstract-Equality-Comparison" class="headerlink" title="Abstract Equality Comparison"></a>Abstract Equality Comparison</h3><blockquote>
+<p>The comparison x &#x3D;&#x3D; y, where x and y are values, produces true or false. Such a comparison is performed as follows:</p>
+<ol>
+<li>If Type(x) is the same as Type(y), then<br>a. Return the result of performing Strict Equality Comparison x &#x3D;&#x3D;&#x3D; y.</li>
+<li>If x is null and y is undefined, return true.</li>
+<li>If x is undefined and y is null, return true.</li>
+<li>If Type(x) is Number and Type(y) is String, return the result of the comparison x &#x3D;&#x3D; ToNumber(y).</li>
+<li>If Type(x) is String and Type(y) is Number, return the result of the comparison ToNumber(x) &#x3D;&#x3D; y.</li>
+<li>If Type(x) is Boolean, return the result of the comparison ToNumber(x) &#x3D;&#x3D; y.</li>
+<li>If Type(y) is Boolean, return the result of the comparison x &#x3D;&#x3D; ToNumber(y).</li>
+<li>If Type(x) is either String, Number, or Symbol and Type(y) is Object, return the result of the comparison x &#x3D;&#x3D; ToPrimitive(y).</li>
+<li>If Type(x) is Object and Type(y) is either String, Number, or Symbol, return the result of the comparison ToPrimitive(x)&#x3D;&#x3D; y.</li>
+<li>Return false.</li>
+</ol>
+</blockquote>
+<h3 id="x3D-x3D"><a href="#x3D-x3D" class="headerlink" title="&#x3D;&#x3D;"></a>&#x3D;&#x3D;</h3><ul>
+<li>如果Type(x)和Type(y)相同，返回x&#x3D;&#x3D;&#x3D;y的结果</li>
+<li>如果Type(x)和Type(y)不同<ul>
+<li>如果x是null，y是undefined，返回true</li>
+<li>如果x是undefined，y是null，返回true</li>
+<li>如果Type(x)是Number，Type(y)是String，返回 x&#x3D;&#x3D;ToNumber(y) 的结果</li>
+<li>如果Type(x)是String，Type(y)是Number，返回 ToNumber(x)&#x3D;&#x3D;y 的结果</li>
+<li>如果Type(x)是Boolean，返回 ToNumber(x)&#x3D;&#x3D;y 的结果</li>
+<li>如果Type(y)是Boolean，返回 x&#x3D;&#x3D;ToNumber(y) 的结果</li>
+<li>如果Type(x)是String或Number或Symbol中的一种并且Type(y)是Object，返回 x&#x3D;&#x3D;ToPrimitive(y) 的结果</li>
+<li>如果Type(x)是Object并且Type(y)是String或Number或Symbol中的一种，返回 ToPrimitive(x)&#x3D;&#x3D;y 的结果</li>
+<li>其他返回false</li>
+</ul>
+</li>
+</ul>
+<p>上面两个片段是ecma262规范中对<code>===</code>和<code>==</code>计算过程的定义，我摘录过来并做了翻译。<br>可能一时半会有点不好理解，慢慢解释。</p>
+<p>其中涉及到几个es定义的抽象操作：</p>
+<ul>
+<li>Type(x) : 获取x的类型</li>
+<li>ToNumber(x) : 将x转换为Number类型</li>
+<li>ToBoolean(x) : 将x转换为Boolean类型</li>
+<li>ToString(x) : 将x转换为String类型</li>
+<li>SameValueNonNumber(x,y) : 计算非数字类型x,y是否相同</li>
+<li>ToPrimitive(x) : 将x转换为原始值</li>
+</ul>
+<p>这里的每个操作都有其严格并复杂的定义，可以直接查阅ECMA规范文档对其的详细说明。<br>附上在线文档地址：<a target="_blank" rel="noopener" href="http://www.ecma-international.org/ecma-262/7.0/index.html">ECMA262-7th</a></p>
+<p>这里我们看下SameValueNonNumber()和ToPrimitive()两个操作。</p>
+<h3 id="SameValueNonNumber-x-y"><a href="#SameValueNonNumber-x-y" class="headerlink" title="SameValueNonNumber (x, y)"></a>SameValueNonNumber (x, y)</h3><blockquote>
+<p>The internal comparison abstract operation SameValueNonNumber(x, y), where neither x nor y are Number values, produces true or false. Such a comparison is performed as follows:</p>
+<ol>
+<li>Assert: Type(x) is not Number.</li>
+<li>Assert: Type(x) is the same as Type(y).</li>
+<li>If Type(x) is Undefined, return true.</li>
+<li>If Type(x) is Null, return true.</li>
+<li>If Type(x) is String, then<ul>
+<li>a. If x and y are exactly the same sequence of code units (same length and same code units at corresponding indices), return true; otherwise, return false.</li>
+</ul>
+</li>
+<li>If Type(x) is Boolean, then<ul>
+<li>a. If x and y are both true or both false, return true; otherwise, return false.</li>
+</ul>
+</li>
+<li>If Type(x) is Symbol, then<ul>
+<li>a. If x and y are both the same Symbol value, return true; otherwise, return false.</li>
+</ul>
+</li>
+<li>Return true if x and y are the same Object value. Otherwise, return false.</li>
+</ol>
+</blockquote>
+<p>翻译一下：</p>
+<blockquote>
+<ul>
+<li>断言：Type(x)不是Number类型</li>
+<li>断言：Type(x)和Type(y)不同</li>
+<li>如果Type(x)是Undefined，返回true</li>
+<li>如果Type(x)是Null，返回true</li>
+<li>如果Type(x)是String，当且仅当x,y字符序列完全相同（长度相同，每个位置上的字符也相同）时返回true，否则返回false</li>
+<li>如果Type(x)是Boolean，如果x,y都是true或x,y都是false返回true，否则返回false</li>
+<li>如果Type(x)是Symbol，如果x,y是相同的Symbol值，返回true,否则返回false</li>
+<li>如果x和y是同一个对象值，返回ture，否则返回false</li>
+</ul>
+</blockquote>
+<p>这个SameValueNonNumber操作说的就是，如果x,y两个值类型相同，但又不同时是Number类型时的比较是否相等的操作。</p>
+<h3 id="ToPrimitive-input-PreferredType"><a href="#ToPrimitive-input-PreferredType" class="headerlink" title="ToPrimitive ( input [ , PreferredType ] )"></a>ToPrimitive ( input [ , PreferredType ] )</h3><blockquote>
+<p>The abstract operation ToPrimitive takes an input argument and an optional argument PreferredType. The abstract operation ToPrimitive converts its input argument to a non‐Object type. If an object is capable of converting to more than one primitive type, it may use the optional hint PreferredType to favour that type.<br>Conversion occurs according to Table 9:<br>Table 9: ToPrimitive Conversions</p>
+</blockquote>
+<blockquote>
+<table>
+<thead>
+<tr>
+<th>Input Type</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Undefined</td>
+<td>Return input.</td>
+</tr>
+<tr>
+<td>Null</td>
+<td>Return input.</td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td>Return input.</td>
+</tr>
+<tr>
+<td>Number</td>
+<td>Return input.</td>
+</tr>
+<tr>
+<td>String</td>
+<td>Return input.</td>
+</tr>
+<tr>
+<td>Symbol</td>
+<td>Return input.</td>
+</tr>
+<tr>
+<td>Object</td>
+<td>Perform the steps following this table.</td>
+</tr>
+</tbody></table>
+</blockquote>
+<blockquote>
+<p>When Type(input) is Object, the following steps are taken:</p>
+<ol>
+<li>If PreferredType was not passed, let hint be “default”.</li>
+<li>Else if PreferredType is hint String, let hint be “string”.</li>
+<li>Else PreferredType is hint Number, let hint be “number”.</li>
+<li>Let exoticToPrim be ? GetMethod(input, @@toPrimitive).</li>
+<li>If exoticToPrim is not undefined, then<ul>
+<li>a. Let result be ? Call(exoticToPrim, input, « hint »).</li>
+<li>b. If Type(result) is not Object, return result.</li>
+<li>c. Throw a TypeError exception.</li>
+</ul>
+</li>
+<li>If hint is “default”, let hint be “number”.</li>
+<li>Return ? OrdinaryToPrimitive(input, hint).</li>
+</ol>
+<p>When the abstract operation OrdinaryToPrimitive is called with arguments O and hint, the following steps are taken:</p>
+<ol>
+<li>Assert: Type(O) is Object.</li>
+<li>Assert: Type(hint) is String and its value is either “string” or “number”.</li>
+<li>If hint is “string”, then<ul>
+<li>a. Let methodNames be « “toString”, “valueOf” ».</li>
+</ul>
+</li>
+<li>Else,<ul>
+<li>a. Let methodNames be « “valueOf”, “toString” ».</li>
+</ul>
+</li>
+<li>For each name in methodNames in List order, do<ul>
+<li>a. Let method be ? Get(O, name).</li>
+<li>b. If IsCallable(method) is true, then<ul>
+<li>i. Let result be ? Call(method, O).</li>
+<li>ii. If Type(result) is not Object, return result.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Throw a TypeError exception.</li>
+</ol>
+</blockquote>
+<blockquote>
+<p><strong>NOTE</strong> When ToPrimitive is called with no hint, then it generally behaves as if the hint were Number. However, objects may over‐ride this behaviour by de ining a @@toPrimitive method. Of the objects de ined in this speci ication only Date objects (see 20.3.4.45) and Symbol objects (see 19.4.3.4) over‐ride the default ToPrimitive behaviour. Date objects treat no hint as if the hint were String.</p>
+</blockquote>
+<h3 id="ToPrimitive-方法"><a href="#ToPrimitive-方法" class="headerlink" title="ToPrimitive() 方法"></a>ToPrimitive() 方法</h3><p>转换成原始类型方法。<br>js中的原始类型：</p>
+<ul>
+<li>Null: null值.</li>
+<li>Undefined: undefined 值.</li>
+<li>Number: 所有的数字类型，例如0,1,3.14等 以及NaN, 和 Infinity.</li>
+<li>Boolean: 两个值true和false.</li>
+<li>String: 所有的字符串，例如’abc’和’’.<br>其他的都是’非原始’的，像Array,Function,Object等。</li>
+</ul>
+<p><em>注意：typeof null 得到的结果是object。这里是由于js在最初的设计的问题。但其实null应该是属于原始类型的。</em></p>
+<p>上面规范对 ToPrimitive 操作的说明大致可翻译如下：</p>
+<p>ToPrimitive ( input [ , PreferredType ] )方法传递两个参数input和PreferredType，其中PreferredType是可选的。input输入,PreferredType可选的期望类型。<br>ToPrimitive 运算符把其值参数转换为非对象类型。如果对象有能力被转换为不止一种原语类 型,可以使用可选的 期望类型 来暗示那个类型。根据下表完成转换:</p>
+<table>
+<thead>
+<tr>
+<th>输入类型</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Undefined</td>
+<td>不转换</td>
+</tr>
+<tr>
+<td>Null</td>
+<td>不转换</td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td>不转换</td>
+</tr>
+<tr>
+<td>Number</td>
+<td>不转换</td>
+</tr>
+<tr>
+<td>String</td>
+<td>不转换</td>
+</tr>
+<tr>
+<td>Object</td>
+<td>返回该对象的默认值。（调用该对象的内部方法[[DefaultValue]]一样）</td>
+</tr>
+<tr>
+<td>当input的类型是Object时，按照下面步骤进行操作：</td>
+<td></td>
+</tr>
+</tbody></table>
+<ul>
+<li>如果PreferredType没有传，令hint为”default”</li>
+<li>如果PreferredType参数是String类型，那么令hint为”string”</li>
+<li>如果PreferredType参数是Number类型，那么令hint为”number”</li>
+<li>令exoticToPrim为GetMethod(input, @@toPrimitive).</li>
+<li>如果exoticToPrim不是undefined，那么<ul>
+<li>令result为 Call(exoticToPrim, input, « hint »).</li>
+<li>如果result类型不是Object，直接返回result</li>
+<li>扔出TypeError异常</li>
+</ul>
+</li>
+<li>如果hint为”default”,令hint为”number”</li>
+<li>返回OrdinaryToPrimitive(input, hint)的值</li>
+</ul>
+<p>当抽象操作OrdinaryToPrimitive被执行，传递参数O和hint，按照下面步骤执行：</p>
+<ul>
+<li>断言：O的类型是Object</li>
+<li>断言：hint的类型是String，它的值只能是’string’或’number’</li>
+<li>如果hint是’string’<ul>
+<li>令methodNames是« “toString”, “valueOf” »</li>
+</ul>
+</li>
+<li>否则<ul>
+<li>令methodNames是« “valueOf”, “toString” ».</li>
+</ul>
+</li>
+<li>在有顺序的methodNames列表中，对于每个项目：<ul>
+<li>令method为Get(O, name).</li>
+<li>如果IsCallable(method)返回true,然后<ul>
+<li>令result为Call(method, O).</li>
+<li>如果result的类型不是Object，返回result</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>返回TypeError异常</li>
+</ul>
+<p><em>注意：当调用ToPrimitive而没有传hint参数时，默认情况下hint将被赋值Number。但是可以重写对象的@@toPrimitive方法来覆盖这个行为。在本规范中，只有Date和Symbol两个对象重写了默认的ToPrimitive操作。对于Date对象，如果没有传hint，hint将被默认赋值为String</em></p>
+<p>看完之后是不是有一万只草泥马在心中跑过，我也是。</p>
+<p>对于一个Object，ToPrimitive()方法是如何转换成原始类型的呢，最后转换成的原始类型的值又是多少呢？<br>我们光从上面的表格中可能看不出太多的东西来。下面我们来看看js的源码实现。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ECMA-262, section 9.1, page 30. Use null/undefined for no hint,</span></span><br><span class="line"><span class="comment">// (1) for number hint, and (2) for string hint.</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">ToPrimitive</span>(<span class="params">x, hint</span>) &#123;</span><br><span class="line">  <span class="comment">// Fast case check.</span></span><br><span class="line">  <span class="comment">// 如果为字符串，则直接返回</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="title function_">IS_STRING</span>(x)) <span class="keyword">return</span> x;</span><br><span class="line">  <span class="comment">// Normal behavior.</span></span><br><span class="line">  <span class="keyword">if</span> (!<span class="title function_">IS_SPEC_OBJECT</span>(x)) <span class="keyword">return</span> x;</span><br><span class="line">  <span class="keyword">if</span> (<span class="title function_">IS_SYMBOL_WRAPPER</span>(x)) <span class="keyword">throw</span> <span class="title class_">MakeTypeError</span>(<span class="string">&#x27;symbol_to_primitive&#x27;</span>, []);</span><br><span class="line">  <span class="keyword">if</span> (hint == <span class="variable constant_">NO_HINT</span>) hint = (<span class="title function_">IS_DATE</span>(x)) ? <span class="variable constant_">STRING_HINT</span> : <span class="variable constant_">NUMBER_HINT</span>;</span><br><span class="line">  <span class="keyword">return</span> (hint == <span class="variable constant_">NUMBER_HINT</span>) ? %<span class="title class_">DefaultNumber</span>(x) : %<span class="title class_">DefaultString</span>(x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>默认情况下，如果不传hint参数，x如果是Date类型，则hint为String,否则hint为Number类型。<br>然后根据hint将处理结果返回。<br>例如对于<code>[10]</code>数组这个例子，默认hint应该为Number类型。<br>处理函数为 DefaultNumber(x) 。<br>那么，DefaultNumber()又是如何处理的呢？<br>继续找代码看呗</p>
+<p>DefaultNumber()方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ECMA-262, section 8.6.2.6, page 28.</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">DefaultNumber</span>(<span class="params">x</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (!<span class="title function_">IS_SYMBOL_WRAPPER</span>(x)) &#123;</span><br><span class="line">    <span class="keyword">var</span> valueOf = x.<span class="property">valueOf</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_">IS_SPEC_FUNCTION</span>(valueOf)) &#123;</span><br><span class="line">      <span class="keyword">var</span> v = %<span class="title function_">_CallFunction</span>(x, valueOf);</span><br><span class="line">      <span class="keyword">if</span> (%<span class="title class_">IsPrimitive</span>(v)) <span class="keyword">return</span> v;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> toString = x.<span class="property">toString</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_">IS_SPEC_FUNCTION</span>(toString)) &#123;</span><br><span class="line">      <span class="keyword">var</span> s = %<span class="title function_">_CallFunction</span>(x, toString);</span><br><span class="line">      <span class="keyword">if</span> (%<span class="title class_">IsPrimitive</span>(s)) <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">throw</span> %<span class="title class_">MakeTypeError</span>(<span class="string">&#x27;cannot_convert_to_primitive&#x27;</span>, []);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>首先通过valueOf 转换，即 obj.valueOf()方法的返回值</li>
+<li>如果 obj.valueOf()方法的返回值是原始类型，那么直接返回</li>
+<li>如果不是，再通过 obj.toString()方法转换</li>
+<li>如果obj.toString()返回的是原始类型，直接返回该值</li>
+<li>如果还不是原始类型，抛出不能转换异常。</li>
+</ul>
+<p>DefaultString()方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ECMA-262, section 8.6.2.6, page 28.</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">DefaultString</span>(<span class="params">x</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (!<span class="title function_">IS_SYMBOL_WRAPPER</span>(x)) &#123;</span><br><span class="line">    <span class="comment">// 转换为字符串原始类型时首先通过toString</span></span><br><span class="line">    <span class="keyword">var</span> toString = x.<span class="property">toString</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_">IS_SPEC_FUNCTION</span>(toString)) &#123;</span><br><span class="line">      <span class="keyword">var</span> s = %<span class="title function_">_CallFunction</span>(x, toString);</span><br><span class="line">      <span class="keyword">if</span> (%<span class="title class_">IsPrimitive</span>(s)) <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 否则通过valueOf</span></span><br><span class="line">    <span class="keyword">var</span> valueOf = x.<span class="property">valueOf</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_">IS_SPEC_FUNCTION</span>(valueOf)) &#123;</span><br><span class="line">      <span class="keyword">var</span> v = %<span class="title function_">_CallFunction</span>(x, valueOf);</span><br><span class="line">      <span class="keyword">if</span> (%<span class="title class_">IsPrimitive</span>(v)) <span class="keyword">return</span> v;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 否则抛出异常</span></span><br><span class="line">  <span class="keyword">throw</span> %<span class="title class_">MakeTypeError</span>(<span class="string">&#x27;cannot_convert_to_primitive&#x27;</span>, []);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>首先使用toString()转换</li>
+<li>如果obj.toString()返回的是原始类型的值，直接返回该值</li>
+<li>如果不是，再使用obj.valueOf()转换</li>
+<li>如果obj.valueOf()返回的是原始类型的值，返回该值</li>
+<li>如果还不是，抛出不能转换异常</li>
+</ul>
+<p>好乱的有木有，简单总结下：</p>
+<ul>
+<li>ToPrimitive(input,hint)转换为原始类型的方法，根据hint目标类型进行转换。</li>
+<li>hint只有两个值：String和Number</li>
+<li>如果没有传hint，Date类型的input的hint默认为String,其他类型的input的hint默认为Number</li>
+<li>Number 类型先判断 valueOf()方法的返回值，如果不是，再判断 toString()方法的返回值</li>
+<li>String 类型先判断 toString()方法的返回值，如果不是，再判断 valueOf()方法的返回值</li>
+</ul>
+<p>来两个简单的例子看一下ToPrimitive()的结果可能会更有效。</p>
+<p>1.求 ToPrimitive([10])<br>对于数组，默认的hint应该为Number ,所以先判断 valueOf()</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; [10].valueOf()</span><br><span class="line">[10]</span><br></pre></td></tr></table></figure>
+<p>数组的valueOf()方法返回的是数组本身，不是一个原始类型，我们继续判断 toString()</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; [10].toString();</span><br><span class="line">&#x27;10&#x27;</span><br></pre></td></tr></table></figure>
+<p>toString()返回的是一个字符串 ‘10’ 是一个原始类型，因此，<code>ToPrimitive([10]) = &#39;10&#39;</code></p>
+<p>2.ToPrimitive(function sayHi(){})</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">var sayHi = function (name) &#123;</span><br><span class="line">    console.log(&#x27;hi &#x27; + name);</span><br><span class="line">&#125;</span><br><span class="line">console.log(sayHi.valueOf());</span><br><span class="line">console.log(typeof sayHi.valueOf());</span><br><span class="line">console.log(sayHi.toString());</span><br><span class="line">console.log(typeof sayHi.toString());</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[Function]</span><br><span class="line">function</span><br><span class="line">function (name) &#123;</span><br><span class="line">    console.log(&#x27;hi &#x27; + name);</span><br><span class="line">&#125;</span><br><span class="line">string</span><br></pre></td></tr></table></figure>
+<p>先判断 valueOf() ，返回的是一个function类型，只能继续判断 toString()返回的是string类型的，是原始类型，因此，<br>ToPrimitive(sayHi)是源码字符串。</p>
+<p>有了上面费了这么大劲准备的基础知识，我们再看看<code>==</code>就简单多了。哈哈。<br>有点远了，我们回过头来看 &#x3D;&#x3D; 的那几个例子。<br>首先 [10]&#x3D;&#x3D;10 这个<br>类型不同，Type([10])是Object，而Type(10)是Number,我们应该判断<code>ToPrimitive([10])==10</code>的结果<br>由上面的分析，ToPrimitive([10])的结果为 字符串’10’，因此结果变为要判断 ‘10’&#x3D;&#x3D;10<br>Type(‘10’)为String,(10)为Number，因此结果变为 ToNumber(‘10’)&#x3D;&#x3D;10<br>ToNumber(‘10’)的值是 数字 10 ，因此，最后要判断的是 10&#x3D;&#x3D;10<br>很明显，类型相同，值也相同，最终返回的就是 true</p>
+<p>再来看 []&#x3D;&#x3D;0 这个<br>同样地道理，ToPrimitive([])&#x3D;&#x3D;’’<br>而 ToNumber(‘’)&#x3D;&#x3D;0<br>因此 []&#x3D;&#x3D;0 的结果是 true</p>
+<p>[]&#x3D;&#x3D;false也很简单了<br>false是Boolean类型的，我们要比较 []&#x3D;&#x3D;ToNumber(false)即 []&#x3D;&#x3D;0，就是上面这个啊，结果是 true</p>
+<p>既然[]&#x3D;&#x3D;false返回的是true，那么，![]&#x3D;&#x3D;false应该返回的false吧，我靠，怎么还是true?<br>首先，左边 ![] 进行取反，要转换成Boolean类型，然后取反。Boolean([])的结果是true,取反是false<br>也就是，最终比较的是 false&#x3D;&#x3D;false   结果当然是 true 了。</p>
+<p>从上面我们可以看出，[]&#x3D;&#x3D;![]是成立的，神奇吧，对，js就是这么神奇。</p>
+<p>null&#x3D;&#x3D;false的结果是false，&#x3D;&#x3D;运算规则的最后一条，前面所有的都不满足，最后返回false，没什么好纠结的。<br>null&#x3D;&#x3D;false的结果是false，但这并不代表 null&#x3D;&#x3D;true 。因为 null&#x3D;&#x3D;true 最后走的还是最后一条，返回false。</p>
+<p>好了，写到这里应该差不多了，现在已经是凌晨3点了，脑子都转不动了，额，思路也比较乱，文章写的可能没那么有条理，如有发现错误之处，敬请指教吧。</p>
+<p>其实还有很多隐藏的内容没说明白，比如 js 内部 ToNumber(),ToBoolean()是如何转换的等，ECMA-262规范说明中已经有很详细的说明，可以具体参考一下，这是最最最官方的说明了，没有比这个更准确的了。</p>
+<p>还有就是，<code>==</code> 涉及到隐式类型转换，<code>&lt;</code>（小于号） 也涉及到隐式类型转换，改天重新整理一下<code>&lt;</code>以及js的隐式强制类型转换。</p>
+<p>主要参考内容：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.ecma-international.org/ecma-262/7.0/">ECMA-262规范说明</a></li>
+<li><a target="_blank" rel="noopener" href="http://sentsin.com/web/1108.html">javascript类型与类型转换</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.adequatelygood.com/Object-to-Primitive-Conversions-in-JavaScript.html">Object-to-Primitive Conversions in JavaScript</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/JSAPI_Reference/JS::ToPrimitive">MDN</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/20348948">知乎上的讨论贴：JavaScript 中应该用 “&#x3D;&#x3D;” 还是 “&#x3D;&#x3D;&#x3D;”</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/js/" rel="tag">#js</a>
+          
+            <a href="/tags/ecmasrcipt/" rel="tag">#ecmasrcipt</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/02/es6%E5%88%9D%E6%8E%A2/" rel="next" title="ES6初探之Promise">
+                <i class="fa fa-chevron-left"></i> ES6初探之Promise
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/06/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B8%AD%E7%9A%84%E8%B4%9F%E6%95%B0%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%E8%A1%A5%E7%A0%81%E8%A1%A8%E7%A4%BA/" rel="prev" title="计算机中的负数为什么使用补码表示">
+                计算机中的负数为什么使用补码表示 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Strict-Equality-Comparison"><span class="nav-number">1.</span> <span class="nav-text">Strict Equality Comparison</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#x3D-x3D-x3D"><span class="nav-number">2.</span> <span class="nav-text">&#x3D;&#x3D;&#x3D;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Abstract-Equality-Comparison"><span class="nav-number">3.</span> <span class="nav-text">Abstract Equality Comparison</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#x3D-x3D"><span class="nav-number">4.</span> <span class="nav-text">&#x3D;&#x3D;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SameValueNonNumber-x-y"><span class="nav-number">5.</span> <span class="nav-text">SameValueNonNumber (x, y)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ToPrimitive-input-PreferredType"><span class="nav-number">6.</span> <span class="nav-text">ToPrimitive ( input [ , PreferredType ] )</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ToPrimitive-方法"><span class="nav-number">7.</span> <span class="nav-text">ToPrimitive() 方法</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

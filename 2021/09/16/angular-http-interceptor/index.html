@@ -1,0 +1,734 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Angular,前端,拦截器," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="Angular 的 HttpClient 实现了拦截器机制，可以对请求进行拦截与修改，过滤等操作。基于这种特性，我们可以很方便的将有关 http 请求的一些逻辑抽离出来，对代码进行解藕。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Angular拦截器的一些妙用">
+<meta property="og:url" content="http://coolcao.com/2021/09/16/angular-http-interceptor/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="Angular 的 HttpClient 实现了拦截器机制，可以对请求进行拦截与修改，过滤等操作。基于这种特性，我们可以很方便的将有关 http 请求的一些逻辑抽离出来，对代码进行解藕。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-09-16T10:48:36.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.952Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="Angular">
+<meta property="article:tag" content="前端">
+<meta property="article:tag" content="拦截器">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2021/09/16/angular-http-interceptor/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> Angular拦截器的一些妙用 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Angular拦截器的一些妙用
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2021-09-16T18:48:36+08:00" content="2021-09-16">
+              2021-09-16
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Angular 的 HttpClient 实现了拦截器机制，可以对请求进行拦截与修改，过滤等操作。<br>基于这种特性，我们可以很方便的将有关 http 请求的一些逻辑抽离出来，对代码进行解藕。</p>
+<span id="more"></span>
+
+<h2 id="拦截器"><a href="#拦截器" class="headerlink" title="拦截器"></a>拦截器</h2><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Injectable</span> &#125; <span class="keyword">from</span> <span class="string">&quot;@angular/core&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123;</span><br><span class="line">  <span class="title class_">HttpRequest</span>,</span><br><span class="line">  <span class="title class_">HttpHandler</span>,</span><br><span class="line">  <span class="title class_">HttpEvent</span>,</span><br><span class="line">  <span class="title class_">HttpInterceptor</span>,</span><br><span class="line">&#125; <span class="keyword">from</span> <span class="string">&quot;@angular/common/http&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Observable</span> &#125; <span class="keyword">from</span> <span class="string">&quot;rxjs&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Injectable</span>()</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">AuthInterceptor</span> <span class="keyword">implements</span> <span class="title class_">HttpInterceptor</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">intercept</span>(</span><br><span class="line">    <span class="attr">request</span>: <span class="title class_">HttpRequest</span>&lt;<span class="built_in">unknown</span>&gt;,</span><br><span class="line">    <span class="attr">next</span>: <span class="title class_">HttpHandler</span></span><br><span class="line">  ): <span class="title class_">Observable</span>&lt;<span class="title class_">HttpEvent</span>&lt;<span class="built_in">unknown</span>&gt;&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> next.<span class="title function_">handle</span>(request);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>新建一个拦截器，继承自<code>HttpInterceptor</code>，我们需要做的就是使用自己的逻辑重写<code>intercept</code>方法。</p>
+<p>其中参数<code>request</code>为接收到的请求，<code>next</code>为处理完毕，交给下一个拦截器处理。多个拦截器形成链式处理。</p>
+<p>今天这篇文章，简单介绍下面几个场景，可以采用拦截器的例子。</p>
+<h2 id="登录认证"><a href="#登录认证" class="headerlink" title="登录认证"></a>登录认证</h2><p>前端系统与后端 api 进行交互时，一般都要做用户认证。<br>用户登录完成，后端返回一个认证凭证 token，然后前端每次请求时，都要带上这个凭证。</p>
+<p>在这种情况下，我们就可以使用拦截器，在每一次请求上加上这个凭证，而不用每次请求手动添加。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Injectable</span>()</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">TokenInterceptor</span> <span class="keyword">implements</span> <span class="title class_">HttpInterceptor</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"><span class="keyword">private</span> authService: AuthService</span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">intercept</span>(</span><br><span class="line">    <span class="attr">request</span>: <span class="title class_">HttpRequest</span>&lt;<span class="built_in">unknown</span>&gt;,</span><br><span class="line">    <span class="attr">next</span>: <span class="title class_">HttpHandler</span></span><br><span class="line">  ): <span class="title class_">Observable</span>&lt;<span class="title class_">HttpEvent</span>&lt;<span class="built_in">unknown</span>&gt;&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> req = request.<span class="title function_">clone</span>(&#123;</span><br><span class="line">      <span class="attr">setHeaders</span>: &#123; <span class="string">&quot;Content-Type&quot;</span>: <span class="string">&quot;application/json;charset=utf-8&quot;</span> &#125;,</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">const</span> authInfo = <span class="variable language_">this</span>.<span class="property">authService</span>.<span class="title function_">getAuthInfo</span>();</span><br><span class="line">    <span class="keyword">if</span> (authInfo) &#123;</span><br><span class="line">      <span class="keyword">const</span> token = authInfo.<span class="property">accessToken</span>;</span><br><span class="line">      <span class="keyword">if</span> (token) &#123;</span><br><span class="line">        req = req.<span class="title function_">clone</span>(&#123;</span><br><span class="line">          <span class="attr">setHeaders</span>: &#123; <span class="string">&quot;x-auth-token&quot;</span>: token &#125;,</span><br><span class="line">        &#125;);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> next.<span class="title function_">handle</span>(req);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们将 auth 信息存储到 sessionStore 中，封装<code>AuthService</code>进行访问。</p>
+<p>在拦截器内，获取 auth 信息，如果获取到，则将其 token 放到 header 中。</p>
+<h2 id="全局-Http-异常处理"><a href="#全局-Http-异常处理" class="headerlink" title="全局 Http 异常处理"></a>全局 Http 异常处理</h2><p>拦截器不仅能处理<code>request</code>，还能对请求的<code>response</code>进行处理。虽然在拦截方法中，并没有<code>response</code>参数。但其返回是一个 Observable，这样我们就可以对其进行操作了。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Injectable</span>()</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">ErrorHandleInterceptor</span> <span class="keyword">implements</span> <span class="title class_">HttpInterceptor</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span></span><br><span class="line"><span class="params">    <span class="keyword">private</span> errorService: ErrorService,</span></span><br><span class="line"><span class="params">    <span class="keyword">private</span> loadingService: LoadingService</span></span><br><span class="line"><span class="params">  </span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">intercept</span>(</span><br><span class="line">    <span class="attr">request</span>: <span class="title class_">HttpRequest</span>&lt;<span class="built_in">any</span>&gt;,</span><br><span class="line">    <span class="attr">next</span>: <span class="title class_">HttpHandler</span></span><br><span class="line">  ): <span class="title class_">Observable</span>&lt;<span class="title class_">HttpEvent</span>&lt;<span class="built_in">any</span>&gt;&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> next.<span class="title function_">handle</span>(request).<span class="title function_">pipe</span>(</span><br><span class="line">      <span class="title function_">catchError</span>(<span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (err <span class="keyword">instanceof</span> <span class="title class_">HttpErrorResponse</span>) &#123;</span><br><span class="line">          <span class="variable language_">this</span>.<span class="property">errorService</span>.<span class="title function_">handleHttpError</span>(err);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Observable</span>&lt;<span class="title class_">HttpEvent</span>&lt;<span class="built_in">any</span>&gt;&gt;();</span><br><span class="line">      &#125;)</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>next.handle(request)</code>返回一个 Observable，我们可以使用 RxJs 操作符对其进行修改。</p>
+<p>使用<code>catchError</code>操作符捕捉错误。如果捕捉到的错误是一个<code>HttpErrorResponse</code>，则将这个错误交给<code>ErrorService</code>处理。</p>
+<h2 id="全局-Loading-状态"><a href="#全局-Loading-状态" class="headerlink" title="全局 Loading 状态"></a>全局 Loading 状态</h2><p>一般为了更好的用户体验，在进行一些耗时的 HTTP 请求时，会在页面上加一些 loading 效果，一来减少用户的焦虑感，二来也避免用户重复提交。<br>如果在每个页面上都单独写一个 loading 状态来控制，会显得很繁琐。这里也可以使用拦截器进行全局处理。</p>
+<p>比如我们将上面错误处理的拦截器稍微改一下，在其中加上全局 loading 状态即可。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Injectable</span>()</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">ErrorHandleInterceptor</span> <span class="keyword">implements</span> <span class="title class_">HttpInterceptor</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span></span><br><span class="line"><span class="params">    <span class="keyword">private</span> errorService: ErrorService,</span></span><br><span class="line"><span class="params">    <span class="keyword">private</span> loadingService: LoadingService</span></span><br><span class="line"><span class="params">  </span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">intercept</span>(</span><br><span class="line">    <span class="attr">request</span>: <span class="title class_">HttpRequest</span>&lt;<span class="built_in">any</span>&gt;,</span><br><span class="line">    <span class="attr">next</span>: <span class="title class_">HttpHandler</span></span><br><span class="line">  ): <span class="title class_">Observable</span>&lt;<span class="title class_">HttpEvent</span>&lt;<span class="built_in">any</span>&gt;&gt; &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">loadingService</span>.<span class="title function_">setLoading</span>(request.<span class="property">url</span>, <span class="literal">true</span>);</span><br><span class="line">    <span class="keyword">return</span> next</span><br><span class="line">      .<span class="title function_">handle</span>(request)</span><br><span class="line">      .<span class="title function_">pipe</span>(</span><br><span class="line">        <span class="title function_">catchError</span>(<span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">          <span class="variable language_">this</span>.<span class="property">loadingService</span>.<span class="title function_">setLoading</span>(request.<span class="property">url</span>, <span class="literal">false</span>);</span><br><span class="line">          <span class="keyword">if</span> (err <span class="keyword">instanceof</span> <span class="title class_">HttpErrorResponse</span>) &#123;</span><br><span class="line">            <span class="variable language_">this</span>.<span class="property">errorService</span>.<span class="title function_">handleHttpError</span>(err);</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Observable</span>&lt;<span class="title class_">HttpEvent</span>&lt;<span class="built_in">any</span>&gt;&gt;();</span><br><span class="line">        &#125;)</span><br><span class="line">      )</span><br><span class="line">      .<span class="title function_">pipe</span>(</span><br><span class="line">        map&lt;<span class="title class_">HttpEvent</span>&lt;<span class="built_in">any</span>&gt;, <span class="built_in">any</span>&gt;(<span class="function">(<span class="params">evt: HttpEvent&lt;<span class="built_in">any</span>&gt;</span>) =&gt;</span> &#123;</span><br><span class="line">          <span class="keyword">if</span> (evt <span class="keyword">instanceof</span> <span class="title class_">HttpResponse</span>) &#123;</span><br><span class="line">            <span class="variable language_">this</span>.<span class="property">loadingService</span>.<span class="title function_">setLoading</span>(request.<span class="property">url</span>, <span class="literal">false</span>);</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">return</span> evt;</span><br><span class="line">        &#125;)</span><br><span class="line">      );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在请求开始之前，<code>this.loadingService.setLoading(request.url, true);</code> 设置 loading 状态为 true，如果捕捉到错误，或者正常结束请求，<code>this.loadingService.setLoading(request.url, false);</code>将 loading 状态设置为 false 即可。</p>
+<p>其中 LoadingService 代码如下：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Injectable</span>(&#123;</span><br><span class="line">  <span class="attr">providedIn</span>: <span class="string">&quot;root&quot;</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">LoadingService</span> &#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="attr">loading$</span>: <span class="title class_">BehaviorSubject</span>&lt;<span class="built_in">boolean</span>&gt; = <span class="keyword">new</span> <span class="title class_">BehaviorSubject</span>&lt;<span class="built_in">boolean</span>&gt;(</span><br><span class="line">    <span class="literal">false</span></span><br><span class="line">  );</span><br><span class="line">  <span class="keyword">private</span> <span class="attr">loadingMap</span>: <span class="title class_">Map</span>&lt;<span class="built_in">string</span>, <span class="built_in">number</span>&gt; = <span class="keyword">new</span> <span class="title class_">Map</span>&lt;<span class="built_in">string</span>, <span class="built_in">number</span>&gt;();</span><br><span class="line"></span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">setLoading</span>(<span class="attr">url</span>: <span class="built_in">string</span>, <span class="attr">loading</span>: <span class="built_in">boolean</span>): <span class="built_in">void</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!url) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(</span><br><span class="line">        <span class="string">&quot;The request URL must be provided to the LoadingService.setLoading function&quot;</span></span><br><span class="line">      );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (loading === <span class="literal">true</span>) &#123;</span><br><span class="line">      <span class="keyword">const</span> count = <span class="variable language_">this</span>.<span class="property">loadingMap</span>.<span class="title function_">get</span>(url) || <span class="number">0</span>;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">loadingMap</span>.<span class="title function_">set</span>(url, count + <span class="number">1</span>);</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">loading$</span>.<span class="title function_">next</span>(<span class="literal">true</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (loading === <span class="literal">false</span> &amp;&amp; <span class="variable language_">this</span>.<span class="property">loadingMap</span>.<span class="title function_">has</span>(url)) &#123;</span><br><span class="line">      <span class="keyword">const</span> count = <span class="variable language_">this</span>.<span class="property">loadingMap</span>.<span class="title function_">get</span>(url);</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">loadingMap</span>.<span class="title function_">set</span>(url, count! - <span class="number">1</span>);</span><br><span class="line">      <span class="keyword">if</span> (<span class="variable language_">this</span>.<span class="property">loadingMap</span>.<span class="title function_">get</span>(url) == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">loadingMap</span>.<span class="title function_">delete</span>(url);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">this</span>.<span class="property">loadingMap</span>.<span class="property">size</span> === <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">loading$</span>.<span class="title function_">next</span>(<span class="literal">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注：HTTP 拦截器只能全局处理与 HTTP 请求相关的 loading 状态，那如果是其他操作引起的 loading 状态变化，那该怎么办呢？只能再单独处理么？<br>其实也不是。完全可以复用上面的<code>LoadingService</code>，需要将 loading 设置为 true 时，调用<code>loadingService.setLoading(url, true)</code>，处理完成使用<code>loadingService.setLoading(url, false)</code>即可。url 这里可以直接设置为当前组件的文件地址，只要能区分不同的组件或页面即可。</p>
+</blockquote>
+<h2 id="结果分页处理"><a href="#结果分页处理" class="headerlink" title="结果分页处理"></a>结果分页处理</h2><p>有时候后端 api 的一些额外数据，并不放到 body 体里，放到了 header 中，比如分页数据。<br>这个时候，如果为每个具有分页的接口都写一个从 header 中获取数据的逻辑，会导致代码重复且耦合高。</p>
+<p>这里我们可以使用拦截器对 response 进行处理，统一将 header 中的数据拿出来，和 body 统一起来。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Injectable</span>()</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">PaginationResultInterceptor</span> <span class="keyword">implements</span> <span class="title class_">HttpInterceptor</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">  <span class="title function_">intercept</span>(</span><br><span class="line">    <span class="attr">request</span>: <span class="title class_">HttpRequest</span>&lt;<span class="built_in">unknown</span>&gt;,</span><br><span class="line">    <span class="attr">next</span>: <span class="title class_">HttpHandler</span></span><br><span class="line">  ): <span class="title class_">Observable</span>&lt;<span class="title class_">HttpEvent</span>&lt;<span class="built_in">unknown</span>&gt;&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> next.<span class="title function_">handle</span>(request).<span class="title function_">pipe</span>(</span><br><span class="line">      <span class="title function_">filter</span>(<span class="function">(<span class="params">event</span>) =&gt;</span> event <span class="keyword">instanceof</span> <span class="title class_">HttpResponse</span>),</span><br><span class="line">      <span class="title function_">map</span>(<span class="function">(<span class="params">event: HttpEvent&lt;<span class="built_in">any</span>&gt;</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> e = event <span class="keyword">as</span> <span class="title class_">HttpResponse</span>&lt;<span class="built_in">any</span>&gt;;</span><br><span class="line">        <span class="keyword">const</span> recordTotal = e.<span class="property">headers</span>.<span class="title function_">get</span>(<span class="string">&quot;x-content-record-total&quot;</span>) <span class="keyword">as</span> <span class="built_in">string</span>;</span><br><span class="line">        <span class="comment">// 修改分页数据结构</span></span><br><span class="line">        <span class="keyword">if</span> (recordTotal) &#123;</span><br><span class="line">          <span class="keyword">const</span> total = <span class="title class_">Number</span>.<span class="built_in">parseInt</span>(recordTotal);</span><br><span class="line">          <span class="keyword">return</span> e.<span class="title function_">clone</span>(&#123;</span><br><span class="line">            <span class="attr">body</span>: &#123; total, <span class="attr">data</span>: e.<span class="property">body</span> &#125;,</span><br><span class="line">          &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> e;</span><br><span class="line">      &#125;)</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Angular/" rel="tag">#Angular</a>
+          
+            <a href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">#前端</a>
+          
+            <a href="/tags/%E6%8B%A6%E6%88%AA%E5%99%A8/" rel="tag">#拦截器</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/03/06/trie-tree-route/" rel="next" title="前缀树结构做路由匹配">
+                <i class="fa fa-chevron-left"></i> 前缀树结构做路由匹配
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/08/06/Web%E5%89%8D%E7%AB%AF%E5%AE%9E%E7%8E%B0%E5%A4%8D%E5%88%B6%E5%88%B0%E5%89%AA%E5%88%87%E6%9D%BF-%E5%89%AA%E8%B4%B4%E6%9D%BF-%E7%B2%98%E8%B4%B4%E6%9D%BF/" rel="prev" title="Web 前端实现复制到剪切板/剪贴板/粘贴板">
+                Web 前端实现复制到剪切板/剪贴板/粘贴板 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#拦截器"><span class="nav-number">1.</span> <span class="nav-text">拦截器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#登录认证"><span class="nav-number">2.</span> <span class="nav-text">登录认证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#全局-Http-异常处理"><span class="nav-number">3.</span> <span class="nav-text">全局 Http 异常处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#全局-Loading-状态"><span class="nav-number">4.</span> <span class="nav-text">全局 Loading 状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结果分页处理"><span class="nav-number">5.</span> <span class="nav-text">结果分页处理</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

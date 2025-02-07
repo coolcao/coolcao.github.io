@@ -1,0 +1,762 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="js," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="今天在看js的Array的方法时， 看到源码中有下面的一段代码， 挺有意思， 是关于位运算的， 就拿来研究了一下： 1var len &#x3D; t.length &gt;&gt;&gt; 0;  这里使用了 &gt;&gt;&gt; ，无符号右移运算符， 还右移了 0 位， 初看有点蒙， 到底啥意思？ 带着疑问做了如下实验： 123456789101112console.log(1 &gt;&gt;&amp;g">
+<meta property="og:type" content="article">
+<meta property="og:title" content="js的位操作">
+<meta property="og:url" content="http://coolcao.com/2016/08/09/js%E7%9A%84%E4%BD%8D%E6%93%8D%E4%BD%9C/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="今天在看js的Array的方法时， 看到源码中有下面的一段代码， 挺有意思， 是关于位运算的， 就拿来研究了一下： 1var len &#x3D; t.length &gt;&gt;&gt; 0;  这里使用了 &gt;&gt;&gt; ，无符号右移运算符， 还右移了 0 位， 初看有点蒙， 到底啥意思？ 带着疑问做了如下实验： 123456789101112console.log(1 &gt;&gt;&amp;g">
+<meta property="og:locale">
+<meta property="article:published_time" content="2016-08-09T11:41:18.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.957Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="js">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2016/08/09/js的位操作/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> js的位操作 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                js的位操作
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-09T19:41:18+08:00" content="2016-08-09">
+              2016-08-09
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>今天在看js的Array的方法时， 看到源码中有下面的一段代码， 挺有意思， 是关于位运算的， 就拿来研究了一下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> len = t.<span class="property">length</span> &gt;&gt;&gt; <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这里使用了 <code>&gt;&gt;&gt;</code> ，无符号右移运算符， 还右移了 0 位， 初看有点蒙， 到底啥意思？ 带着疑问做了如下实验：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">1</span> &gt;&gt;&gt; <span class="number">0</span>);               <span class="comment">//1</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">1.1</span> &gt;&gt;&gt; <span class="number">0</span>);             <span class="comment">//1</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">NaN</span> &gt;&gt;&gt; <span class="number">0</span>);             <span class="comment">//0</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="literal">true</span> &gt;&gt;&gt; <span class="number">0</span>);            <span class="comment">//1</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="literal">false</span> &gt;&gt;&gt; <span class="number">0</span>);           <span class="comment">//0</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;a&#x27;</span> &gt;&gt;&gt; <span class="number">0</span>);             <span class="comment">//0</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;123&#x27;</span> &gt;&gt;&gt; <span class="number">0</span>);           <span class="comment">//123</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;a123&#x27;</span> &gt;&gt;&gt; <span class="number">0</span>);          <span class="comment">//0</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(&#123;&#125; &gt;&gt;&gt; <span class="number">0</span>);              <span class="comment">//0</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;&#125; &gt;&gt;&gt; <span class="number">0</span>);   <span class="comment">//0</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="literal">null</span> &gt;&gt;&gt; <span class="number">0</span>);            <span class="comment">//0</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="literal">undefined</span> &gt;&gt;&gt; <span class="number">0</span>);       <span class="comment">//0</span></span><br></pre></td></tr></table></figure>
+
+<p>从结果来看，不管是什么类型的数据，都被强制转换成了整型。 为什么 <code>&gt;&gt;&gt;</code> 运算符会如此呢？这要从js的位运算符说起。</p>
+<span id="more"></span>
+
+<h3 id="位运算符"><a href="#位运算符" class="headerlink" title="位运算符"></a>位运算符</h3><p>位运算符用于在最基本的层次上，即按内存中表示数值的位来操作数值。ECMAScript中的所有数值都以IEEE-745 64位格式存储，但 <em>位操作符并不直接操作64位的值</em>，而是将64位的值转换成32位的整数，然后执行操作，最后再将结果转换回64位。</p>
+<p>对于有符号的整数，32位中的前31位表示整数的值，第32位表示整数的符号，0表示整数，1表示负数。这个表示符号的位叫做 <em>符号位</em>,符号位的值决定了其他位数值的格式。<strong>其中，整数以纯二进制格式存储，31位中的每一位都表示2的幂。负数同样以二进制存储，但使用的格式是二进制补码</strong> 计算一个数值的二进制补码，需要经过下列3个步骤： 1.求这个数值绝对值的二进制码 2.求二进制码的反码，即将0替换为1，1替换为0 3.得到的二进制反码加1</p>
+<p>例如，要求-18的二进制码，首先求18的二进制码：</p>
+<p>0000 0000 0000 0000 0000 0000 0001 0010</p>
+<p>求其反码：</p>
+<p>1111 1111 1111 1111 1111 1111 1110 1101</p>
+<p>最后反码加1</p>
+<p>1111 1111 1111 1111 1111 1111 1110 1110</p>
+<p>这样就求得了-18的二进制表示。</p>
+<p><strong>如果对非数值应用位操作符，会显示用Number()函数将改数值转换成一个数值(自动完成),然后再用应位操作符。</strong></p>
+<h4 id="按位非"><a href="#按位非" class="headerlink" title="按位非 ~"></a>按位非 ~</h4><p>按位非的结果就是，返回数值的反码。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> num = <span class="number">25</span>;           <span class="comment">//二进制 00000000000000000000000000011001</span></span><br><span class="line"><span class="keyword">var</span> num2 = ~num;        <span class="comment">//二进制 11111111111111111111111111100110</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(num2);      <span class="comment">//-26</span></span><br></pre></td></tr></table></figure>
+
+<p>这里，对25执行按位非操作，结果得到了-26.这也验证了按位非操作的实质：<strong>操作数的负值减1</strong> 。因此，下面的代码也能得到相同的结果：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> num = <span class="number">25</span>;</span><br><span class="line"><span class="keyword">var</span> num2 = -num - <span class="number">1</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(num2);</span><br></pre></td></tr></table></figure>
+
+<p>虽然以上代码也能返回同样的结果，但由于按位非是在数值表示的最底层执行操作，因此速度更快。</p>
+<h4 id="按位与-amp"><a href="#按位与-amp" class="headerlink" title="按位与 &amp;"></a>按位与 &amp;</h4><h4 id="按位或"><a href="#按位或" class="headerlink" title="按位或 |"></a>按位或 |</h4><h4 id="按位异或"><a href="#按位异或" class="headerlink" title="按位异或 ^"></a>按位异或 ^</h4><p>按位异或操作扶由一个插入符号(^)表示，也有两个操作数。以下是按位异或的真值表：</p>
+<table>
+<thead>
+<tr>
+<th>第一个数值的位</th>
+<th>第二个数值的位</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+</tbody></table>
+<h4 id="左移-lt-lt"><a href="#左移-lt-lt" class="headerlink" title="左移 &lt;&lt;"></a>左移 <code>&lt;&lt;</code></h4><p>将数值的所有位向左移动指定的位。 左移的结果是，移动n位，乘以2的n次幂。例如，<code>2&lt;&lt;5 = 2*2^5 = 64</code></p>
+<p>左移不会影响操作数的符号位。</p>
+<h4 id="有符号右移-算数右移-gt-gt"><a href="#有符号右移-算数右移-gt-gt" class="headerlink" title="有符号右移[算数右移] &gt;&gt;"></a>有符号右移[算数右移] <code>&gt;&gt;</code></h4><p>符号位不移，其他位右移，在左端补k个最高有效位的值。</p>
+<h4 id="无符号右移-逻辑右移-gt-gt-gt"><a href="#无符号右移-逻辑右移-gt-gt-gt" class="headerlink" title="无符号右移[逻辑右移] &gt;&gt;&gt;"></a>无符号右移[逻辑右移] <code>&gt;&gt;&gt;</code></h4><p>这个操作符会将数值的所有32位都向右移动。对正数来说无符号右移的结果和有符号相同。但是对于负数来说，情况就不一样了。 无符号右移操作符会把负数的二进制码当成正数的二进制码，而且由于负数以其绝对值的二进制补码形式表示，因此会导致无符号右移后的结果非常之大。 例如，上面的例子中，-18的二进制码：</p>
+<p>1111 1111 1111 1111 1111 1111 1110 1110</p>
+<p>右移一位： <code>-18 &gt;&gt;&gt; 1</code></p>
+<p>0111 1111 1111 1111 1111 1111 1111 0111</p>
+<p>这时将这个二进制码转换成正数是：2147483639</p>
+<hr>
+<p>好了，我们回过头来看最初在js源码中看到的关于<code>&gt;&gt;&gt;</code>那个问题，任何类型的数值，经过无符号右移0位后都被强制转换成了整数。 因为，在右移之前，先使用Number()函数转换成数值类型，移动0位相当于没移，因此，无论何种类型的值，<code>&gt;&gt;&gt;0</code>被强制转换成整数类型。 那么，问题来了，Number()进行转换的时候，有一些是不能转换为整数的，比如，Number(‘a’)得到的是NaN,NaN的类型也是number类型，但是，他却不是一个确定的值，js在对NaN进行位运算时，将0作为 运算元。</p>
+<p>所以，如果看透了位运算，你会发现，其实 <code>a&gt;&gt;&gt;0</code> 其实和 <code>~~a</code>运算的结果是一样的，都是将其转换成整数的一个运算。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/js/" rel="tag">#js</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/06/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B8%AD%E7%9A%84%E8%B4%9F%E6%95%B0%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%E8%A1%A5%E7%A0%81%E8%A1%A8%E7%A4%BA/" rel="next" title="计算机中的负数为什么使用补码表示">
+                <i class="fa fa-chevron-left"></i> 计算机中的负数为什么使用补码表示
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/12/ecma%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" rel="prev" title="ecmasrcipt类型转换">
+                ecmasrcipt类型转换 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#位运算符"><span class="nav-number">1.</span> <span class="nav-text">位运算符</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#按位非"><span class="nav-number">1.1.</span> <span class="nav-text">按位非 ~</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#按位与-amp"><span class="nav-number">1.2.</span> <span class="nav-text">按位与 &amp;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#按位或"><span class="nav-number">1.3.</span> <span class="nav-text">按位或 |</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#按位异或"><span class="nav-number">1.4.</span> <span class="nav-text">按位异或 ^</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#左移-lt-lt"><span class="nav-number">1.5.</span> <span class="nav-text">左移 &lt;&lt;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#有符号右移-算数右移-gt-gt"><span class="nav-number">1.6.</span> <span class="nav-text">有符号右移[算数右移] &gt;&gt;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#无符号右移-逻辑右移-gt-gt-gt"><span class="nav-number">1.7.</span> <span class="nav-text">无符号右移[逻辑右移] &gt;&gt;&gt;</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

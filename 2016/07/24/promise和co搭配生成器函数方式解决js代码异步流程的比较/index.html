@@ -1,0 +1,725 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="js,es6," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="在es6中引入的原生Promise为js的异步回调问题带来了一个新的解决方式，而TJ大神写的co模块搭配Generator函数的同步写法，更是将js的异步回调带了更优雅的写法。今天我想对比一下这两种方式，来看看这两种方式的区别以及优劣。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="promise和co搭配生成器函数方式解决js代码异步流程的比较">
+<meta property="og:url" content="http://coolcao.com/2016/07/24/promise%E5%92%8Cco%E6%90%AD%E9%85%8D%E7%94%9F%E6%88%90%E5%99%A8%E5%87%BD%E6%95%B0%E6%96%B9%E5%BC%8F%E8%A7%A3%E5%86%B3js%E4%BB%A3%E7%A0%81%E5%BC%82%E6%AD%A5%E6%B5%81%E7%A8%8B%E7%9A%84%E6%AF%94%E8%BE%83/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="在es6中引入的原生Promise为js的异步回调问题带来了一个新的解决方式，而TJ大神写的co模块搭配Generator函数的同步写法，更是将js的异步回调带了更优雅的写法。今天我想对比一下这两种方式，来看看这两种方式的区别以及优劣。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2016-07-24T10:50:59.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.958Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="js">
+<meta property="article:tag" content="es6">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2016/07/24/promise和co搭配生成器函数方式解决js代码异步流程的比较/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> promise和co搭配生成器函数方式解决js代码异步流程的比较 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                promise和co搭配生成器函数方式解决js代码异步流程的比较
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-24T18:50:59+08:00" content="2016-07-24">
+              2016-07-24
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在es6中引入的原生Promise为js的异步回调问题带来了一个新的解决方式，而TJ大神写的co模块搭配Generator函数的同步写法，更是将js的异步回调带了更优雅的写法。<br>今天我想对比一下这两种方式，来看看这两种方式的区别以及优劣。</p>
+<span id="more"></span>
+
+<p>我们先抽象几个操作：<br>以做饭为例，我们先去买菜，回来洗菜，刷碗，烧菜，最后才是吃。定义如下方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> buy = <span class="keyword">function</span> (<span class="params"></span>)&#123;&#125;;  <span class="comment">//买菜，需要3s</span></span><br><span class="line"><span class="keyword">var</span> clean = <span class="keyword">function</span>(<span class="params"></span>)&#123;&#125;;   <span class="comment">//洗菜，需要1s</span></span><br><span class="line"><span class="keyword">var</span> wash = <span class="keyword">function</span>(<span class="params"></span>)&#123;&#125;;    <span class="comment">//刷碗，需要1s</span></span><br><span class="line"><span class="keyword">var</span> cook = <span class="keyword">function</span>(<span class="params"></span>)&#123;&#125;;    <span class="comment">//煮菜，需要3s</span></span><br><span class="line"><span class="keyword">var</span> eat = <span class="keyword">function</span> (<span class="params"></span>) &#123;&#125;;   <span class="comment">//吃饭，2s，最后的一个步骤。</span></span><br></pre></td></tr></table></figure>
+
+
+<p>在实际中，我们可能这样，先去买菜，然后洗菜，然后开始烧菜，烧菜的同时，刷碗，等碗刷完了，菜煮好了，我们才开始吃饭。也就是，煮菜和刷碗是并行的。</p>
+<h2 id="Promise方式"><a href="#Promise方式" class="headerlink" title="Promise方式"></a>Promise方式</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> begin = <span class="keyword">new</span> <span class="title class_">Date</span>();</span><br><span class="line"><span class="title function_">buySomething</span>().<span class="title function_">then</span>(<span class="function">(<span class="params">buyed</span>)=&gt;</span>&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(buyed);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="keyword">new</span> <span class="title class_">Date</span>()-begin);</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">clean</span>();</span><br><span class="line">&#125;).<span class="title function_">then</span>(<span class="function">(<span class="params">cleaned</span>)=&gt;</span>&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(cleaned);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="keyword">new</span> <span class="title class_">Date</span>()-begin);</span><br><span class="line">    <span class="keyword">return</span> <span class="title class_">Promise</span>.<span class="title function_">all</span>([<span class="title function_">cook</span>(),<span class="title function_">wash</span>()]);</span><br><span class="line">&#125;).<span class="title function_">then</span>(<span class="function">(<span class="params">value</span>)=&gt;</span>&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(value);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="keyword">new</span> <span class="title class_">Date</span>()-begin);</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">eat</span>();</span><br><span class="line">&#125;).<span class="title function_">then</span>(<span class="function">(<span class="params">eated</span>)=&gt;</span>&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(eated);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="keyword">new</span> <span class="title class_">Date</span>()-begin);</span><br><span class="line">&#125;).<span class="title function_">catch</span>(<span class="function">(<span class="params">err</span>)=&gt;</span>&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(err);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">菜买到啦</span><br><span class="line">3021</span><br><span class="line">菜洗乾淨了</span><br><span class="line">4023</span><br><span class="line">[ &#x27;飯菜煮好了，可以吃飯了&#x27;, &#x27;盤子洗乾淨啦&#x27; ]</span><br><span class="line">7031</span><br><span class="line">飯吃完了，好舒服啊</span><br><span class="line">9034</span><br></pre></td></tr></table></figure>
+
+<p>Promise里有个all()方法，可以传递一个promise数组，功能是当所有promise都成功时，才返回成功。上面的例子，我们就将 cook()和wash()放到all()方法，模拟两个操作同时进行。从时间上来看，先去买菜，耗时3s，洗菜耗时1s，输出4023，刷碗和煮菜同时进行，以耗时长的煮菜3s，输出7031，最后吃饭2s，输出9034。</p>
+<p>Promise的优势就是，可以随意定制Promise链，去掌控你的流程，想要同步的时候，就使用Promise链，想要异步，就使用Promise.all()，接口也很简单，逻辑也很简单。</p>
+<h2 id="co-Generator搭配使用"><a href="#co-Generator搭配使用" class="headerlink" title="co+Generator搭配使用"></a>co+Generator搭配使用</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> begin = <span class="keyword">new</span> <span class="title class_">Date</span>();</span><br><span class="line"><span class="title function_">co</span>(<span class="keyword">function</span>* ()&#123;</span><br><span class="line">    <span class="keyword">let</span> buyed = <span class="keyword">yield</span> <span class="title function_">buySomething</span>();</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(buyed);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="keyword">new</span> <span class="title class_">Date</span>() - begin);</span><br><span class="line">    <span class="keyword">let</span> cleaned = <span class="keyword">yield</span> <span class="title function_">clean</span>();</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(cleaned);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="keyword">new</span> <span class="title class_">Date</span>() - begin);</span><br><span class="line">    <span class="keyword">let</span> cook_and_wash = <span class="keyword">yield</span> [<span class="title function_">cook</span>(),<span class="title function_">wash</span>()];</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(cook_and_wash);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="keyword">new</span> <span class="title class_">Date</span>() - begin);</span><br><span class="line">    <span class="keyword">let</span> eated = <span class="keyword">yield</span> <span class="title function_">eat</span>();</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(eated);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="keyword">new</span> <span class="title class_">Date</span>() - begin);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">菜买到啦</span><br><span class="line">3023</span><br><span class="line">菜洗乾淨了</span><br><span class="line">4026</span><br><span class="line">[ &#x27;飯菜煮好了，可以吃飯了&#x27;, &#x27;盤子洗乾淨啦&#x27; ]</span><br><span class="line">7033</span><br><span class="line">飯吃完了，好舒服啊</span><br><span class="line">9035</span><br></pre></td></tr></table></figure>
+
+<p>从代码上，我们可以看出，使用co+Generator函数的写法，更趋向于同步代码的写法，具体代码是怎么执行的，大家可以研究一下es6的Generator函数。而且yield也可以接收一个数组，用来异步执行两个方法。代码上更精炼，更符合逻辑。<br>当前来说，co模块+Generator函数是一个比较好的改善“回调地狱”的优美的解决方案。</p>
+<p>而且，这种方式比Promise优的一点是，Promise在实际操作中可能需要嵌套，例如我上一篇博客中&lt;&lt;es6中promise的研究&gt;&gt;中的例子一样，如果使用co+generator方式，则可以减少嵌套，在代码逻辑上更清晰，也不会让人思维混乱。</p>
+<p>如可以改写为如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="title function_">getColl</span> = (<span class="params">collname, db</span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="keyword">function</span>(<span class="params">resolve,reject</span>)&#123;</span><br><span class="line">    <span class="title function_">co</span>(<span class="keyword">function</span>* ()&#123;</span><br><span class="line">      <span class="keyword">var</span> coll = <span class="keyword">yield</span> db.<span class="title function_">createCollection</span>(collname,&#123;<span class="attr">capped</span>: <span class="literal">true</span>,<span class="attr">size</span>: <span class="number">11800000</span>,<span class="attr">max</span>: <span class="number">5000</span>&#125;);</span><br><span class="line">      <span class="keyword">var</span> stats = <span class="keyword">yield</span> coll.<span class="title function_">stats</span>();</span><br><span class="line">      <span class="keyword">if</span>(stats.<span class="property">count</span> == <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">var</span> inserted = <span class="keyword">yield</span> coll.<span class="title function_">insert</span>(&#123;<span class="attr">coll</span>: collname,<span class="attr">create_time</span>: <span class="keyword">new</span> <span class="title class_">Date</span>()&#125;);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="title function_">resolve</span>(coll);</span><br><span class="line">    &#125;).<span class="title function_">catch</span>(<span class="keyword">function</span>(<span class="params">err</span>)&#123;</span><br><span class="line">      <span class="title function_">reject</span>(err);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码在逻辑上，看起来就比之前用纯Promise实现的清爽些，逻辑上不混乱。</p>
+<h2 id="es7的async和await"><a href="#es7的async和await" class="headerlink" title="es7的async和await"></a>es7的async和await</h2><p>es7提供了async函数和await,这里和co+Generator函数方式是一样的，都是基于Promise实现的。这里async函数可以看作是Generator函数的语法糖，await可以看作是yield的语法糖。<br>co模块可以看作是Generator函数的执行器，而es7中，async函数自带执行器，这样就不必引用第三方的co模块了。<br>更好的语义，async和await，比起星号和yield，语义更清楚了。async表示函数里有异步操作，await表示紧跟在后面的表达式需要等待结果。<br>更广的适用性。 co模块约定，yield命令后面只能是Thunk函数或Promise对象，而async函数的await命令后面，可以是Promise对象和原始类型的值（数值、字符串和布尔值，但这时等同于同步操作）。<br>返回值是Promise。async函数的返回值是Promise对象，这比Generator函数的返回值是Iterator对象方便多了。你可以用then方法指定下一步的操作。<br>可以说，es7的async和await才是解决回调地狱的终极大招，虽然现在还不能以原生代码编写，但是可以使用es7编写代码，然后使用babel转译成es5代码。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/js/" rel="tag">#js</a>
+          
+            <a href="/tags/es6/" rel="tag">#es6</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/05/angular%E8%87%AA%E5%AE%9A%E4%B9%89filter/" rel="next" title="angular自定义filter">
+                <i class="fa fa-chevron-left"></i> angular自定义filter
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/02/es6%E5%88%9D%E6%8E%A2/" rel="prev" title="ES6初探之Promise">
+                ES6初探之Promise <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Promise方式"><span class="nav-number">1.</span> <span class="nav-text">Promise方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#co-Generator搭配使用"><span class="nav-number">2.</span> <span class="nav-text">co+Generator搭配使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#es7的async和await"><span class="nav-number">3.</span> <span class="nav-text">es7的async和await</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

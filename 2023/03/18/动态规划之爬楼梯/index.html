@@ -1,0 +1,746 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="算法与数据结构,动态规划," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="爬楼梯是一个动态规划的入门题目，非常简单，也非常容易理解，一般将动态规划都是以爬楼梯作为例子来讲解。 虽然简单，但里面确有一些值得玩味的细节，今天来聊聊这个经典的爬楼梯。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="动态规划之爬楼梯">
+<meta property="og:url" content="http://coolcao.com/2023/03/18/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E7%88%AC%E6%A5%BC%E6%A2%AF/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="爬楼梯是一个动态规划的入门题目，非常简单，也非常容易理解，一般将动态规划都是以爬楼梯作为例子来讲解。 虽然简单，但里面确有一些值得玩味的细节，今天来聊聊这个经典的爬楼梯。">
+<meta property="og:locale">
+<meta property="og:image" content="https://img.coolcao.site/file/e049647ad8351a06b44c5.png">
+<meta property="og:image" content="https://img.coolcao.site/file/21987c3906e5c69dbf025.png">
+<meta property="og:image" content="https://img.coolcao.site/file/6491ef8634ef89cba020a.png">
+<meta property="article:published_time" content="2023-03-18T13:25:35.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.961Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="算法与数据结构">
+<meta property="article:tag" content="动态规划">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.coolcao.site/file/e049647ad8351a06b44c5.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2023/03/18/动态规划之爬楼梯/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> 动态规划之爬楼梯 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                动态规划之爬楼梯
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2023-03-18T21:25:35+08:00" content="2023-03-18">
+              2023-03-18
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>爬楼梯是一个动态规划的入门题目，非常简单，也非常容易理解，一般将动态规划都是以爬楼梯作为例子来讲解。</p>
+<p>虽然简单，但里面确有一些值得玩味的细节，今天来聊聊这个经典的爬楼梯。</p>
+<span id="more"></span>
+
+<h2 id="爬楼梯"><a href="#爬楼梯" class="headerlink" title="爬楼梯"></a>爬楼梯</h2><blockquote>
+<p>题目描述：</p>
+<p><img src="https://img.coolcao.site/file/e049647ad8351a06b44c5.png" alt="爬楼梯"></p>
+</blockquote>
+<p><img src="https://img.coolcao.site/file/21987c3906e5c69dbf025.png" alt="1"></p>
+<p>由于每次只能爬1个或2个台阶，因此，对于只有一个台阶的楼梯，只有一种方法，就是从地面爬1个台阶都楼顶（图中红色部分）。对于一个有2个台阶的楼梯而言，有2种方法，直接爬两个台阶到楼顶（图中绿色部分），或者每次一个台阶，爬两次到楼顶（图中蓝色部分）。</p>
+<p>对于有n阶台阶的楼梯而言，有两种方式爬上来：</p>
+<ol>
+<li>从n-1阶台阶，爬1个台阶上来</li>
+<li>从n-2阶台阶，爬2个台阶上来</li>
+</ol>
+<p>因此，我们定义 <code>dp[i]</code> 为爬i个台阶的方法数，则 <code>dp[i] = dp[i-1]+dp[i-2]</code>即为状态转移公式。</p>
+<p>初始化状态，我们初始化 <code>dp[0]=1, dp[1]=1</code>。对于dp[1]&#x3D;1很多人没有异议，但是对于dp[0]&#x3D;1很多人不理解，dp[0]按定义就是爬0阶台阶的楼梯，应该等于0，怎么会等于1呢？</p>
+<p>其实对于0阶台阶，即直接地面就是楼顶，本身也是一种方法，因此初始化时可以直接初始化为1。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">climbStairs</span>(<span class="params">n: <span class="built_in">number</span></span>): <span class="built_in">number</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> dp = <span class="keyword">new</span> <span class="title class_">Array</span>(n + <span class="number">1</span>).<span class="title function_">fill</span>(<span class="number">0</span>);</span><br><span class="line">  <span class="comment">// 初始化状态</span></span><br><span class="line">  dp[<span class="number">0</span>] = <span class="number">1</span>, dp[<span class="number">1</span>] = <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i=<span class="number">2</span>;i&lt;=n;i++) &#123;</span><br><span class="line">    dp[i] = dp[i-<span class="number">1</span>]+dp[i-<span class="number">2</span>];</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> dp[n];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用最小花费爬楼梯"><a href="#使用最小花费爬楼梯" class="headerlink" title="使用最小花费爬楼梯"></a>使用最小花费爬楼梯</h2><blockquote>
+<p><img src="https://img.coolcao.site/file/6491ef8634ef89cba020a.png" alt="爬楼梯"></p>
+</blockquote>
+<p>本题是上面 <a href="#%E7%88%AC%E6%A5%BC%E6%A2%AF">爬楼梯</a>的升级，在爬的过程中需要支付相应的费用。</p>
+<p>我们定义 <code>dp[i]</code> 表示爬到第i阶台阶所需要的最小花费。那么，爬到楼顶的最小花费即为 <code>dp[length+1]</code>.</p>
+<p>我们爬到第i阶台阶有两种方式：</p>
+<ul>
+<li>从i-1阶台阶，爬一个台阶上来</li>
+<li>从i-2阶台阶，爬2个台阶上来</li>
+</ul>
+<p>由于我们可以选择从下标为0或者下标为1的台阶开始爬，因此会有 <code>dp[0]=0，dp[1]=0</code>。<br>即我们可以选择直接从地面爬，或者直接从第1阶台阶爬，这都是不需要费用的。</p>
+<p>那么得到的状态转移公式便是 <code>dp[i]=min(dp[i-1]+cost[i-1], dp[i-2]+cost[i-2])</code></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">minCostClimbingStairs</span>(<span class="params">cost: <span class="built_in">number</span>[]</span>): <span class="built_in">number</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> dp = [<span class="number">0</span>, <span class="number">0</span>];</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">2</span>; i &lt;= cost.<span class="property">length</span>; i++) &#123;</span><br><span class="line">    dp[i] = <span class="title class_">Math</span>.<span class="title function_">min</span>(dp[i - <span class="number">1</span>] + cost[i - <span class="number">1</span>], dp[i - <span class="number">2</span>] + cost[i - <span class="number">2</span>]);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> dp[cost.<span class="property">length</span>]</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="爬楼梯进阶"><a href="#爬楼梯进阶" class="headerlink" title="爬楼梯进阶"></a>爬楼梯进阶</h2><p>我们做一下进阶，上面爬楼梯每次只能爬1个或2个台阶，但如果改一下，每次至多爬k个台阶呢？<br>对于一个有n阶台阶的楼梯，每次能爬1个，2个，3个，…，至多k个台阶，那么爬到楼顶有多少种方法？</p>
+<blockquote>
+<p>k&#x3D;2即是上面爬楼梯的题</p>
+</blockquote>
+<p>如果每次只能爬1个或2个台阶，每次爬到第n个台阶时方法是固定的，就两种，从n-1阶台阶爬上来或从n-2阶台阶爬上来。</p>
+<p>但是如果爬的方式不固定，可以1个，也可以2个，至多可以爬k个台阶，其实解决方法也是一样的。</p>
+<p>对于爬n个台阶而言，我们可以从n-1爬上来，也可以从n-2爬上来，也可以从n-3爬上来，一直到可以从n-k爬上来。</p>
+<p>我们只需要多加一层循环，来遍历爬楼梯的方式即可。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">climbStairs</span>(<span class="params">n: <span class="built_in">number</span>, k: <span class="built_in">number</span></span>): <span class="built_in">number</span> &#123;</span><br><span class="line">  <span class="comment">// 定义 dp[i] 为爬到第i个台阶时方法数</span></span><br><span class="line">  <span class="keyword">const</span> dp = <span class="keyword">new</span> <span class="title class_">Array</span>(n + <span class="number">1</span>).<span class="title function_">fill</span>(<span class="number">0</span>);</span><br><span class="line">  dp[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i=<span class="number">1</span>;i&lt;=n;i++) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> j=<span class="number">1</span>;j&lt;=k;j++) &#123;</span><br><span class="line">      <span class="comment">// 这里为什么要判断 i-j&gt;=0 ?</span></span><br><span class="line">      <span class="comment">// 因为要确保爬到第i个台阶时，要有足够的台阶够每次爬j个台阶，如果每次爬j个台阶时已经没有台阶了，那么就没有办法爬到第i个台阶了</span></span><br><span class="line">      <span class="keyword">if</span> (i-j&gt;=<span class="number">0</span>) &#123;</span><br><span class="line">        dp[i] = dp[i] + dp[i - j];</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> dp[n];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码中k&#x3D;2即可当作上面普通爬楼梯题目的代码。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">#算法与数据结构</a>
+          
+            <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" rel="tag">#动态规划</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2023/01/23/express-koa-middleware/" rel="next" title="深入理解express和koa中间件模型">
+                <i class="fa fa-chevron-left"></i> 深入理解express和koa中间件模型
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2023/03/25/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%B3%BB%E5%88%97/" rel="prev" title="动态规划之买卖股票系列">
+                动态规划之买卖股票系列 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#爬楼梯"><span class="nav-number">1.</span> <span class="nav-text">爬楼梯</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用最小花费爬楼梯"><span class="nav-number">2.</span> <span class="nav-text">使用最小花费爬楼梯</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#爬楼梯进阶"><span class="nav-number">3.</span> <span class="nav-text">爬楼梯进阶</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

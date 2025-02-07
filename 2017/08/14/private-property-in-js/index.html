@@ -1,0 +1,756 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="js," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="今天在看《你不知道的 js》这本书时，无意看到 Object 还有个方法叫做 getOwnPropertySymbols() ，用来获取对象的 Symbol 属性。记得之前看过一些文章说，可以使用 Symbol 来实现私有属性，如果能直接使用 getOwnPropertySymbols() 方法获取 Symbol 属性，那还是私有属性么？ 今天复习整理一下关于 js 中创建私有属性的一些问题。 由">
+<meta property="og:type" content="article">
+<meta property="og:title" content="js中模拟实现私有属性">
+<meta property="og:url" content="http://coolcao.com/2017/08/14/private-property-in-js/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="今天在看《你不知道的 js》这本书时，无意看到 Object 还有个方法叫做 getOwnPropertySymbols() ，用来获取对象的 Symbol 属性。记得之前看过一些文章说，可以使用 Symbol 来实现私有属性，如果能直接使用 getOwnPropertySymbols() 方法获取 Symbol 属性，那还是私有属性么？ 今天复习整理一下关于 js 中创建私有属性的一些问题。 由">
+<meta property="og:locale">
+<meta property="article:published_time" content="2017-08-14T07:14:50.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.958Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="js">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2017/08/14/private-property-in-js/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> js中模拟实现私有属性 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                js中模拟实现私有属性
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-08-14T15:14:50+08:00" content="2017-08-14">
+              2017-08-14
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>今天在看《你不知道的 js》这本书时，无意看到 Object 还有个方法叫做 <code>getOwnPropertySymbols()</code> ，用来获取对象的 Symbol 属性。记得之前看过一些文章说，可以使用 Symbol 来实现私有属性，如果能直接使用 <code>getOwnPropertySymbols()</code> 方法获取 Symbol 属性，那还是私有属性么？</p>
+<p>今天复习整理一下关于 js 中创建私有属性的一些问题。</p>
+<p>由于 js 并不是 Java 那种类式面向对象，因此即使 es6 添加了 class 支持，js 根上还是基于原型的面向对象，不支持什么私有，公有属性的。</p>
+<p>要想实现私有属性，基于现有的 js，途径只有一个： 闭包。</p>
+<span id="more"></span>
+
+<p>至于什么是闭包，网上一大把，有兴趣也可以看看我之前整理的<a href="http://coolcao.com/2017/02/06/closure/">文章</a>。</p>
+<h2 id="使用原始的闭包"><a href="#使用原始的闭包" class="headerlink" title="使用原始的闭包"></a>使用原始的闭包</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">User</span> = (<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">name</span>) &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">getName</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">      &#125;;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">setName</span> = <span class="keyword">function</span> (<span class="params">name</span>) &#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">getName</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">          <span class="keyword">return</span> name;</span><br><span class="line">        &#125;;</span><br><span class="line">      &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+
+<p>这种方式的确可以实现私有的属性，而且如果有子类继承，也可以如下写法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">Boy</span> = (<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">class</span> <span class="title class_">Boy</span> <span class="keyword">extends</span> <span class="title class_ inherited__">User</span> &#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">name</span>) &#123;</span><br><span class="line">      <span class="variable language_">super</span>(name);</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">getGender</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;boy&quot;</span>;</span><br><span class="line">      &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+
+<p>但问题也有：</p>
+<ul>
+<li>代码组织混乱。由于对构造器函数形成一个闭包，因此所有的 setter,getter 函数都写在了构造器内。可以从上面的 User 的写法中看出，setter 函数中，还要再定义一遍 getter，这种混乱，不是一般能忍受的。如果业务逻辑中还有其他的更多操作，那么混乱程度一下子就上来了。</li>
+<li>闭包的内存开销不容小觑。</li>
+</ul>
+<p>针对上面的问题，我们可不可以将 name 单独拿出来放到单独一个地方存储，优化一下代码的组织呢？比如下面这个：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">User</span> = (<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">let</span> privateName = <span class="literal">null</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">name</span>) &#123;</span><br><span class="line">      privateName = name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">getName</span>(<span class="params"></span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> privateName;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">setName</span>(<span class="params">name</span>) &#123;</span><br><span class="line">      privateName = name;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+
+<p>上面这个例子，貌似是可以的，这样代码也清晰了，也能实现私有属性。</p>
+<p>但是，仔细分析一下，真的可以么？</p>
+<p>如此的话，是不是所有的实例对象都共享一个 privateName 属性？后面的实例会覆盖前面实例的值。看下面：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> u1 = <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;coolcao&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> u2 = <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;lili&quot;</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(u2.<span class="title function_">getName</span>());</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(u1.<span class="title function_">getName</span>());</span><br><span class="line"><span class="comment">// lili</span></span><br><span class="line"><span class="comment">// lili</span></span><br></pre></td></tr></table></figure>
+
+<p>针对上面的问题，我们使用一个 privateName 保存私有属性，会被覆盖，那么我们如果使用一个数组，保存多个，然后针对每个实例，生成一个唯一的存取标识呢？</p>
+<h2 id="基于散列实现"><a href="#基于散列实现" class="headerlink" title="基于散列实现"></a>基于散列实现</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">User</span> = (<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> privateData = &#123;&#125;;</span><br><span class="line">  <span class="keyword">let</span> i = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">name</span>) &#123;</span><br><span class="line">      <span class="variable language_">this</span>[<span class="string">&quot;_id&quot;</span>] = i++;</span><br><span class="line">      privateData[<span class="variable language_">this</span>[<span class="string">&quot;_id&quot;</span>]] = &#123; <span class="attr">name</span>: name &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">getName</span>(<span class="params"></span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> privateData[<span class="variable language_">this</span>[<span class="string">&quot;_id&quot;</span>]].<span class="property">name</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">setName</span>(<span class="params">name</span>) &#123;</span><br><span class="line">      privateData[<span class="variable language_">this</span>[<span class="string">&quot;_id&quot;</span>]].<span class="property">name</span> = name;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+
+<p>我们使用 privateData 这个对象来保存所有实例的私有属性，针对每个实例，使用一个 id 进行标识，每实例化一个实例，该 id 会自动加 1。然后将该 id 作为键值，将私有属性存入 privateData 对象。<br>嗯，这样看上去比直接在构造器中使用闭包要清晰多了，而且实例与实例之间也不冲突。</p>
+<p>在 es6 之前，这可能是最合适的方案。虽然也会存在问题：</p>
+<p>每个实例对象都会引用 privateData ，因此，还是由于闭包的问题，如果实例太多的话，内存是个问题。</p>
+<h2 id="WeakMap-实现"><a href="#WeakMap-实现" class="headerlink" title="WeakMap 实现"></a>WeakMap 实现</h2><p>幸好 es6 来了，带来了一个叫做 <code>WeakMap</code> 的东西，具体这东西是啥呢？可以看看<a target="_blank" rel="noopener" href="http://es6.ruanyifeng.com/#docs/set-map#WeakMap">阮老师的教程</a></p>
+<p>简单说来，WeakMap 键名所引用的对象都是弱引用，即垃圾回收机制不将该引用考虑在内。因此，只要所引用的对象的其他引用都被清除，垃圾回收机制就会释放该对象所占用的内存。也就是说，一旦不再需要，WeakMap 里面的键名对象和所对应的键值对会自动消失，不用手动删除引用。</p>
+<p>好了，那么上面的这个强引用关系，我们可以使用 WeakMap 弱引用来代替：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">User</span> = (<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> privateData = <span class="keyword">new</span> <span class="title class_">WeakMap</span>();</span><br><span class="line">  <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">name</span>) &#123;</span><br><span class="line">      privateData.<span class="title function_">set</span>(<span class="variable language_">this</span>, &#123; <span class="attr">name</span>: name &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">getName</span>(<span class="params"></span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> privateData.<span class="title function_">get</span>(<span class="variable language_">this</span>).<span class="property">name</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">setName</span>(<span class="params">name</span>) &#123;</span><br><span class="line">      privateData.<span class="title function_">get</span>(<span class="variable language_">this</span>).<span class="property">name</span> = name;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+
+<p>如此的代码，干净清爽了许多，而且由于 WeakMap 是弱引用，如果没有其他引用和该键引用同一个对象,这个对象将会被当作垃圾回收掉。解决了内存泄露的问题。</p>
+<p>好了，js 模拟闭包，就这几个方式了，从这几个例子来看，都使用了自执行函数（IIFE），因此都会形成闭包。这也是我最开始说的，要想在 js 实现私有属性，只能使用闭包。</p>
+<h2 id="Symbol-的问题"><a href="#Symbol-的问题" class="headerlink" title="Symbol 的问题"></a>Symbol 的问题</h2><p>话说回来我当初的疑问，ES6 的 Symbol 实现的私有属性有啥问题呢？</p>
+<p>看下面例子：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">User</span> = (<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="variable constant_">NAME</span> = <span class="title class_">Symbol</span>(<span class="string">&quot;User#Name&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">name</span>) &#123;</span><br><span class="line">      <span class="variable language_">this</span>[<span class="variable constant_">NAME</span>] = name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">getName</span>(<span class="params"></span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="variable language_">this</span>[<span class="variable constant_">NAME</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">setName</span>(<span class="params">name</span>) &#123;</span><br><span class="line">      <span class="variable language_">this</span>[<span class="variable constant_">NAME</span>] = name;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+
+<p>NAME 是个 Symbol，从外部并不能拿到 NAME 确切的值，好像是有点私有属性的意思。但是 有一个 <code>Object.getOwnPropertySymbols()</code> 方法可以拿到对象所有的 Symbol 属性，虽然我不知道具体存了个啥，但是能拿到这个标识，就可以修改属性值了：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> smbs = <span class="title class_">Object</span>.<span class="title function_">getOwnPropertySymbols</span>(user);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> s <span class="keyword">of</span> smbs) &#123;</span><br><span class="line">  user[s] = <span class="string">&quot;good&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(user.<span class="title function_">getName</span>());</span><br><span class="line"><span class="comment">// good</span></span><br></pre></td></tr></table></figure>
+
+<p>因此，严格意义上说，Symbol 其实并不能实现私有属性。</p>
+<p>不过倒是可以将上面第二种基于散列的方式改为 Symbol 的方式：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">User</span> = (<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> privateData = &#123;&#125;;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">name</span>) &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">_name</span> = <span class="title class_">Symbol</span>(<span class="string">&quot;name&quot;</span>);</span><br><span class="line">      privateData[<span class="variable language_">this</span>.<span class="property">_name</span>] = &#123; <span class="attr">name</span>: name &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">getName</span>(<span class="params"></span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> privateData[<span class="variable language_">this</span>.<span class="property">_name</span>].<span class="property">name</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">setName</span>(<span class="params">name</span>) &#123;</span><br><span class="line">      privateData[<span class="variable language_">this</span>.<span class="property">_name</span>].<span class="property">name</span> = name;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+
+<p>这样对外暴露的只是 _name 的这个符号，外部还是无法直接访问每个实例的 privateData 中的值。但这个其实和第二种是一样的，闭包引起的问题还是无法解决。</p>
+<h2 id="展望未来"><a href="#展望未来" class="headerlink" title="展望未来"></a>展望未来</h2><p>js 的私有属性，目前处于 stage2 阶段，目前还未最终确定，不过我们可以先看一下模样：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Point</span> &#123;</span><br><span class="line">  #x;</span><br><span class="line">  #y;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">x, y</span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.#x = x;</span><br><span class="line">    <span class="variable language_">this</span>.#y = y;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">equals</span>(<span class="params">point</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>.#x === point.#x &amp;&amp; <span class="variable language_">this</span>.#y === point.#y;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>语法如上，使用 <code>#</code> 定义私有属性，在类的内部可以直接 使用 <code>this.#x</code> 的形式引用。<br>目前使用#进行定义和访问私有属性，未来会不会使用 public,private 等关键字不得而知。</p>
+<p>目前使用<code>#</code>，可能的原因是，js 没有静态类型系统。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.nczonline.net/blog/2014/01/21/private-instance-members-with-weakmaps-in-javascript/">Private instance members with weakmaps in JavaScript</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/Add-ons/SDK/Guides/Contributor_s_Guide/Private_Properties">Private Properties(MDN)</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/ihardcoder/p/4914938.html">JavaScript 实现私有属性</a></li>
+<li><a target="_blank" rel="noopener" href="http://thejameskyle.com/javascripts-new-private-class-fields.html">JavaScript’s new #private class fields</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/js/" rel="tag">#js</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/06/intelli-sense-in-vscode/" rel="next" title="增强vscode中js代码提示">
+                <i class="fa fa-chevron-left"></i> 增强vscode中js代码提示
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/28/co-learning/" rel="prev" title="co源码学习">
+                co源码学习 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用原始的闭包"><span class="nav-number">1.</span> <span class="nav-text">使用原始的闭包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于散列实现"><span class="nav-number">2.</span> <span class="nav-text">基于散列实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WeakMap-实现"><span class="nav-number">3.</span> <span class="nav-text">WeakMap 实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Symbol-的问题"><span class="nav-number">4.</span> <span class="nav-text">Symbol 的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#展望未来"><span class="nav-number">5.</span> <span class="nav-text">展望未来</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

@@ -1,0 +1,808 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="前端,爬虫,反爬," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="看到一篇文章，介绍在反爬虫过程中，前端工程师的各种脑洞，文章见这里。文章里介绍了几个大的网站，在反爬虫过程中，采取的各式各样的策略，无不体现出前端工程师的奇葩脑洞。还挺有意思的，就简单分析了一下，针对每个方案，看看有没有解决办法，于是整理成博客，记录一下。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="爬虫攻防之前端策略简析">
+<meta property="og:url" content="http://coolcao.com/2018/06/09/tips-of-anti-spider-in-fe/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="看到一篇文章，介绍在反爬虫过程中，前端工程师的各种脑洞，文章见这里。文章里介绍了几个大的网站，在反爬虫过程中，采取的各式各样的策略，无不体现出前端工程师的奇葩脑洞。还挺有意思的，就简单分析了一下，针对每个方案，看看有没有解决办法，于是整理成博客，记录一下。">
+<meta property="og:locale">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/maoyan.1.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/maoyan.2.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/maoyan.3.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/maoyan.5.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/maoyan.6.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/manyan.7.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/qunaer.1.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/qunar.2.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/qunar.3.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/wechat.1.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/goubanjia.1.png">
+<meta property="article:published_time" content="2018-06-09T02:56:19.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.959Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="前端">
+<meta property="article:tag" content="爬虫">
+<meta property="article:tag" content="反爬">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/maoyan.1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2018/06/09/tips-of-anti-spider-in-fe/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> 爬虫攻防之前端策略简析 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                爬虫攻防之前端策略简析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-06-09T10:56:19+08:00" content="2018-06-09">
+              2018-06-09
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>看到一篇文章，介绍在反爬虫过程中，前端工程师的各种脑洞，文章见<a target="_blank" rel="noopener" href="http://imweb.io/topic/595b7161d6ca6b4f0ac71f05">这里</a>。<br>文章里介绍了几个大的网站，在反爬虫过程中，采取的各式各样的策略，无不体现出前端工程师的奇葩脑洞。<br>还挺有意思的，就简单分析了一下，针对每个方案，看看有没有解决办法，于是整理成博客，记录一下。</p>
+<span id="more"></span>
+
+<h2 id="1-自定义字体形式"><a href="#1-自定义字体形式" class="headerlink" title="1. 自定义字体形式"></a>1. 自定义字体形式</h2><p>该方案是，自定义了一种字体，网页中使用乱码字符或者其他混淆字符，通过自定义字体的渲染成正确的显示数据。</p>
+<p>代表网站有猫眼电影和去哪儿手机端。</p>
+<h3 id="1-1-猫眼电影"><a href="#1-1-猫眼电影" class="headerlink" title="1.1 猫眼电影"></a>1.1 猫眼电影</h3><p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/maoyan.1.png" alt="今日票房"></p>
+<p>如上图，是猫眼首页今日票房栏的前10名统计（截图只截取了前三名），其中的票房数据，对爬虫来说是私密数据，于是，猫眼给“加密”了。</p>
+<p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/maoyan.2.png" alt="source"></p>
+<p>网页代码显示的是一堆乱码，都是方框。。。</p>
+<p>我们通过浏览器的开发者工具查看该部分“方框”数字，发现是用了自定义的字体渲染成可视的数字的。</p>
+<p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/maoyan.3.png" alt="maoyan.3"></p>
+<p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/maoyan.5.png" alt="maoyan.4"></p>
+<p>woff字体是网页开放字体格式，详细可参见 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/WOFF">MDN</a>。</p>
+<p>我们把这个woff格式的字体文件下载下来，看一下这个自定义的字体里有啥奥秘呢？</p>
+<p>这里推荐一个在线的字体编辑工具：<a target="_blank" rel="noopener" href="http://fontstore.baidu.com/static/editor/index.html">百度字体编辑器</a>。</p>
+<p>将下载后的woff文件字体，在百度字体编辑器中打开：</p>
+<p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/maoyan.6.png" alt="baidu.font"></p>
+<p>好了，一目了然，这个字体文件里，<strong>采用随机的Unicode编码来定义了 0-9这几个数字以及一个空白符和一个小数点，而且数字定义的顺序不是固定的，Unicode编码也不是连续的</strong>。</p>
+<p>也就是说，在HTML页面源码看到的方框，它的unicode应该和字体上的值是对应的，你可以用 charCodeAt()方法进行验证一下。</p>
+<p>如果说，woff文件是固定的，那么其实问题很简单。但是，猫眼这个woff文件并不是固定的，而是随机的。</p>
+<p>如果，woff字体文件里定义字体的顺序和实际数字顺序一致，或者其unicode值的顺序和真实数字是一致的，也简单。但是，顺序也是随机的。。。</p>
+<p>所以，难道就真的没办法搞了么？</p>
+<p>当然不！！！任何能在页面上显示的，都可以搞。</p>
+<p>找到python的一个库 <code>fonttools</code>，可以解析成字体为 xml 文件，然后再根据xml里的信息找找：</p>
+<blockquote>
+<p>其实百度字体编辑器代码是开源的，它其中依赖了一个核心库 <a target="_blank" rel="noopener" href="https://github.com/kekee000/fonteditor-core">fonteditor-core</a> ，这个库应该也能解析字体数据，但是我在实验时，老是报错解析错误，不知为何，有兴趣的小伙伴可以自行研究一下，并分享一下研究成果，谢过。</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fontTools.ttLib <span class="keyword">import</span> TTFont</span><br><span class="line"></span><br><span class="line">font = TTFont(<span class="string">&#x27;/Users/coolcao/Downloads/b0a53bf9d791622d4681b8344fd118f92088.woff&#x27;</span>)</span><br><span class="line">font.saveXML(<span class="string">&#x27;/Users/coolcao/maoyan2.xml&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>生成的xml文件，有两部分很重要：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">GlyphOrder</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- The &#x27;id&#x27; attribute is only for humans; it is ignored when parsed. --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;0&quot;</span> <span class="attr">name</span>=<span class="string">&quot;glyph00000&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;1&quot;</span> <span class="attr">name</span>=<span class="string">&quot;x&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;2&quot;</span> <span class="attr">name</span>=<span class="string">&quot;uniEABA&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;3&quot;</span> <span class="attr">name</span>=<span class="string">&quot;uniEB51&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;4&quot;</span> <span class="attr">name</span>=<span class="string">&quot;uniE06D&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;5&quot;</span> <span class="attr">name</span>=<span class="string">&quot;uniF88C&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;6&quot;</span> <span class="attr">name</span>=<span class="string">&quot;uniF012&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;7&quot;</span> <span class="attr">name</span>=<span class="string">&quot;uniF6C7&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;8&quot;</span> <span class="attr">name</span>=<span class="string">&quot;uniE373&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;9&quot;</span> <span class="attr">name</span>=<span class="string">&quot;uniF48F&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;10&quot;</span> <span class="attr">name</span>=<span class="string">&quot;uniE429&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;11&quot;</span> <span class="attr">name</span>=<span class="string">&quot;uniF4CA&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">GlyphOrder</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>第一部分是字体概览，定义了字体集中的name，注意，这里id和实际数字并无关系，并不是实际的数字0,1,2…等等。name是采用unicode定义的 ，和在百度字体编辑器中的正好是一致的。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">TTGlyph</span> <span class="attr">name</span>=<span class="string">&quot;uniF4CA&quot;</span> <span class="attr">xMin</span>=<span class="string">&quot;0&quot;</span> <span class="attr">yMin</span>=<span class="string">&quot;-13&quot;</span> <span class="attr">xMax</span>=<span class="string">&quot;511&quot;</span> <span class="attr">yMax</span>=<span class="string">&quot;719&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">contour</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;130&quot;</span> <span class="attr">y</span>=<span class="string">&quot;201&quot;</span> <span class="attr">on</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;145&quot;</span> <span class="attr">y</span>=<span class="string">&quot;126&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;216&quot;</span> <span class="attr">y</span>=<span class="string">&quot;60&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;270&quot;</span> <span class="attr">y</span>=<span class="string">&quot;60&quot;</span> <span class="attr">on</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;332&quot;</span> <span class="attr">y</span>=<span class="string">&quot;60&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;417&quot;</span> <span class="attr">y</span>=<span class="string">&quot;146&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;417&quot;</span> <span class="attr">y</span>=<span class="string">&quot;270&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;378&quot;</span> <span class="attr">y</span>=<span class="string">&quot;309&quot;</span> <span class="attr">on</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;337&quot;</span> <span class="attr">y</span>=<span class="string">&quot;349&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;277&quot;</span> <span class="attr">y</span>=<span class="string">&quot;349&quot;</span> <span class="attr">on</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;251&quot;</span> <span class="attr">y</span>=<span class="string">&quot;349&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;215&quot;</span> <span class="attr">y</span>=<span class="string">&quot;339&quot;</span> <span class="attr">on</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;225&quot;</span> <span class="attr">y</span>=<span class="string">&quot;416&quot;</span> <span class="attr">on</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;239&quot;</span> <span class="attr">y</span>=<span class="string">&quot;415&quot;</span> <span class="attr">on</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;296&quot;</span> <span class="attr">y</span>=<span class="string">&quot;415&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;385&quot;</span> <span class="attr">y</span>=<span class="string">&quot;474&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;385&quot;</span> <span class="attr">y</span>=<span class="string">&quot;535&quot;</span> <span class="attr">on</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;385&quot;</span> <span class="attr">y</span>=<span class="string">&quot;583&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;322&quot;</span> <span class="attr">y</span>=<span class="string">&quot;646&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;268&quot;</span> <span class="attr">y</span>=<span class="string">&quot;646&quot;</span> <span class="attr">on</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;217&quot;</span> <span class="attr">y</span>=<span class="string">&quot;646&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;149&quot;</span> <span class="attr">y</span>=<span class="string">&quot;584&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;139&quot;</span> <span class="attr">y</span>=<span class="string">&quot;518&quot;</span> <span class="attr">on</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;51&quot;</span> <span class="attr">y</span>=<span class="string">&quot;533&quot;</span> <span class="attr">on</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;67&quot;</span> <span class="attr">y</span>=<span class="string">&quot;623&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;124&quot;</span> <span class="attr">y</span>=<span class="string">&quot;670&quot;</span> <span class="attr">on</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;182&quot;</span> <span class="attr">y</span>=<span class="string">&quot;719&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;266&quot;</span> <span class="attr">y</span>=<span class="string">&quot;719&quot;</span> <span class="attr">on</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;324&quot;</span> <span class="attr">y</span>=<span class="string">&quot;719&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;374&quot;</span> <span class="attr">y</span>=<span class="string">&quot;693&quot;</span> <span class="attr">on</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;423&quot;</span> <span class="attr">y</span>=<span class="string">&quot;669&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;476&quot;</span> <span class="attr">y</span>=<span class="string">&quot;581&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;476&quot;</span> <span class="attr">y</span>=<span class="string">&quot;485&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;426&quot;</span> <span class="attr">y</span>=<span class="string">&quot;410&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;377&quot;</span> <span class="attr">y</span>=<span class="string">&quot;388&quot;</span> <span class="attr">on</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;440&quot;</span> <span class="attr">y</span>=<span class="string">&quot;373&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;511&quot;</span> <span class="attr">y</span>=<span class="string">&quot;281&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;511&quot;</span> <span class="attr">y</span>=<span class="string">&quot;211&quot;</span> <span class="attr">on</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;511&quot;</span> <span class="attr">y</span>=<span class="string">&quot;118&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;374&quot;</span> <span class="attr">y</span>=<span class="string">&quot;-13&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;270&quot;</span> <span class="attr">y</span>=<span class="string">&quot;-13&quot;</span> <span class="attr">on</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;175&quot;</span> <span class="attr">y</span>=<span class="string">&quot;-13&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;51&quot;</span> <span class="attr">y</span>=<span class="string">&quot;99&quot;</span> <span class="attr">on</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">pt</span> <span class="attr">x</span>=<span class="string">&quot;42&quot;</span> <span class="attr">y</span>=<span class="string">&quot;189&quot;</span> <span class="attr">on</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">contour</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">instructions</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">TTGlyph</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>第二部分是具体每个字体的座标集合信息，这里我只摘录了其中的一个字符<code>F4CA</code>的信息，我们多刷新两次页面，拿两个不同的woff文件，转换成xml文件，对比会发现，虽然每次定义的unicode不同，顺序是随机的，unicode也不连续，但是，但是，但是，有一样是相同的，那就是上面第二部分字体的座标信息。为啥一样呢？因为每个数字样式是固定的，所以画出图来座标必定是一样的。</p>
+<p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/manyan.7.png" alt="maoyan.7"></p>
+<p>好了同志们，到这里，基本就明朗了，我们可以人工先把几个数字的座标点进行标记，然后每次刷新时，拿到新的woff字体时，通过fonttool将字体转换成xml格式，根据座标点信息，判断其uncode值分别是多少。然后再将代码中的“方框”转换成真实数字即可。</p>
+<h3 id="1-2-去哪儿手机端网页"><a href="#1-2-去哪儿手机端网页" class="headerlink" title="1.2 去哪儿手机端网页"></a>1.2 去哪儿手机端网页</h3><p>去哪儿手机端采用的方案和猫眼类似，都是用的自定义字体进行混淆。</p>
+<p>但去哪儿采用的是ttf格式的字体文件。这是不同点一。</p>
+<p>而且，去哪儿自定义的字体，采用的unicode也比较简单，看下面：</p>
+<p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/qunaer.1.png" alt="去哪儿"></p>
+<p>去哪儿直接用的真实数字的uncode进行编码，只不过顺序和真实数字不是一一对应的，也就是说，网页源码中如果是 ‘183’，实际显示的数字却是 ‘361’。</p>
+<p>而且每次好像也是不一样的。不过没关系，只要能用 fonttool 将其转换成xml文件，拿到里面的座标数据，那么，没跑。</p>
+<h3 id="1-3-起点中文网"><a href="#1-3-起点中文网" class="headerlink" title="1.3 起点中文网"></a>1.3 起点中文网</h3><p>有一个小说阅读网站，叫起点中文网，也是采用了自定义字体的形式，这也是在cnode上有一个小伙伴提问的，我这次也看了一下。</p>
+<p>不看不知道，一看吓一跳，拿到源码里的“方框字”后，看了一下其 unicode 编码，全是一个unicode编码，如下面：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">node test.js</span></span><br><span class="line">94.37</span><br><span class="line">d821</span><br><span class="line">d821</span><br><span class="line">d821</span><br><span class="line">d821</span><br><span class="line">d821</span><br></pre></td></tr></table></figure>
+<p>其中第一行94.37是真实显示的阅读数，后面的每一行是一个方框字对应的unicode编码，当我看到结果是，崩溃了，都是一样的，什么鬼。。。 同一个字符编码，能渲染出不同的数字来？？？</p>
+<p>怎么套路和猫眼和去哪儿不一样呢？</p>
+<p>从源码中，看到，这段阅读数加密的数字，使用了css 类名为 zxJBLkdl，顺着源码，找到类 zxJBLkdl 的定义部分，有这么一段代码：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">em</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="language-css"></span></span><br><span class="line"><span class="language-css">            <span class="keyword">@font-face</span> &#123; </span></span><br><span class="line"><span class="language-css">                <span class="attribute">font-family</span>: zxJBLkdl; </span></span><br><span class="line"><span class="language-css">                <span class="attribute">src</span>: <span class="built_in">url</span>(<span class="string">&#x27;https://qidian.gtimg.com/qd_anti_spider/zxJBLkdl.eot?&#x27;</span>) <span class="built_in">format</span>(<span class="string">&#x27;eot&#x27;</span>); </span></span><br><span class="line"><span class="language-css">                <span class="attribute">src</span>: <span class="built_in">url</span>(<span class="string">&#x27;https://qidian.gtimg.com/qd_anti_spider/zxJBLkdl.woff&#x27;</span>) <span class="built_in">format</span>(<span class="string">&#x27;woff&#x27;</span>), <span class="built_in">url</span>(<span class="string">&#x27;https://qidian.gtimg.com/qd_anti_spider/zxJBLkdl.ttf&#x27;</span>) <span class="built_in">format</span>(<span class="string">&#x27;truetype&#x27;</span>); </span></span><br><span class="line"><span class="language-css">            &#125; </span></span><br><span class="line"><span class="language-css">            <span class="selector-class">.zxJBLkdl</span> &#123; </span></span><br><span class="line"><span class="language-css">                <span class="attribute">font-family</span>: <span class="string">&#x27;zxJBLkdl&#x27;</span> <span class="meta">!important</span>;     </span></span><br><span class="line"><span class="language-css">                <span class="attribute">display</span>: initial <span class="meta">!important</span>; </span></span><br><span class="line"><span class="language-css">                <span class="attribute">color</span>: inherit <span class="meta">!important</span>; </span></span><br><span class="line"><span class="language-css">                <span class="attribute">vertical-align</span>: initial <span class="meta">!important</span>; </span></span><br><span class="line"><span class="language-css">            &#125;</span></span><br><span class="line"><span class="language-css">        </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;zxJBLkdl&quot;</span>&gt;</span><span class="symbol">&amp;#100181;</span><span class="symbol">&amp;#100184;</span><span class="symbol">&amp;#100186;</span><span class="symbol">&amp;#100181;</span><span class="symbol">&amp;#100185;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">em</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">cite</span>&gt;</span>万字<span class="tag">&lt;/<span class="name">cite</span>&gt;</span><span class="tag">&lt;<span class="name">i</span>&gt;</span>|<span class="tag">&lt;/<span class="name">i</span>&gt;</span><span class="tag">&lt;<span class="name">em</span>&gt;</span><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="language-css"><span class="keyword">@font-face</span> &#123; <span class="attribute">font-family</span>: zxJBLkdl; <span class="attribute">src</span>: <span class="built_in">url</span>(<span class="string">&#x27;https://qidian.gtimg.com/qd_anti_spider/zxJBLkdl.eot?&#x27;</span>) <span class="built_in">format</span>(<span class="string">&#x27;eot&#x27;</span>); <span class="attribute">src</span>: <span class="built_in">url</span>(<span class="string">&#x27;https://qidian.gtimg.com/qd_anti_spider/zxJBLkdl.woff&#x27;</span>) <span class="built_in">format</span>(<span class="string">&#x27;woff&#x27;</span>), <span class="built_in">url</span>(<span class="string">&#x27;https://qidian.gtimg.com/qd_anti_spider/zxJBLkdl.ttf&#x27;</span>) <span class="built_in">format</span>(<span class="string">&#x27;truetype&#x27;</span>); &#125; <span class="selector-class">.zxJBLkdl</span> &#123; <span class="attribute">font-family</span>: <span class="string">&#x27;zxJBLkdl&#x27;</span> <span class="meta">!important</span>;     <span class="attribute">display</span>: initial <span class="meta">!important</span>; <span class="attribute">color</span>: inherit <span class="meta">!important</span>; <span class="attribute">vertical-align</span>: initial <span class="meta">!important</span>; &#125;</span><span class="tag">&lt;/<span class="name">style</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;zxJBLkdl&quot;</span>&gt;</span><span class="symbol">&amp;#100183;</span><span class="symbol">&amp;#100185;</span><span class="symbol">&amp;#100186;</span><span class="symbol">&amp;#100181;</span><span class="symbol">&amp;#100188;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">em</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">cite</span>&gt;</span>万总点击<span class="tag">&lt;<span class="name">span</span>&gt;</span><span class="symbol">&amp;#183;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span>会员周点击</span><br><span class="line">        <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="language-css"></span></span><br><span class="line"><span class="language-css">        <span class="keyword">@font-face</span> &#123;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">font-family</span>: zxJBLkdl;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">src</span>: <span class="built_in">url</span>(<span class="string">&#x27;https://qidian.gtimg.com/qd_anti_spider/zxJBLkdl.eot?&#x27;</span>) <span class="built_in">format</span>(<span class="string">&#x27;eot&#x27;</span>);</span></span><br><span class="line"><span class="language-css">            <span class="attribute">src</span>: <span class="built_in">url</span>(<span class="string">&#x27;https://qidian.gtimg.com/qd_anti_spider/zxJBLkdl.woff&#x27;</span>) <span class="built_in">format</span>(<span class="string">&#x27;woff&#x27;</span>), <span class="built_in">url</span>(<span class="string">&#x27;https://qidian.gtimg.com/qd_anti_spider/zxJBLkdl.ttf&#x27;</span>) <span class="built_in">format</span>(<span class="string">&#x27;truetype&#x27;</span>);</span></span><br><span class="line"><span class="language-css">        &#125;</span></span><br><span class="line"><span class="language-css"></span></span><br><span class="line"><span class="language-css">        <span class="selector-class">.zxJBLkdl</span> &#123;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">font-family</span>: <span class="string">&#x27;zxJBLkdl&#x27;</span> <span class="meta">!important</span>;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">display</span>: initial <span class="meta">!important</span>;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">color</span>: inherit <span class="meta">!important</span>;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">vertical-align</span>: initial <span class="meta">!important</span>;</span></span><br><span class="line"><span class="language-css">        &#125;</span></span><br><span class="line"><span class="language-css">        </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;zxJBLkdl&quot;</span>&gt;</span><span class="symbol">&amp;#100181;</span><span class="symbol">&amp;#100185;</span><span class="symbol">&amp;#100187;</span><span class="symbol">&amp;#100184;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">cite</span>&gt;</span><span class="tag">&lt;<span class="name">i</span>&gt;</span>|<span class="tag">&lt;/<span class="name">i</span>&gt;</span><span class="tag">&lt;<span class="name">em</span>&gt;</span><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="language-css"><span class="keyword">@font-face</span> &#123; <span class="attribute">font-family</span>: zxJBLkdl; <span class="attribute">src</span>: <span class="built_in">url</span>(<span class="string">&#x27;https://qidian.gtimg.com/qd_anti_spider/zxJBLkdl.eot?&#x27;</span>) <span class="built_in">format</span>(<span class="string">&#x27;eot&#x27;</span>); <span class="attribute">src</span>: <span class="built_in">url</span>(<span class="string">&#x27;https://qidian.gtimg.com/qd_anti_spider/zxJBLkdl.woff&#x27;</span>) <span class="built_in">format</span>(<span class="string">&#x27;woff&#x27;</span>), <span class="built_in">url</span>(<span class="string">&#x27;https://qidian.gtimg.com/qd_anti_spider/zxJBLkdl.ttf&#x27;</span>) <span class="built_in">format</span>(<span class="string">&#x27;truetype&#x27;</span>); &#125; <span class="selector-class">.zxJBLkdl</span> &#123; <span class="attribute">font-family</span>: <span class="string">&#x27;zxJBLkdl&#x27;</span> <span class="meta">!important</span>;     <span class="attribute">display</span>: initial <span class="meta">!important</span>; <span class="attribute">color</span>: inherit <span class="meta">!important</span>; <span class="attribute">vertical-align</span>: initial <span class="meta">!important</span>; &#125;</span><span class="tag">&lt;/<span class="name">style</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;zxJBLkdl&quot;</span>&gt;</span><span class="symbol">&amp;#100179;</span><span class="symbol">&amp;#100186;</span><span class="symbol">&amp;#100181;</span><span class="symbol">&amp;#100188;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">em</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">cite</span>&gt;</span>万总推荐<span class="tag">&lt;<span class="name">span</span>&gt;</span><span class="symbol">&amp;#183;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span>周</span><br><span class="line">        <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="language-css"></span></span><br><span class="line"><span class="language-css">        <span class="keyword">@font-face</span> &#123;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">font-family</span>: zxJBLkdl;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">src</span>: <span class="built_in">url</span>(<span class="string">&#x27;https://qidian.gtimg.com/qd_anti_spider/zxJBLkdl.eot?&#x27;</span>) <span class="built_in">format</span>(<span class="string">&#x27;eot&#x27;</span>);</span></span><br><span class="line"><span class="language-css">            <span class="attribute">src</span>: <span class="built_in">url</span>(<span class="string">&#x27;https://qidian.gtimg.com/qd_anti_spider/zxJBLkdl.woff&#x27;</span>) <span class="built_in">format</span>(<span class="string">&#x27;woff&#x27;</span>), <span class="built_in">url</span>(<span class="string">&#x27;https://qidian.gtimg.com/qd_anti_spider/zxJBLkdl.ttf&#x27;</span>) <span class="built_in">format</span>(<span class="string">&#x27;truetype&#x27;</span>);</span></span><br><span class="line"><span class="language-css">        &#125;</span></span><br><span class="line"><span class="language-css"></span></span><br><span class="line"><span class="language-css">        <span class="selector-class">.zxJBLkdl</span> &#123;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">font-family</span>: <span class="string">&#x27;zxJBLkdl&#x27;</span> <span class="meta">!important</span>;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">display</span>: initial <span class="meta">!important</span>;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">color</span>: inherit <span class="meta">!important</span>;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">vertical-align</span>: initial <span class="meta">!important</span>;</span></span><br><span class="line"><span class="language-css">        &#125;</span></span><br><span class="line"><span class="language-css">        </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;zxJBLkdl&quot;</span>&gt;</span><span class="symbol">&amp;#100188;</span><span class="symbol">&amp;#100187;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">cite</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在这段代码里发现了猫腻，其采用的也是随机字体的形式，比如此次刷新时的字体叫zxJBLkdl.woff，这不重要。</p>
+<p>重要的是 <code>&lt;span class=&quot;zxJBLkdl&quot;&gt;&amp;#100181;&amp;#100184;&amp;#100186;&amp;#100181;&amp;#100185;&lt;/span&gt;</code>这一行，这是啥，这是使用了html转义字符输出了几个不知名的方块字，然后通过字体再渲染出真实的数字显示。</p>
+<p>这里和普通的 <code>&amp;lt;</code>等不同，这里叫做实体编号，实际转义字符都要转成实体编号才能被浏览器识别，具体请参阅<a target="_blank" rel="noopener" href="http://www.w3chtml.com/html/character.html">这里</a>。</p>
+<p>可是为啥我拿到的unicode是一样的呢？</p>
+<p>答案还是得从字体文件里找。使用fonttool将字体文件转换成xml，然后你就找到了下面的代码：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">GlyphOrder</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- The &#x27;id&#x27; attribute is only for humans; it is ignored when parsed. --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;0&quot;</span> <span class="attr">name</span>=<span class="string">&quot;.notdef&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;1&quot;</span> <span class="attr">name</span>=<span class="string">&quot;period&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;2&quot;</span> <span class="attr">name</span>=<span class="string">&quot;zero&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;3&quot;</span> <span class="attr">name</span>=<span class="string">&quot;one&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;4&quot;</span> <span class="attr">name</span>=<span class="string">&quot;two&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;5&quot;</span> <span class="attr">name</span>=<span class="string">&quot;three&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;6&quot;</span> <span class="attr">name</span>=<span class="string">&quot;four&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;7&quot;</span> <span class="attr">name</span>=<span class="string">&quot;five&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;8&quot;</span> <span class="attr">name</span>=<span class="string">&quot;six&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;9&quot;</span> <span class="attr">name</span>=<span class="string">&quot;seven&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;10&quot;</span> <span class="attr">name</span>=<span class="string">&quot;eight&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">GlyphID</span> <span class="attr">id</span>=<span class="string">&quot;11&quot;</span> <span class="attr">name</span>=<span class="string">&quot;nine&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">GlyphOrder</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>太明目张胆了，直接用英文来命名数字，再继续找这几个英文数字的定义，找到如下代码：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">cmap_format_12</span> <span class="attr">platformID</span>=<span class="string">&quot;3&quot;</span> <span class="attr">platEncID</span>=<span class="string">&quot;10&quot;</span> <span class="attr">format</span>=<span class="string">&quot;12&quot;</span> <span class="attr">reserved</span>=<span class="string">&quot;0&quot;</span> <span class="attr">length</span>=<span class="string">&quot;148&quot;</span> <span class="attr">language</span>=<span class="string">&quot;0&quot;</span> <span class="attr">nGroups</span>=<span class="string">&quot;11&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">map</span> <span class="attr">code</span>=<span class="string">&quot;0x18751&quot;</span> <span class="attr">name</span>=<span class="string">&quot;eight&quot;</span>/&gt;</span><span class="comment">&lt;!-- ???? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">map</span> <span class="attr">code</span>=<span class="string">&quot;0x18753&quot;</span> <span class="attr">name</span>=<span class="string">&quot;two&quot;</span>/&gt;</span><span class="comment">&lt;!-- ???? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">map</span> <span class="attr">code</span>=<span class="string">&quot;0x18754&quot;</span> <span class="attr">name</span>=<span class="string">&quot;five&quot;</span>/&gt;</span><span class="comment">&lt;!-- ???? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">map</span> <span class="attr">code</span>=<span class="string">&quot;0x18755&quot;</span> <span class="attr">name</span>=<span class="string">&quot;three&quot;</span>/&gt;</span><span class="comment">&lt;!-- ???? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">map</span> <span class="attr">code</span>=<span class="string">&quot;0x18756&quot;</span> <span class="attr">name</span>=<span class="string">&quot;zero&quot;</span>/&gt;</span><span class="comment">&lt;!-- ???? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">map</span> <span class="attr">code</span>=<span class="string">&quot;0x18757&quot;</span> <span class="attr">name</span>=<span class="string">&quot;nine&quot;</span>/&gt;</span><span class="comment">&lt;!-- ???? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">map</span> <span class="attr">code</span>=<span class="string">&quot;0x18758&quot;</span> <span class="attr">name</span>=<span class="string">&quot;six&quot;</span>/&gt;</span><span class="comment">&lt;!-- ???? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">map</span> <span class="attr">code</span>=<span class="string">&quot;0x18759&quot;</span> <span class="attr">name</span>=<span class="string">&quot;four&quot;</span>/&gt;</span><span class="comment">&lt;!-- ???? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">map</span> <span class="attr">code</span>=<span class="string">&quot;0x1875a&quot;</span> <span class="attr">name</span>=<span class="string">&quot;period&quot;</span>/&gt;</span><span class="comment">&lt;!-- ???? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">map</span> <span class="attr">code</span>=<span class="string">&quot;0x1875b&quot;</span> <span class="attr">name</span>=<span class="string">&quot;one&quot;</span>/&gt;</span><span class="comment">&lt;!-- ???? --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">map</span> <span class="attr">code</span>=<span class="string">&quot;0x1875c&quot;</span> <span class="attr">name</span>=<span class="string">&quot;seven&quot;</span>/&gt;</span><span class="comment">&lt;!-- ???? --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">cmap_format_12</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里应该就是每个字符和其十六进制编码之间的关系了。将上面的转义编号的数字部分转换成十六进制，正好就是这十六进制的编码，因为这转义字符是“自定义的”，因此浏览器不能识别，只显示方框，估计在拷贝的过程中发生异常，浏览器不能识别具体的字符，都是按照方框去拷贝的，所以出来的unicode都是一样的。</p>
+<p>到这里起点中文网的过程也明朗了，其实质和猫眼也是一样的，只是过程和形式不大一样而已。</p>
+<h3 id="1-4-小结"><a href="#1-4-小结" class="headerlink" title="1.4 小结"></a>1.4 小结</h3><p>采用自定义字体的网站，思路都一致。</p>
+<p>后端搭一套字体生成接口，随机生成一个woff字体，然后返回这个字体文件，以及各个数字的unicode对应关系，前端页面进行数据填充即可。</p>
+<p>基本采用自定义字体的方式，都可以使用上面的思路去破解，先拿到一个字体文件，然后使用fonttool转换成xml，人工拿到每个数字的座标，然后就可以写程序，当拿到新的字体文件时，通过座标信息去判断每个数字到底是多少。</p>
+<p>还有一种方案，使用无头浏览器进行截图，然后使用OCR工具进行文字识别，但这种方案问题在于，OCR识别存在一定的错误率，因此并不完美。这里就不说了。</p>
+<h2 id="2-元素定位覆盖"><a href="#2-元素定位覆盖" class="headerlink" title="2. 元素定位覆盖"></a>2. 元素定位覆盖</h2><p>这种方式太有意思了，给两套数据，前面一套假的，后面一套真的，然后显示时，通过css定位，将假的数据覆盖掉，只显示真实数据。</p>
+<p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/qunar.2.png" alt="源码"><br><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/qunar.3.png" alt="真实数据"></p>
+<p>这个代码块里面，第一个 <code>&lt;b&gt;</code> 元素中有三个<code>&lt;i&gt;</code>元素，其中0和8是假的，是被后面的两个<code>&lt;b&gt;</code>元素的9和4覆盖掉了，显示的真实数据是 479 。</p>
+<p>这种方式很有意思，但在反爬难度上，和第一种采用自定义字体的方式，略微低一点，感觉有点骗小孩的意思。</p>
+<p>我们可以根据第一个b元素的宽度，以及后面b元素的宽度和偏移量来计算，拿到真正的值（实际浏览器不就是这样工作的么）。</p>
+<p>比如上面这个，第一个b元素的宽度是54px，左偏移 -54px，第二个b元素为18px,左偏移-18px，那么很明显覆盖的是第三个数字嘛，第三个b元素左偏移-54px，覆盖的是第一个数字，这样完全可以写个程序自动判断，拿到真实数字。</p>
+<p>这个方式没有写具体代码，但代码应该不难写，有兴趣的可以试试。</p>
+<h2 id="3-背景图拼凑"><a href="#3-背景图拼凑" class="headerlink" title="3. 背景图拼凑"></a>3. 背景图拼凑</h2><p>还有一种形式是，使用背景图片，然后给位置，截图，拼凑出真实的数字。</p>
+<p>如imweb这篇文章里提到的美团这种方式。但是我没找到美团哪个页面现在是这样的，应该是美团现在改版了，现在都是直接显示数字。</p>
+<p>这种方式，和上面元素定位覆盖差不多的思想，但稍微复杂点，先把背景图片拿下来，然后再解析html拿到具体的 background-position具体的值，使用能够解析图片的类库进行截取数字，拿到的数字是图片格式的，没办法，这种只能在通过一次OCR识别了，图片，真的没办法。</p>
+<p>因为是图片，所以与其那么复杂去解析每个位置是啥数字，倒不如直接通过无头浏览器进行截图，然后通过OCR识别来的直接，因为浏览器显示的就是图片，只能进行文字识别这条路了。</p>
+<p>这种方式在破解时复杂点，还会存在一定的错误识别率，其实还是一种不错的反爬前端方案。但有一点不好的地方在于，由于是使用的图片，所以在显示上，不如文字那么清晰，而且在浏览器缩放时，也会有一定的模糊，给用户的体验会不好，不如文字清晰。</p>
+<h2 id="4-伪类元素代替"><a href="#4-伪类元素代替" class="headerlink" title="4. 伪类元素代替"></a>4. 伪类元素代替</h2><p>汽车之家现在使用的是伪类元素，将词组拆开，使用伪类元素代替。</p>
+<p>这种方式在搞起来，比上面字体要难感觉。</p>
+<p>拿汽车之家举例，伪类的类名是随机的，而定义伪类的css样式，是js动态生成的，搞起来比较麻烦。</p>
+<p>没有爬汽车之家的需求，不搞了，我在网上找到一篇关于搞汽车之家这种方式的文章，有兴趣的同学可以看下： <a target="_blank" rel="noopener" href="http://www.cnblogs.com/dyfblog/p/6753251.html">反爬虫破解系列-汽车之家利用css样式替换文字破解方法</a></p>
+<p>从最终的结果来看，是js动态获取要替换的问题，然后动态替换了问题。而且现在汽车之家又升级了，要替换的文字也是动态获取的，没有任何标志，所以在实际操作起来，难度还是蛮大的。</p>
+<p>汽车之家的前端，你可以的，佩服。。。</p>
+<p>有兴趣的同学真的可以搞一下，搞定这个真的很有成就感。</p>
+<h2 id="5-添加干扰字符并隐藏"><a href="#5-添加干扰字符并隐藏" class="headerlink" title="5. 添加干扰字符并隐藏"></a>5. 添加干扰字符并隐藏</h2><p>这类有微信公共号的文章以及全网代理ip这个网站。</p>
+<p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/wechat.1.png" alt="微信公众号"><br>微信公众号里面，左侧下划线的部分文字为干扰文字，使用css的透明度(opacity)将透明度设置为0隐藏显示。</p>
+<p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/goubanjia.1.png" alt="全网ip代理"><br>全网代理ip这个网站，左侧画细框的部分为干扰文字，使用css的display:none隐藏不显示。</p>
+<p>这种方案的话，需要解析每个dom元素，并根据其css样式进行选择正确的字符进行拼装。难度应该不大，没具体实施。</p>
+<h2 id="6-总结"><a href="#6-总结" class="headerlink" title="6. 总结"></a>6. 总结</h2><p>这个周末主要的精力放到了搞自定义字体部分了，觉得这个特有意思，因为之前也遇到过，当时不知道咋弄。</p>
+<p>爬虫与反爬向来都是，道高一尺，魔高一丈。在反爬方面，除了在后端上设置反爬策略，如限制ip访问频率，限制登录用户访问频率等等，前端在反爬上，也绞尽脑汁做了不少动作。</p>
+<p>还是那句话，反爬做的就是，不断提升爬虫解析出正确数据的成本，但没办法真正防止爬虫。</p>
+<p>对于爬虫来说，任何你能从浏览器上看到的数据，爬虫都能拿到，只是在拿数据时，难以程度有所不同而已。</p>
+<p>希望该文章能给大家带来一些思路，帮助大家在爬虫与反爬虫过程中，作出更多有创新性的工作。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">#前端</a>
+          
+            <a href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">#爬虫</a>
+          
+            <a href="/tags/%E5%8F%8D%E7%88%AC/" rel="tag">#反爬</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/25/vscode-debuger-for-java/" rel="next" title="配置vscode调试java代码">
+                <i class="fa fa-chevron-left"></i> 配置vscode调试java代码
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/24/Salted-Password-Hashing/" rel="prev" title="如何正确对用户密码进行加密？">
+                如何正确对用户密码进行加密？ <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-自定义字体形式"><span class="nav-number">1.</span> <span class="nav-text">1. 自定义字体形式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-猫眼电影"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 猫眼电影</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-去哪儿手机端网页"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 去哪儿手机端网页</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-起点中文网"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 起点中文网</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-小结"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-元素定位覆盖"><span class="nav-number">2.</span> <span class="nav-text">2. 元素定位覆盖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-背景图拼凑"><span class="nav-number">3.</span> <span class="nav-text">3. 背景图拼凑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-伪类元素代替"><span class="nav-number">4.</span> <span class="nav-text">4. 伪类元素代替</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-添加干扰字符并隐藏"><span class="nav-number">5.</span> <span class="nav-text">5. 添加干扰字符并隐藏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-总结"><span class="nav-number">6.</span> <span class="nav-text">6. 总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

@@ -1,0 +1,846 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Angular,前端,urlencode," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="在一个前端使用 Angular， 后端使用 SpringBoot 的项目中，有一个对象的某个属性值中带有 + 字符，前端发到后端后，发现 + 被解析成了 空格   。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Angular 中 HttpParameterCodec 对 + 编码的 bug">
+<meta property="og:url" content="http://coolcao.com/2022/12/02/angular2-httpparams-encode/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="在一个前端使用 Angular， 后端使用 SpringBoot 的项目中，有一个对象的某个属性值中带有 + 字符，前端发到后端后，发现 + 被解析成了 空格   。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2022-12-01T17:59:00.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.953Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="Angular">
+<meta property="article:tag" content="前端">
+<meta property="article:tag" content="urlencode">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2022/12/02/angular2-httpparams-encode/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> Angular 中 HttpParameterCodec 对 + 编码的 bug | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Angular 中 HttpParameterCodec 对 + 编码的 bug
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2022-12-02T01:59:00+08:00" content="2022-12-02">
+              2022-12-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在一个前端使用 Angular， 后端使用 SpringBoot 的项目中，有一个对象的某个属性值中带有 <code>+</code> 字符，前端发到后端后，发现 <code>+</code> 被解析成了 空格 <code> </code> 。</p>
+<span id="more"></span>
+
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li><a href="#angular%E4%B8%ADhttpparametercodec%E5%AF%B9--%E7%BC%96%E7%A0%81%E7%9A%84bug">Angular 中 HttpParameterCodec 对 + 编码的 bug</a><ul>
+<li><a href="#%E7%8E%B0%E8%B1%A1">现象</a></li>
+<li><a href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88">解决方案</a></li>
+<li><a href="#%E5%8E%9F%E5%9B%A0%E8%A7%A3%E6%9E%90">原因解析</a><ul>
+<li><a href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90">源码分析</a></li>
+<li><a href="#%E9%97%AE%E9%A2%98%E8%BF%BD%E8%B8%AA">问题追踪</a></li>
+<li><a href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90">问题分析</a></li>
+</ul>
+</li>
+<li><a href="#%E6%84%8F%E5%A4%96%E6%94%B6%E8%8E%B7">意外收获</a><ul>
+<li><a href="#%E7%A9%BA%E6%A0%BC%E7%9A%84%E8%BD%AC%E6%8D%A2">空格的转换</a></li>
+<li><a href="#encodeuri%E5%92%8Cencodeuricomponent">encodeURI 和 encodeURIComponent</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h2><p>前端代码大致如下：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> url = <span class="string">&quot;url&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> queryParams = <span class="keyword">new</span> <span class="title class_">HttpParams</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (params.<span class="property">name</span>) &#123;</span><br><span class="line">  queryParams = queryParams.<span class="title function_">set</span>(<span class="string">&quot;name&quot;</span>, params.<span class="property">name</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">this</span>.<span class="property">http</span>.<span class="title function_">get</span>(url, &#123; <span class="attr">params</span>: queryParams &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>比如有一个 name 参数值是 <code>edqd+0I5FKI</code> ，后端接收到的参数中， <code>+</code> 被转换成了空格，成了 <code>edqd 0I5FKI</code> ，经过排查发现，前端发送给后端的数据中，确实带了 <code>+</code> 号，完成的数据就是 <code>edqd+0I5FKI</code> ，而后端在解析时，要经过 URLDecode ，加号 <code>+</code> 经过 URLDecode 后就是空格。</p>
+<p>所以，这里的根本问题在于，前端在发送数据时，未对 <code>+</code> 进行 URLEncode。也就是 Angular 的 HTTP Client 未对参数中的 <code>+</code> 进行 URL 转码。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>先说解决方案，如果有兴趣可以再看后面的原因解析。</p>
+<p>解决方案其实也很简单，Angular 的 Http 客户端未对 <code>+</code> 做转码，那么我们自己做一下转码即可。</p>
+<p>⓵ 创建一个拦截器，拦截器内指定 HttpParams 的编码器</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Injectable</span> &#125; <span class="keyword">from</span> <span class="string">&quot;@angular/core&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123;</span><br><span class="line">  <span class="title class_">HttpRequest</span>,</span><br><span class="line">  <span class="title class_">HttpHandler</span>,</span><br><span class="line">  <span class="title class_">HttpEvent</span>,</span><br><span class="line">  <span class="title class_">HttpInterceptor</span>,</span><br><span class="line">  <span class="title class_">HttpParameterCodec</span>,</span><br><span class="line">  <span class="title class_">HttpParams</span>,</span><br><span class="line">&#125; <span class="keyword">from</span> <span class="string">&quot;@angular/common/http&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Observable</span> &#125; <span class="keyword">from</span> <span class="string">&quot;rxjs&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 自定义Angular的HTTP参数Encoder</span></span><br><span class="line"><span class="comment"> * 因为Angular内置的编码方法将一些特殊字符未做转换，包括 @ : $ , ; + ; ? /</span></span><br><span class="line"><span class="comment"> * 所以这里重写其Encoder，直接使用标准的encodeURIComponent()方法进行转码</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CustomEncoder</span> <span class="keyword">implements</span> <span class="title class_">HttpParameterCodec</span> &#123;</span><br><span class="line">  <span class="title function_">encodeKey</span>(<span class="attr">key</span>: <span class="built_in">string</span>): <span class="built_in">string</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">encodeURIComponent</span>(key);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">encodeValue</span>(<span class="attr">value</span>: <span class="built_in">string</span>): <span class="built_in">string</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">encodeURIComponent</span>(value);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">decodeKey</span>(<span class="attr">key</span>: <span class="built_in">string</span>): <span class="built_in">string</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">decodeURIComponent</span>(key);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">decodeValue</span>(<span class="attr">value</span>: <span class="built_in">string</span>): <span class="built_in">string</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">decodeURIComponent</span>(value);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Injectable</span>()</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">QueryParamEncodeInterceptor</span> <span class="keyword">implements</span> <span class="title class_">HttpInterceptor</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">intercept</span>(</span><br><span class="line">    <span class="attr">request</span>: <span class="title class_">HttpRequest</span>&lt;<span class="built_in">any</span>&gt;,</span><br><span class="line">    <span class="attr">next</span>: <span class="title class_">HttpHandler</span></span><br><span class="line">  ): <span class="title class_">Observable</span>&lt;<span class="title class_">HttpEvent</span>&lt;<span class="built_in">any</span>&gt;&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> params = <span class="keyword">new</span> <span class="title class_">HttpParams</span>(&#123;</span><br><span class="line">      <span class="attr">encoder</span>: <span class="keyword">new</span> <span class="title class_">CustomEncoder</span>(),</span><br><span class="line">      <span class="attr">fromString</span>: request.<span class="property">params</span>.<span class="title function_">toString</span>(),</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> next.<span class="title function_">handle</span>(request.<span class="title function_">clone</span>(&#123; params &#125;));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>⓶ 在 <code>app.module.ts</code> 中将该拦截器提供给 <code>providers</code></p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">providers</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">provide</span>: <span class="variable constant_">HTTP_INTERCEPTORS</span>,</span><br><span class="line">      <span class="attr">useClass</span>: <span class="title class_">QueryParamEncodeInterceptor</span>,</span><br><span class="line">      <span class="attr">multi</span>: <span class="literal">true</span>,</span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br></pre></td></tr></table></figure>
+
+<h2 id="原因解析"><a href="#原因解析" class="headerlink" title="原因解析"></a>原因解析</h2><h3 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h3><p>Angular 中负责对 URL 参数进行编码的类是 <code>HttpUrlEncodingCodec</code> ，该类实现了 <code>HttpParameterCodec</code> 接口。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Provides encoding and decoding of URL parameter and query-string values.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Serializes and parses URL parameter keys and values to encode and decode them.</span></span><br><span class="line"><span class="comment"> * If you pass URL query parameters without encoding,</span></span><br><span class="line"><span class="comment"> * the query parameters can be misinterpreted at the receiving end.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@publicApi</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">declare</span> <span class="keyword">class</span> <span class="title class_">HttpUrlEncodingCodec</span> <span class="keyword">implements</span> <span class="title class_">HttpParameterCodec</span> &#123;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * Encodes a key name for a URL parameter or query-string.</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> key The key name.</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@returns</span> The encoded key name.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="title function_">encodeKey</span>(<span class="attr">key</span>: <span class="built_in">string</span>): <span class="built_in">string</span>;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * Encodes the value of a URL parameter or query-string.</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> value The value.</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@returns</span> The encoded value.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="title function_">encodeValue</span>(<span class="attr">value</span>: <span class="built_in">string</span>): <span class="built_in">string</span>;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * Decodes an encoded URL parameter or query-string key.</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> key The encoded key name.</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@returns</span> The decoded key name.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="title function_">decodeKey</span>(<span class="attr">key</span>: <span class="built_in">string</span>): <span class="built_in">string</span>;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * Decodes an encoded URL parameter or query-string value.</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> value The encoded value.</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@returns</span> The decoded value.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="title function_">decodeValue</span>(<span class="attr">value</span>: <span class="built_in">string</span>): <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们看一下 <code>HttpUrlEncodingCodec</code> 类的具体实现方法，在 <code>angular/packages/common/http/src/params.ts</code> 中可以看到：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@license</span></span></span><br><span class="line"><span class="comment"> * Copyright Google LLC All Rights Reserved.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Use of this source code is governed by an MIT-style license that can be</span></span><br><span class="line"><span class="comment"> * found in the LICENSE file at https://angular.io/license</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Provides encoding and decoding of URL parameter and query-string values.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Serializes and parses URL parameter keys and values to encode and decode them.</span></span><br><span class="line"><span class="comment"> * If you pass URL query parameters without encoding,</span></span><br><span class="line"><span class="comment"> * the query parameters can be misinterpreted at the receiving end.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@publicApi</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">HttpUrlEncodingCodec</span> &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Encodes a key name for a URL parameter or query-string.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> key The key name.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@returns</span> The encoded key name.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="title function_">encodeKey</span>(<span class="params">key</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_">standardEncoding</span>(key);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Encodes the value of a URL parameter or query-string.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> value The value.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@returns</span> The encoded value.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="title function_">encodeValue</span>(<span class="params">value</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_">standardEncoding</span>(value);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Decodes an encoded URL parameter or query-string key.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> key The encoded key name.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@returns</span> The decoded key name.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="title function_">decodeKey</span>(<span class="params">key</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">decodeURIComponent</span>(key);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Decodes an encoded URL parameter or query-string value.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> value The encoded value.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@returns</span> The decoded value.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="title function_">decodeValue</span>(<span class="params">value</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">`(value);</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到，两个 decode 方法使用了 <code>decodeURIComponent()</code> 函数，而 encode 方法并没有使用标准的 <code>encodeURIComponent()</code> 函数，而是使用了 Angular 自己写的 <code>standardEncoding()</code> 函数：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Encode input string with standard encodeURIComponent and then un-encode specific characters.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">const</span> <span class="variable constant_">STANDARD_ENCODING_REGEX</span> = <span class="regexp">/%(\d[a-f0-9])/gi</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="attr">STANDARD_ENCODING_REPLACEMENTS</span>: &#123; [<span class="attr">x</span>: <span class="built_in">string</span>]: <span class="built_in">string</span> &#125; = &#123;</span><br><span class="line">  <span class="string">&quot;40&quot;</span>: <span class="string">&quot;@&quot;</span>,</span><br><span class="line">  <span class="string">&quot;3A&quot;</span>: <span class="string">&quot;:&quot;</span>,</span><br><span class="line">  <span class="string">&quot;24&quot;</span>: <span class="string">&quot;$&quot;</span>,</span><br><span class="line">  <span class="string">&quot;2C&quot;</span>: <span class="string">&quot;,&quot;</span>,</span><br><span class="line">  <span class="string">&quot;3B&quot;</span>: <span class="string">&quot;;&quot;</span>,</span><br><span class="line">  <span class="string">&quot;2B&quot;</span>: <span class="string">&quot;+&quot;</span>,</span><br><span class="line">  <span class="string">&quot;3D&quot;</span>: <span class="string">&quot;=&quot;</span>,</span><br><span class="line">  <span class="string">&quot;3F&quot;</span>: <span class="string">&quot;?&quot;</span>,</span><br><span class="line">  <span class="string">&quot;2F&quot;</span>: <span class="string">&quot;/&quot;</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">standardEncoding</span>(<span class="params">v: <span class="built_in">string</span></span>): <span class="built_in">string</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">encodeURIComponent</span>(v).<span class="title function_">replace</span>(</span><br><span class="line">    <span class="variable constant_">STANDARD_ENCODING_REGEX</span>,</span><br><span class="line">    <span class="function">(<span class="params">s, t</span>) =&gt;</span> <span class="variable constant_">STANDARD_ENCODING_REPLACEMENTS</span>[t] ?? s</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个 <code>standardEncoding()</code> 函数其实就是调用了标准的 <code>encodeURIComponent()</code> 函数，只不过对几个特殊的字符（<code>@:$;,+=?/</code>）跳过，不做转码。</p>
+<p>所以，解决方案就如同上面所说，我们自己实现一个 <code>HttpParameterCodec</code> ，将其上面几个所谓的特殊字符也一同转码了即可。</p>
+<hr>
+<p>Angular14 更新：<br>Angular 14 中 <code>standardEncoding()</code> 方法有更新，去掉了对 <code>+</code> 字符的转换：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Encode input string with standard encodeURIComponent and then un-encode specific characters.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Encode input string with standard encodeURIComponent and then un-encode specific characters.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">const</span> <span class="variable constant_">STANDARD_ENCODING_REGEX</span> = <span class="regexp">/%(\d[a-f0-9])/gi</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="attr">STANDARD_ENCODING_REPLACEMENTS</span>: &#123; [<span class="attr">x</span>: <span class="built_in">string</span>]: <span class="built_in">string</span> &#125; = &#123;</span><br><span class="line">  <span class="string">&quot;40&quot;</span>: <span class="string">&quot;@&quot;</span>,</span><br><span class="line">  <span class="string">&quot;3A&quot;</span>: <span class="string">&quot;:&quot;</span>,</span><br><span class="line">  <span class="string">&quot;24&quot;</span>: <span class="string">&quot;$&quot;</span>,</span><br><span class="line">  <span class="string">&quot;2C&quot;</span>: <span class="string">&quot;,&quot;</span>,</span><br><span class="line">  <span class="string">&quot;3B&quot;</span>: <span class="string">&quot;;&quot;</span>,</span><br><span class="line">  <span class="string">&quot;3D&quot;</span>: <span class="string">&quot;=&quot;</span>,</span><br><span class="line">  <span class="string">&quot;3F&quot;</span>: <span class="string">&quot;?&quot;</span>,</span><br><span class="line">  <span class="string">&quot;2F&quot;</span>: <span class="string">&quot;/&quot;</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">standardEncoding</span>(<span class="params">v: <span class="built_in">string</span></span>): <span class="built_in">string</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">encodeURIComponent</span>(v).<span class="title function_">replace</span>(</span><br><span class="line">    <span class="variable constant_">STANDARD_ENCODING_REGEX</span>,</span><br><span class="line">    <span class="function">(<span class="params">s, t</span>) =&gt;</span> <span class="variable constant_">STANDARD_ENCODING_REPLACEMENTS</span>[t] ?? s</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>即从 Angular 14 开始，Angular 14 默认会对 <code>+</code> 字符进行百分比转码，而不用再自己重写 <code>HttpParameterCodec</code> 了。</p>
+<h3 id="问题追踪"><a href="#问题追踪" class="headerlink" title="问题追踪"></a>问题追踪</h3><p>那么，问题来了，Angular 为什么会这么做？按照规范，<code>+</code> 字符被 URLEncode 后，就应该被转换为 <code>%2B</code> 呀，Angular 为什么会跳过这些特殊字符的转码呢？</p>
+<blockquote>
+<p>上面的其他字符跳过转码，其实也还好，但是 <code>+</code> 很特殊，如果前端发给后端的数据中带有 <code>+</code> 字符，按照规范，<code>+</code> 会被解码成空格 <code> </code> ，这也就是最开始我们遇到的问题。<br>Angular 未对 <code>+</code> 做转码，到后端进行 URL Decode 解码时，<code>+</code> 会被解析成空格，导致数据发生变化。</p>
+</blockquote>
+<p>网上查了一下，在 Angular 的官方 github issues 中发现有这么一个 issues:</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/angular/angular/issues/9348" title="Breaking change with RC2: Sending Urls with search params because of encoding search values · Issue #9348 · angular/angular · GitHub">Breaking change with RC2: Sending Urls with search params because of encoding search values · Issue #9348 · angular&#x2F;angular · GitHub</a></p>
+<p>提出这个问题的哥们大致是说，Angular2 升级到 RC2(相当早相当早了)时，对 query 参数的转码发生了破坏性的变化：</p>
+<p>原来是 <code>q=repo:janbaer/howcani+type:issue&amp;sort=created&amp;order=desc&amp;page</code> ，升级后成了 <code>q=repo%3Ajanbaer%2Fhowcani%2Btype%3Aissue&amp;sort=created&amp;order=desc&amp;page=1</code></p>
+<p>然后 Angular 官方就根据这个问题，提了一个修复，对 query 参数中的几个特殊字符(<code>@ : $ , ; + ; ? /</code>)不进行转码，这其中就包括 <code>+</code> 字符，2016 年 6 月份修复的，到目前已经 6 年半了。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/angular/angular/pull/9651" title="fix(http): don&#39;t encode values that are allowed in query by jeffbcross · Pull Request #9651 · angular/angular · GitHub">fix(http): don’t encode values that are allowed in query by jeffbcross · Pull Request #9651 · angular&#x2F;angular · GitHub</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/hbkrunal/angular/commit/47d2f1f1b82d85da2033ee6daa78b769e4a387d2" title="https://github.com/hbkrunal/angular/commit/47d2f1f1b82d85da2033ee6daa78b769e4a387d2">https://github.com/hbkrunal/angular/commit/47d2f1f1b82d85da2033ee6daa78b769e4a387d2</a></p>
+<h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>那么，这算是一个 bug 么？</p>
+<p>这整个过程很有意思，先是 Angular 对参数所有字符都做了转码，后来有人提了 bug，然后就放开了上面几个特殊字符的转码，为什么要放开这几个字符的转码，放开后，却有产生了因为解码导致 <code>+</code> 被“误解”的 bug？那么这几个字符，到底应不应该进行转码？</p>
+<p>很有意思的是，经过上面一个“修复”后，又有很多人提出了由于 <code>+</code> 字符不做转码导致 bug 的 issue，里面也有很多人在讨论：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/angular/angular/issues/18261" title="common/http: HttpParams encoding of form data · Issue #18261 · angular/angular · GitHub">common&#x2F;http: HttpParams encoding of form data · Issue #18261 · angular&#x2F;angular · GitHub</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/angular/angular/issues/11058" title="HttpParameterCodec improperly encodes special characters like &#39;+&#39; and &#39;=&#39; · Issue #11058 · angular/angular · GitHub">HttpParameterCodec improperly encodes special characters like ‘+’ and ‘&#x3D;’ · Issue #11058 · angular&#x2F;angular · GitHub</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/angular/angular/issues/11058" title="HttpParameterCodec improperly encodes special characters like &#39;+&#39; and &#39;=&#39; · Issue #11058 · angular/angular · GitHub">HttpParameterCodec improperly encodes special characters like ‘+’ and ‘&#x3D;’ · Issue #11058 · angular&#x2F;angular · GitHub</a></p>
+<p>尤其最后一个 issue 中，有很多人不理解，为什么 Angular 默认的转码器不对 <code>+</code> 和 <code>=</code> 进行转码，这样会有很大的机率导致 bug。因为很多后端服务器，包括 php，python，以及 java 的 tomcat 等等，都会将 <code>+</code> 解码为空格，导致 bug 的出现。（按照标准，<code>+</code> 字符在解码时就是会被解码为空格，目测应该后端服务都会这样，不仅仅前面提到的 php，python，tomcat 等等）</p>
+<p>在讨论中有人提出，Angular 应该默认就是将参数所有字符都进行转码，而不应该留下上面几个所谓的特殊字符，至少 <code>+</code> 和 <code>=</code> 会出现明显的 bug。</p>
+<p>Angular 官方的维护者，也出来回复了，大致的意思是，不确定是否所有的后端服务器都能正确处理百分号形式的编码（即<code>+</code> 被转码为<code>%2B</code> 这种格式的编码），所以不敢贸然都改了。至于为什么会有在转码时，留下几个特殊字符不进行转码，那个 Angular 维护者给出的回复是，这段代码是从 AngularJS1.0 就这么些的，至今已运行了 10 年之久，根本原因，其实他也不知道为啥这么写，反正就是从 AngularJS1.0 开始就这么写的，贸然改动不确定会不会出现更大的问题。</p>
+<blockquote>
+<p>这个回复，我真的也是醉了。就因为这段代码从 AngularJS1.0 就存在了，即使出现 bug，有很多人中招了，官方也不进行更改。无语。。。</p>
+</blockquote>
+<h2 id="意外收获"><a href="#意外收获" class="headerlink" title="意外收获"></a>意外收获</h2><p>在翻阅整个 issue 讨论的过程中，我发现 Angular 官方在合并“修复”代码时用的标题是 “don’t encode values that are allowed in query”，意思是说，这几个特殊字符在 querystring 里是合法的字符，被允许的字符，就不被转码了。</p>
+<p>这是什么意思，为什么说 <code>+</code> 是 querystring 允许的合法字符，原来 <code>+</code> 会被解码成空格。</p>
+<h3 id="空格的转换"><a href="#空格的转换" class="headerlink" title="空格的转换"></a>空格的转换</h3><p>空格在进行 URLEncode 时有两种规范：</p>
+<p>⓵[RFC 3986]：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">A percent-encoding mechanism is used to represent a data octet in a</span><br><span class="line">component when that octet&#x27;s corresponding character is outside the</span><br><span class="line">allowed set or is being used as a delimiter of, or within, the</span><br><span class="line">component.  A percent-encoded octet is encoded as a character</span><br><span class="line">triplet, consisting of the percent character &quot;%&quot; followed by the two</span><br><span class="line">hexadecimal digits representing that octet&#x27;s numeric value.  For</span><br><span class="line">example, &quot;%20&quot; is the percent-encoding for the binary octet</span><br><span class="line">&quot;00100000&quot; (ABNF: %x20), which in US-ASCII corresponds to the space</span><br><span class="line">character (SP).  Section 2.4 describes when percent-encoding and</span><br><span class="line">decoding is applied.</span><br></pre></td></tr></table></figure>
+
+<p><strong>[RFC 3986]</strong> 明确规定了<strong>空格 会被百分号编码为<code>%20</code></strong></p>
+<p>⓶[RFC 1866]:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">The default encoding for all forms is `application/x-www-form-</span><br><span class="line">   urlencoded&#x27;. A form data set is represented in this media type as</span><br><span class="line">   follows:</span><br><span class="line"></span><br><span class="line">        1. The form field names and values are escaped: space</span><br><span class="line">        characters are replaced by `+&#x27;, and then reserved characters</span><br><span class="line">        are escaped as per [URL]</span><br></pre></td></tr></table></figure>
+
+<p>这里要求<code>application/x-www-form-urlencoded</code>类型的消息中，空格要被替换为<code>+</code>,其他字符按照[URL]中的定义来转义，其中的[URL]指向的是<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc1738" title="RFC 1738">RFC 1738</a> 而它的修订版中和 URL 有关的最新文档恰恰就是 **[RFC 3986]**。</p>
+<p>这也是为什么在很多文档中的描述中，空格的百分号编码结果是 <code>+</code> 或 <code>%20</code> 。</p>
+<p><a target="_blank" rel="noopener" href="https://www.w3schools.com/tags/ref_urlencode.ASP" title="w3schools">w3schools</a>： URLs cannot contain spaces. URL encoding normally replaces a space with a plus (+) sign or with %20. 【URL 不能包含空格。URL 编码通常使用加号（+）或 %20 替代空格。】</p>
+<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Glossary/percent-encoding" title="MDN">MDN</a>：Depending on the context, the character <code>&#39; &#39;</code> is translated to a <code>&#39;+&#39;</code> (like in the percent-encoding version used in an <code>application/x-www-form-urlencoded</code> message), or in <code>&#39;%20&#39;</code> like on URLs. 【根据上下文，空白符 <code>&#39; &#39;</code> 将会转换为 <code>&#39;+&#39;</code> （必须在 HTTP 的 POST 方法中使定义 <code>application/x-www-form-urlencoded</code> 传输方式），或者将会转换为 <code>&#39;%20&#39;</code> 的 URL。】</p>
+<p><strong>注意</strong>：MDN 中已说明，空格被转换为 <code>+</code> 必须是在 HTTP 的 POST 方法中使用 <code>application/x-www-form-urlencoded</code> 进行传输，其他情况下，均转换为 <code>%20</code> 。</p>
+<blockquote>
+<p>在 StackOverflow 上也有人问，<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/2678551/when-should-space-be-encoded-to-plus-or-20" title="空格">空格</a><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/2678551/when-should-space-be-encoded-to-plus-or-20" title=" "> </a><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/2678551/when-should-space-be-encoded-to-plus-or-20" title=" 到底在什么时候会被转码为 "> 到底在什么时候会被转码为 </a><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/2678551/when-should-space-be-encoded-to-plus-or-20" title="+">+</a><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/2678551/when-should-space-be-encoded-to-plus-or-20" title=" ，什么时候会被转码为 "> ，什么时候会被转码为 </a><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/2678551/when-should-space-be-encoded-to-plus-or-20" title="%20">%20</a><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/2678551/when-should-space-be-encoded-to-plus-or-20" title=" "> </a><br>点赞较多的回答如 MDN 中所说， 空格只有在 <code>application/x-www-form-urlencoded</code> 才会被转码为 <code>+</code> ，如果在 url 中表示 query 参数，则应被转换为 <code>%20</code> 。有兴趣的，可以去看一下大家的讨论。</p>
+</blockquote>
+<blockquote>
+<p>🔔Angular 的转码器，默认不对 <code>+</code> 等字符进行转码，估计就是因为上面这个规范，因为 <code>+</code> 也是一个合法的转码后的字符。但实际上正如规范所说，<code>+</code> 作为转码字符，只有在 HTTP 的 POST 方法中使用 <code>application/x-www-form-urlencoded</code> 进行传输时，其作为空格字符的转码。<br>所以，可以明确，Angular 中默认未对 <code>+</code> 进行转码是错误的。<br>从 github 上的 issue 的讨论也可以看出，他们对为什么会有这段代码十分含糊。</p>
+</blockquote>
+<h3 id="encodeURI-和-encodeURIComponent"><a href="#encodeURI-和-encodeURIComponent" class="headerlink" title="encodeURI 和 encodeURIComponent"></a>encodeURI 和 encodeURIComponent</h3><p>在整个过程中，我发现 js 的两个转码函数： <code>encodeURI()</code> 和 <code>encodeURIComponent()</code> 在进行转码时结果是不同的，当时在猜想，Angular 的这种默认方式，会不会和 <code>encodeURI()</code> 有关，因为 <code>encodeURI()</code>并不会对 <code>+</code> 进行转码，研究了一下发现并不是，因为如果是的话，源码里就直接用 <code>encodeURI()</code> 函数了，而不是用 <code>encodeURIComponent()</code> 函数，然后再将几个特殊字符替换回去。</p>
+<p>而且这几个字符，只是保留字符，像下面的非转义字符和数字符号，都没替换回去。</p>
+<hr>
+<ul>
+<li><p>encodeURI</p>
+<ul>
+<li><code>encodeURI()</code>函数无需对那些保留的并且在 URI 中有特殊意思的字符进行编码。</li>
+<li><code>encodeURI()</code> 会替换所有的字符，但不包括以下字符，即使它们具有适当的 UTF-8 转义序列：<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>包含</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>保留字符</td>
+<td><code>;</code> <code>,</code> <code>/</code> <code>?</code> <code>:</code> <code>@</code> <code>&amp;</code> <code>=</code> <code>+</code> <code>$</code></td>
+</tr>
+<tr>
+<td>非转义的字符</td>
+<td>字母 数字 <code>-</code> <code>_</code> <code>.</code> <code>!</code> <code>~</code> <code>*</code> <code>&#39;</code> <code>(</code> <code>)</code></td>
+</tr>
+<tr>
+<td>数字符号</td>
+<td><code>#</code></td>
+</tr>
+</tbody></table>
+</li>
+<li>请注意，<code>encodeURI</code> 自身<em>无法</em>产生能适用于 HTTP GET 或 POST 请求的 URI，例如对于 XMLHTTPRequests，因为 “&amp;”, “+”, 和 “&#x3D;” 不会被编码，然而在 GET 和 POST 请求中它们是特殊字符。</li>
+</ul>
+</li>
+<li><p>encodeURIComponent</p>
+<ul>
+<li><code>encodeURIComponent()</code> 函数转义除了如下所示外的所有字符：<br>不转义的字符：<br><code>A-Z a-z 0-9 - _ . ! ~ * &#39; ( )</code></li>
+</ul>
+</li>
+</ul>
+<p><code>encodeURIComponent()</code> 和 <strong><code>encodeURI()</code></strong> 有以下几个不同点：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> set1 = <span class="string">&quot;;,/?:@&amp;=+$&quot;</span>; <span class="comment">// 保留字符</span></span><br><span class="line"><span class="keyword">var</span> set2 = <span class="string">&quot;-_.!~*&#x27;()&quot;</span>; <span class="comment">// 不转义字符</span></span><br><span class="line"><span class="keyword">var</span> set3 = <span class="string">&quot;#&quot;</span>; <span class="comment">// 数字标志</span></span><br><span class="line"><span class="keyword">var</span> set4 = <span class="string">&quot;ABC abc 123&quot;</span>; <span class="comment">// 字母数字字符和空格</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="built_in">encodeURI</span>(set1)); <span class="comment">// ;,/?:@&amp;=+$</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="built_in">encodeURI</span>(set2)); <span class="comment">// -_.!~*&#x27;()</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="built_in">encodeURI</span>(set3)); <span class="comment">// #</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="built_in">encodeURI</span>(set4)); <span class="comment">// ABC%20abc%20123 (空格被编码为 %20)</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="built_in">encodeURIComponent</span>(set1)); <span class="comment">// %3B%2C%2F%3F%3A%40%26%3D%2B%24</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="built_in">encodeURIComponent</span>(set2)); <span class="comment">// -_.!~*&#x27;()</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="built_in">encodeURIComponent</span>(set3)); <span class="comment">// %23</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="built_in">encodeURIComponent</span>(set4)); <span class="comment">// ABC%20abc%20123 (空格被编码为 %20)</span></span><br></pre></td></tr></table></figure>
+
+<p>为了避免服务器收到不可预知的请求，对任何用户输入的作为 URI 部分的内容你都需要用 encodeURIComponent 进行转义。比如，一个用户可能会输入”<code>Thyme &amp;time=again</code>“作为<code>comment</code>变量的一部分。如果不使用 encodeURIComponent 对此内容进行转义，服务器得到的将是<code>comment=Thyme%20&amp;time=again</code>。请注意，”&amp;”符号和”&#x3D;”符号产生了一个新的键值对，所以服务器得到两个键值对（一个键值对是<code>comment=Thyme</code>，另一个则是<code>time=again</code>），而不是一个键值对。</p>
+<p>对于 <a target="_blank" rel="noopener" href="https://www.whatwg.org/specs/web-apps/current-work/multipage/association-of-controls-and-forms.html#application/x-www-form-urlencoded-encoding-algorithm" title="application/x-www-form-urlencoded">application&#x2F;x-www-form-urlencoded</a> (POST) 这种数据方式，空格需要被替换成 ‘+’，所以通常使用 <code>encodeURIComponent</code> 的时候还会把 “%20” 替换为 “+”。</p>
+<p>为了更严格的遵循 <a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc3986" title="RFC 3986">RFC 3986</a>（它保留 !, ‘, (, ), 和 *），即使这些字符并没有正式划定 URI 的用途，下面这种方式是比较安全的：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">fixedEncodeURIComponent</span>(<span class="params">str</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">encodeURIComponent</span>(str).<span class="title function_">replace</span>(<span class="regexp">/[!&#x27;()*]/g</span>, <span class="keyword">function</span> (<span class="params">c</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;%&quot;</span> + c.<span class="title function_">charCodeAt</span>(<span class="number">0</span>).<span class="title function_">toString</span>(<span class="number">16</span>).<span class="title function_">toUpperCase</span>();</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上部分摘自<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent" title="MDN文档-encodeURIComponent()">MDN 文档-encodeURIComponent()</a>，有兴趣的可以去看看文档。</p>
+<hr>
+<blockquote>
+<p>🔔 如上 MDN 文档说的，对于任何用户数组的，作为 URI 部分的内容，都应该需要使用 <code>encodeURIComponent()</code> 进行转码，这样服务器端才能正确处理数据。<br>这也同样印证了上面 Angular 默认转码器未对 <code>+</code> 等字符转码的做法是错误的。</p>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>由于在 [RFC 3986] 标准中，保留了几个特殊字符是被允许放到 url 中的，包括 <code>+</code> ，因此 Angular 可能为了遵循该规范，在对 url 进行编码后，又重新将这几个保留字符重新替换回来。<br>但忽略了 <code>+</code> 其实也是允许的空格转码，从而造成此 bug。幸好从 Angular14 开始将该 bug 解决。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Angular/" rel="tag">#Angular</a>
+          
+            <a href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">#前端</a>
+          
+            <a href="/tags/urlencode/" rel="tag">#urlencode</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/10/20/unionset-ext/" rel="next" title="并查集拓展">
+                <i class="fa fa-chevron-left"></i> 并查集拓展
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/12/15/angular-di/" rel="prev" title="Angular依赖注入实现原理解析">
+                Angular依赖注入实现原理解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#目录"><span class="nav-number">1.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#现象"><span class="nav-number">2.</span> <span class="nav-text">现象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决方案"><span class="nav-number">3.</span> <span class="nav-text">解决方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原因解析"><span class="nav-number">4.</span> <span class="nav-text">原因解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#源码分析"><span class="nav-number">4.1.</span> <span class="nav-text">源码分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题追踪"><span class="nav-number">4.2.</span> <span class="nav-text">问题追踪</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题分析"><span class="nav-number">4.3.</span> <span class="nav-text">问题分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#意外收获"><span class="nav-number">5.</span> <span class="nav-text">意外收获</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#空格的转换"><span class="nav-number">5.1.</span> <span class="nav-text">空格的转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#encodeURI-和-encodeURIComponent"><span class="nav-number">5.2.</span> <span class="nav-text">encodeURI 和 encodeURIComponent</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

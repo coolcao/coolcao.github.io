@@ -1,0 +1,937 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Angular,变更检测,前端," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="翻译自《The Last Guide For Angular Change Detection You’ll Ever Need》  Angular 的 Change Detection 是该框架的一个核心机制，但（至少从我的经验来看）它非常难以理解。不幸的是，在官方网站上没有关于这个主题的官方指南。 在这篇博文中，我将为你提供所有你需要了解的关于变更检测的必要信息。我将通过使用我为这篇博文建立">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Angular变更检测(翻译)">
+<meta property="og:url" content="http://coolcao.com/2022/09/27/angular-change-detection/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="翻译自《The Last Guide For Angular Change Detection You’ll Ever Need》  Angular 的 Change Detection 是该框架的一个核心机制，但（至少从我的经验来看）它非常难以理解。不幸的是，在官方网站上没有关于这个主题的官方指南。 在这篇博文中，我将为你提供所有你需要了解的关于变更检测的必要信息。我将通过使用我为这篇博文建立">
+<meta property="og:locale">
+<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547305_20211122090548790_1248588036.png">
+<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547306_20211122090956979_1956406215.png">
+<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547307_20211122091910774_1197136288.png">
+<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547307_20211122092043746_495303673.png">
+<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547308_20211122092654984_922216339.png">
+<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547308_20211122093527364_1300529174.png">
+<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547309_20211122094421294_905268252.png">
+<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547309_20211122094758016_2069356016.png">
+<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547310_20211122095932509_1168897747.png">
+<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547311_20211122100034774_484031073.png">
+<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547311_20211122100259734_442189075.png">
+<meta property="article:published_time" content="2022-09-27T06:49:25.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.952Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="Angular">
+<meta property="article:tag" content="变更检测">
+<meta property="article:tag" content="前端">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547305_20211122090548790_1248588036.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2022/09/27/angular-change-detection/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> 深入理解Angular变更检测(翻译) | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                深入理解Angular变更检测(翻译)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2022-09-27T14:49:25+08:00" content="2022-09-27">
+              2022-09-27
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%BF%BB%E8%AF%91/" itemprop="url" rel="index">
+                    <span itemprop="name">翻译</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>翻译自<a target="_blank" rel="noopener" href="https://indepth.dev/posts/1305/the-last-guide-for-angular-change-detection-youll-ever-need" title="《The Last Guide For Angular Change Detection You&#39;ll Ever Need》">《The Last Guide For Angular Change Detection You’ll Ever Need》</a></p>
+</blockquote>
+<p>Angular 的 Change Detection 是该框架的一个核心机制，但（至少从我的经验来看）它非常难以理解。不幸的是，在官方网站上没有关于这个主题的官方指南。</p>
+<p>在这篇博文中，我将为你提供所有你需要了解的关于变更检测的必要信息。我将通过使用我为这篇博文建立的一个演示项目来解释其机制。</p>
+<span id="more"></span>
+
+<h2 id="什么是变更检测"><a href="#什么是变更检测" class="headerlink" title="什么是变更检测"></a>什么是变更检测</h2><p>Angular 的两个主要目标是可预测性和性能。该框架通过结合状态和模板在 UI 上展现我们应用程序的状态。</p>
+<p><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547305_20211122090548790_1248588036.png"></p>
+<p>如果状态发生任何变化，也有必要更新 DOM。这种将 HTML 与我们的数据同步的机制被称为 “变更检测”。每个前端框架都使用其实现，例如 React 使用虚拟 DOM，Angular 使用变更检测，等等。我可以推荐一篇文章<a target="_blank" rel="noopener" href="https://teropa.info/blog/2015/03/02/change-and-its-detection-in-javascript-frameworks.html" title="《Change And Its Detection In JavaScript Frameworks》">《Change And Its Detection In JavaScript Frameworks》</a>，它对这个话题做了很好的概括。</p>
+<blockquote>
+<p>变更检测。当数据发生变化时，更新 DOM 的过程。</p>
+</blockquote>
+<p>作为开发者，大多数时候我们不需要关心变更检测，直到我们需要优化应用程序的性能。如果处理不当，变更检测会降低大型应用程序的性能。</p>
+<h2 id="变更检测如何工作的"><a href="#变更检测如何工作的" class="headerlink" title="变更检测如何工作的"></a>变更检测如何工作的</h2><p>一个变更检测周期可以分成两部分。</p>
+<ol>
+<li><p>开发者更新应用模型</p>
+</li>
+<li><p>Angular 通过重新渲染来同步 DOM 中更新的模型</p>
+</li>
+</ol>
+<p>让我们更详细地看一下这个过程。</p>
+<p>开发者更新数据模型，例如，通过更新组件绑定<br>Angular 检测到这个变化，变更检测从上到下检查组件树中的每个组件，看看相应的模型是否发生了变化，如果有一个新的值，它将更新组件的视图（DOM）。</p>
+<p>下面的 GIF 以一种简化的方式演示了这个过程。</p>
+<p><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547306_20211122090956979_1956406215.png"></p>
+<p>图片显示了一个 Angular 组件树和它的变更检测器（CD），每个组件都是在应用启动过程中创建的。这个检测器将当前值与属性的先前值进行比较。如果值发生了变化，它将设置 isChanged 为真。看看<a target="_blank" rel="noopener" href="https://github.com/angular/angular/blob/885f1af509eb7d9ee049349a2fe5565282fbfefb/packages/core/src/util/comparison.ts#L13" title="框架代码中的实现">框架代码中的实现</a>，这只是一个&#x3D;&#x3D;&#x3D;比较，对 NaN 有特殊处理。</p>
+<blockquote>
+<p>变更检测并不进行深入的对象比较，它只比较模板所使用的属性的先前值和当前值。</p>
+</blockquote>
+<h2 id="Zone-js"><a href="#Zone-js" class="headerlink" title="Zone.js"></a>Zone.js</h2><p>一般来说，一个区可以跟踪和拦截任何异步任务。</p>
+<p>一个区通常有这些阶段。</p>
+<ul>
+<li><p>它开始时是稳定的</p>
+</li>
+<li><p>如果任务在该区运行，它就变得不稳定</p>
+</li>
+<li><p>如果任务完成，它又变得稳定</p>
+</li>
+<li><p>Angular 在启动时修补了几个低级别的浏览器 API，以便能够检测到应用程序中的变化。这是通过 zone.js 完成的，它修补的 API 包括 EventEmitter、DOM 事件监听器、XMLHttpRequest、Node.js 的 fs API 等。</p>
+</li>
+</ul>
+<p>简而言之，如果发生以下事件之一，该框架将触发变更检测：</p>
+<ul>
+<li><p>任何浏览器事件（click、keyup 等）。</p>
+</li>
+<li><p>setInterval()和 setTimeout()。</p>
+</li>
+<li><p>通过 XMLHttpRequest 的 HTTP 请求</p>
+</li>
+</ul>
+<p>Angular 使用它的区域称为 NgZone。只存在一个 NgZone，变更检测只针对在这个区域触发的异步操作。</p>
+<h2 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h2><p>默认情况下，Angular 变更检测从上到下检查所有组件的模板值是否有变化。</p>
+<p>Angular 对每一个组件进行变更检测的速度非常快，因为它可以在几毫秒内使用<a target="_blank" rel="noopener" href="http://mrale.ph/blog/2012/06/03/explaining-js-vms-in-js-inline-caches.html" title="内联缓存">内联缓存</a>执行数千次检查，从而产生 VM 优化的代码。</p>
+<p>如果你想更深入地了解这个话题，我建议你观看 Victor Savkin 关于<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=jvKGQSFQf10" title="变更检测重塑的演讲">变更检测重塑的演讲</a>。</p>
+<p>尽管 Angular 在幕后做了很多优化工作，但在大型应用中，性能仍然会下降。在下一章中，你将学习如何通过使用不同的变更检测策略来主动提高 Angular 的性能。</p>
+<h2 id="变更检测策略"><a href="#变更检测策略" class="headerlink" title="变更检测策略"></a>变更检测策略</h2><p>Angular 提供了两种策略来运行变更检测。</p>
+<ul>
+<li><p>Default</p>
+</li>
+<li><p>OnPush</p>
+</li>
+</ul>
+<p>让我们来看看这些策略。</p>
+<h3 id="Default（默认的变更检测策略）"><a href="#Default（默认的变更检测策略）" class="headerlink" title="Default（默认的变更检测策略）"></a>Default（默认的变更检测策略）</h3><p>默认情况下，Angular 使用 ChangeDetectionStrategy.Default 变更检测策略。这个默认策略在每次事件触发变更检测（如用户事件、定时器、XHR、Promise 等）时，从上到下检查组件树中的每个组件。这种保守的检查方式没有对组件的依赖性做任何假设，被称为<code>脏检查</code>。在由许多组件组成的大型应用程序中，它可能对你的应用程序的性能产生负面影响。</p>
+<p><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547307_20211122091910774_1197136288.png"></p>
+<h3 id="OnPush"><a href="#OnPush" class="headerlink" title="OnPush"></a>OnPush</h3><p>我们可以通过在组件装饰器元数据中添加 changeDetection 属性来切换到 ChangeDetectionStrategy.OnPush 变更检测策略。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">    <span class="attr">selector</span>: <span class="string">&#x27;hero-card&#x27;</span>,</span><br><span class="line">    <span class="attr">changeDetection</span>: <span class="title class_">ChangeDetectionStrategy</span>.<span class="property">OnPush</span>,</span><br><span class="line">    <span class="attr">template</span>: ...</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">HeroCard</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个变更检测策略提供了跳过对这个组件和它的所有子组件的不必要检查的可能性。</p>
+<p>下一个 GIF 演示了通过使用 OnPush 变更检测策略来跳过部分组件树。</p>
+<p><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547307_20211122092043746_495303673.png"></p>
+<p>使用这个策略，Angular 知道只有在以下情况下才需要更新组件。</p>
+<ul>
+<li><p>输入的引用发生了变化</p>
+</li>
+<li><p>该组件或它的一个子节点触发了一个事件处理程序</p>
+</li>
+<li><p>变更检测被手动触发了</p>
+</li>
+<li><p>通过异步管道链接到模板的观测器（observable）发出了一个新的值</p>
+</li>
+</ul>
+<p>让我们仔细看看这些类型的事件。</p>
+<ol>
+<li>输入引用发生变化</li>
+</ol>
+<p>在默认的变更检测策略中，Angular 会在<code>@Input()</code>数据被改变或修改时运行变更检测器。使用 OnPush 策略，只有当一个<code>新的引用</code>作为@Input()值被传递时，才会触发变更检测。</p>
+<p>JavaScript 中的所有东西都是通过引用传递的，但所有的基元都是不可改变的，它们的字面表述都指向同一个基元实例&#x2F;引用。修改对象属性或数组条目不会创建一个新的引用，因此不会触发 OnPush 组件的变更检测。要触发变更检测器，你需要传递一个新的对象或数组引用来代替。</p>
+<p>你可以通过<a target="_blank" rel="noopener" href="https://angular-change-detection-demo.netlify.com/simple-demo" title="这个简单的例子">这个简单的例子</a>来测试其行为：</p>
+<ul>
+<li><p>用 ChangeDetectionStrategy.Default 修改 HeroCardComponent 的年龄。</p>
+</li>
+<li><p>确认使用<code>ChangeDetectionStrategy.OnPush</code>的 HeroCardOnPush 组件没有反映出改变后的年龄（组件周围的红色边框是直观的）。</p>
+</li>
+<li><p>在 “修改英雄 “面板上点击 “创建新的对象参考”。</p>
+</li>
+<li><p>验证带有<code>ChangeDetectionStrategy.OnPush</code>的 HeroCardOnPushComponent 是否被变更检测所检查。</p>
+</li>
+</ul>
+<p><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547308_20211122092654984_922216339.png"></p>
+<p>为了防止变更检测的错误，通过只使用不可变的对象和列表，使用 OnPush 变更检测到处构建应用程序是很有用的。不可变的对象只能通过创建一个新的对象引用来修改，所以我们可以保证：</p>
+<ul>
+<li><p>每次变化都会触发 OnPush 变更检测</p>
+</li>
+<li><p>我们不会忘记创建一个新的对象引用，这可能会导致错误。</p>
+</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://facebook.github.io/immutable-js/" title="Immutable.js">Immutable.js</a>是一个不错的选择，该库为对象（Map）和列表（List）提供了持久的不可变数据结构。通过 npm 安装该库提供了类型定义，这样我们就可以在 IDE 中利用类型泛型、错误检测和自动完成的优势。</p>
+<ol>
+<li>事件处理被触发</li>
+</ol>
+<p>如果 OnPush 组件或它的一个子组件触发了一个事件处理程序，如点击一个按钮，就会触发变更检测（对组件树中的所有组件）。</p>
+<p>请注意，以下动作不会触发使用 OnPush 变更检测策略的变更检测：</p>
+<ul>
+<li><p><code>setTimeout</code></p>
+</li>
+<li><p><code>setInterval</code></p>
+</li>
+<li><p><code>Promise.resolve().then()</code>, (当然，<code>Promise.reject().then()</code>也是一样)</p>
+</li>
+<li><p><code>this.http.get(&#39;...&#39;).subscribe()</code> (一般来说，任何 RxJS 可观察的订阅)</p>
+</li>
+</ul>
+<p>你可以通过这个<a target="_blank" rel="noopener" href="https://angular-change-detection-demo.netlify.com/simple-demo" title="简单的例子">简单的例子</a>来测试其行为：</p>
+<ol>
+<li><p>点击 HeroCardOnPushComponent 中的 “Change Age “按钮，它使用<code>ChangeDetectionStrategy.OnPush</code></p>
+</li>
+<li><p>验证变更检测是否被触发并检查所有的组件</p>
+</li>
+</ol>
+<p><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547308_20211122093527364_1300529174.png"></p>
+<ol>
+<li>手动触发变更检测</li>
+</ol>
+<p>有三种方法可以手动触发变更检测。</p>
+<ul>
+<li><p><code>ChangeDetectorRef#detectChanges()</code>，该方法通过牢记变更检测策略在该视图及其子视图上运行变更检测。它可以与 detach()结合使用，以实现局部的变更检测检查。</p>
+</li>
+<li><p><code>ApplicationRef.tick()</code>，通过尊重组件的变更检测策略来触发整个应用的变更检测。</p>
+</li>
+<li><p><code>ChangeDetectorRef#markForCheck()</code>，它不触发变更检测，但将所有 OnPush 祖先标记为被检查一次，作为当前或下一个变更检测周期的一部分。它将在被标记的组件上运行变更检测，即使它们正在使用 OnPush 策略。</p>
+</li>
+</ul>
+<blockquote>
+<p>手动运行变更检测不是一个黑客，但你应该只在合理的情况下使用它</p>
+</blockquote>
+<p>下面的插图以可视化的方式展示了不同的 ChangeDetectorRef 方法:</p>
+<p><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547309_20211122094421294_905268252.png"></p>
+<p>你可以使用简单演示中的 “DC”（detectChanges()）和 “MFC”（markForCheck()）按钮测试其中一些动作。</p>
+<ol>
+<li>异步管道</li>
+</ol>
+<p>内置的<a target="_blank" rel="noopener" href="https://angular.io/api/common/AsyncPipe" title="AsyncPipe">AsyncPipe</a>订阅了一个可观察变量，并返回它所发射的最新值。</p>
+<p>在内部，AsyncPipe 在每次发出新值时都会调用 markForCheck，请看其<a target="_blank" rel="noopener" href="https://github.com/angular/angular/blob/5.2.10/packages/common/src/pipes/async_pipe.ts#L139" title="源代码">源代码</a>：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="title function_">_updateLatestValue</span>(<span class="attr">async</span>: <span class="built_in">any</span>, <span class="attr">value</span>: <span class="title class_">Object</span>): <span class="built_in">void</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">async</span> === <span class="variable language_">this</span>.<span class="property">_obj</span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">_latestValue</span> = value;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">_ref</span>.<span class="title function_">markForCheck</span>();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如图所示，AsyncPipe 自动使用 OnPush 变更检测策略工作。因此，建议尽可能多地使用它，以方便以后从默认的变更检测策略切换到 OnPush。</p>
+<p>你可以在<a target="_blank" rel="noopener" href="https://angular-change-detection-demo.netlify.com/async-pipe-demo" title="异步演示">异步演示</a>中看到这种行为的作用。</p>
+<p><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547309_20211122094758016_2069356016.png"></p>
+<p>第一个组件通过 AsyncPipe 直接将一个观察变量绑定到模板上:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mat-card-title</span>&gt;</span>&#123;&#123; (hero$ | async).name &#125;&#125;<span class="tag">&lt;/<span class="name">mat-card-title</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">hero$</span>: <span class="title class_">Observable</span>&lt;<span class="title class_">Hero</span>&gt;;</span><br><span class="line"></span><br><span class="line"><span class="title function_">ngOnInit</span>(): <span class="built_in">void</span> &#123;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">hero$</span> = <span class="title function_">interval</span>(<span class="number">1000</span>).<span class="title function_">pipe</span>(</span><br><span class="line">      <span class="title function_">startWith</span>(<span class="title function_">createHero</span>()),</span><br><span class="line">      <span class="title function_">map</span>(<span class="function">() =&gt;</span> <span class="title function_">createHero</span>())</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>而第二个组件订阅了观察器并更新了一个数据绑定值:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mat-card-title</span>&gt;</span>&#123;&#123; hero.name &#125;&#125;<span class="tag">&lt;/<span class="name">mat-card-title</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">hero</span>: <span class="title class_">Hero</span> = <span class="title function_">createHero</span>();</span><br><span class="line"></span><br><span class="line"><span class="title function_">ngOnInit</span>(): <span class="built_in">void</span> &#123;</span><br><span class="line">  <span class="title function_">interval</span>(<span class="number">1000</span>)</span><br><span class="line">    .<span class="title function_">pipe</span>(<span class="title function_">map</span>(<span class="function">() =&gt;</span> <span class="title function_">createHero</span>()))</span><br><span class="line">      .<span class="title function_">subscribe</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">hero</span> = <span class="title function_">createHero</span>();</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(</span><br><span class="line">          <span class="string">&#x27;HeroCardAsyncPipeComponent new hero without AsyncPipe: &#x27;</span>,</span><br><span class="line">          <span class="variable language_">this</span>.<span class="property">hero</span></span><br><span class="line">        );</span><br><span class="line">      &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>正如你所看到的，没有 AsyncPipe 的实现不会触发变更检测，所以我们需要为观察者发出的每个新事件手动调用 detectChanges()。</p>
+<h2 id="避免循环变更检测和-ExpressionChangedAfterCheckedError-错误"><a href="#避免循环变更检测和-ExpressionChangedAfterCheckedError-错误" class="headerlink" title="避免循环变更检测和 ExpressionChangedAfterCheckedError 错误"></a>避免循环变更检测和 ExpressionChangedAfterCheckedError 错误</h2><p>Angular 包括一个检测变更检测循环的机制。在开发模式下，框架会运行两次变更检测，以检查值在第一次运行后是否有变化。在生产模式下，变更检测只运行一次，以获得更好的性能。</p>
+<p>我在我的<a target="_blank" rel="noopener" href="https://angular-change-detection-demo.netlify.com/expression-changed-demo" title="ExpressionChangedAfterCheckedError演示">ExpressionChangedAfterCheckedError 演示</a>中强制执行了这个错误，如果你打开浏览器控制台就可以看到。</p>
+<p><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547310_20211122095932509_1168897747.png"></p>
+<p>在这个演示中，我通过更新 ngAfterViewInit 生命周期钩子中的 hero 属性来迫使错误发生。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">ngAfterViewInit</span>(): <span class="built_in">void</span> &#123;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">hero</span>.<span class="property">name</span> = <span class="string">&#x27;Another name which triggers ExpressionChangedAfterItHasBeenCheckedError&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>为了理解为什么会出现这样的错误，我们需要看一下变更检测运行期间的不同步骤。</p>
+<p><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547311_20211122100034774_484031073.png"></p>
+<p>正如我们所看到的，AfterViewInit 生命周期钩子是在当前视图的 DOM 更新被渲染后被调用的。如果我们改变这个钩子中的值，它在第二次变更检测运行中（如上所述，在开发模式下自动触发）会有不同的值，因此 Angular 会抛出 ExpressionChangedAfterCheckedError。</p>
+<p>我强烈推荐 Max Koretskyi 的文章<a target="_blank" rel="noopener" href="https://blog.angularindepth.com/everything-you-need-to-know-about-change-detection-in-angular-8006c51d206f" title="《Everything you need to know about change detection in Angular">《Everything you need to know about change detection in Angular</a>》，它更详细地探讨了著名的 ExpressionChangedAfterCheckedError 的基础实现和使用案例。</p>
+<h2 id="运行代码而不进行变更检测"><a href="#运行代码而不进行变更检测" class="headerlink" title="运行代码而不进行变更检测"></a>运行代码而不进行变更检测</h2><p>可以在 NgZone 之外运行某些代码块，这样就不会触发变更检测。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">constructor</span>(<span class="params"><span class="keyword">private</span> ngZone: NgZone</span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">runWithoutChangeDetection</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">ngZone</span>.<span class="title function_">runOutsideAngular</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// the following setTimeout will not trigger change detection</span></span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> <span class="title function_">doStuff</span>(), <span class="number">1000</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这个简单的演示提供了一个按钮来触发 Angular 区域外的动作。</p>
+<p><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1637547311_20211122100259734_442189075.png"></p>
+<p>你应该看到，该动作被记录在控制台中，但 HeroCard 组件没有被检查，这意味着它们的边框没有变成红色。</p>
+<p>这种机制对 Protractor 运行的 E2E 测试非常有用，特别是当你在测试中使用 browser.waitForAngular 时。在每次向浏览器发送命令后，Protractor 会等待，直到该区域变得稳定。如果你使用 setInterval，你的区域将永远不会变得稳定，你的测试可能会超时。</p>
+<p>同样的问题也会发生在 RxJS 的观测器上，但因此你需要在 polyfill.ts 中添加一个补丁版本，如 Zone.js 对非标准 API 的支持中所述。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&quot;zone.js/dist/zone&quot;</span>; <span class="comment">// Included with Angular CLI.</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;zone.js/dist/zone-patch-rxjs&quot;</span>; <span class="comment">// Import RxJS patch to make sure RxJS runs in the correct zone</span></span><br></pre></td></tr></table></figure>
+
+<p>如果没有这个补丁，你可以在 ngZone.runOutsideAngular 里面运行可观察的代码，但它仍然会作为 NgZone 里面的一个任务运行。</p>
+<h2 id="停用变更检测"><a href="#停用变更检测" class="headerlink" title="停用变更检测"></a>停用变更检测</h2><p>有一些特殊的用例，停用变更检测是有意义的。例如，如果你使用 WebSocket 从后端向前端推送大量的数据，而相应的前端组件应该每 10 秒才更新一次。在这种情况下，我们可以通过调用 detach()来停用变更检测，并使用 detectChanges()手动触发。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">constructor</span>(<span class="params"><span class="keyword">private</span> ref: ChangeDetectorRef</span>) &#123;</span><br><span class="line">    ref.<span class="title function_">detach</span>(); <span class="comment">// deactivate change detection</span></span><br><span class="line">    <span class="built_in">setInterval</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">ref</span>.<span class="title function_">detectChanges</span>(); <span class="comment">// manually trigger change detection</span></span><br><span class="line">    &#125;, <span class="number">10</span> * <span class="number">1000</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在 Angular 应用程序的启动过程中，也可以完全停用 Zone.js。这意味着自动变更检测被完全停用，我们需要手动触发 UI 变化，例如通过调用 ChangeDetectorRef.detectChanges（）。</p>
+<p>首先，我们需要从 polyfills.ts 中注释出 Zone.js 的导入。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&quot;zone.js/dist/zone&quot;</span>; <span class="comment">// Included with Angular CLI.</span></span><br></pre></td></tr></table></figure>
+
+<p>接下来，我们需要在 main.ts 中传递 noop 区域。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">platformBrowserDynamic</span>().<span class="title function_">bootstrapModule</span>(<span class="title class_">AppModule</span>, &#123;</span><br><span class="line">      <span class="attr">ngZone</span>: <span class="string">&#x27;noop&#x27;</span>;</span><br><span class="line">&#125;).<span class="title function_">catch</span>(<span class="function"><span class="params">err</span> =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(err));</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>关于停用 Zone.js 的更多细节可以在<a target="_blank" rel="noopener" href="https://www.softwarearchitekt.at/aktuelles/angular-elements-part-iii/" title="Angular Elements without Zone.Js">Angular Elements without Zone.Js</a>一文中找到。</p>
+<h2 id="Ivy"><a href="#Ivy" class="headerlink" title="Ivy"></a>Ivy</h2><p>从 Angular 9 开始，Angular 默认使用 Ivy，Angular 的下一代编译和渲染管道。</p>
+<p>Ivy 仍然以正确的顺序处理所有的框架生命周期钩子，所以变更检测工作与以前一样。所以你仍然会在你的应用程序中看到相同的 ExpressionChangedAfterCheckedError。</p>
+<p>Max Koretskyi 在<a target="_blank" rel="noopener" href="https://blog.angularindepth.com/ivy-engine-in-angular-first-in-depth-look-at-compilation-runtime-and-change-detection-876751edd9fd" title="这篇文章">这篇文章</a>写道:</p>
+<blockquote>
+<p>正如你所看到的，所有熟悉的操作仍然在这里。但操作的顺序似乎已经改变了。例如，现在 Angular 似乎首先检查子组件，然后才是嵌入式视图。由于目前还没有编译器产生适合测试我的假设的输出，所以我不能确定。</p>
+</blockquote>
+<p>你可以在本博文末尾的 “推荐文章 “部分找到另外两篇与常春藤有关的有趣文章。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Angular 变更检测是一个强大的框架机制，它可以确保我们的 UI 以可预测和可执行的方式表示我们的数据。可以说，变更检测只是对大多数应用程序起作用，特别是如果它们不是由 50 多个组件组成的。</p>
+<p>作为一个开发者，你通常需要深入研究这个话题，有两个原因。</p>
+<ul>
+<li><p>你收到一个 ExpressionChangedAfterCheckedError，需要解决它</p>
+</li>
+<li><p>你需要提高你的应用程序的性能</p>
+</li>
+</ul>
+<p>我希望这篇文章能帮助你更好地理解 Angular 的变更检测。欢迎使用我的演示项目来玩一玩不同的变更检测策略。</p>
+<h2 id="推荐文章"><a href="#推荐文章" class="headerlink" title="推荐文章"></a>推荐文章</h2><p><a target="_blank" rel="noopener" href="https://blog.angular-university.io/how-does-angular-2-change-detection-really-work/" title="Angular Change Detection - How Does It Really Work?">Angular Change Detection - How Does It Really Work?</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.angular-university.io/onpush-change-detection-how-it-works/" title="Angular OnPush Change Detection and Component Design - Avoid Common Pitfalls">Angular OnPush Change Detection and Component Design - Avoid Common Pitfalls</a></p>
+<p><a target="_blank" rel="noopener" href="https://netbasal.com/a-comprehensive-guide-to-angular-onpush-change-detection-strategy-5bac493074a4" title="A Comprehensive Guide to Angular onPush Change Detection Strategy">A Comprehensive Guide to Angular onPush Change Detection Strategy</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.thoughtram.io/angular/2016/02/22/angular-2-change-detection-explained.html" title="Angular Change Detection Explained">Angular Change Detection Explained</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.angularindepth.com/angular-ivy-change-detection-execution-are-you-prepared-ab68d4231f2c" title="Angular Ivy change detection execution: are you prepared?">Angular Ivy change detection execution: are you prepared?</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.nrwl.io/understanding-angular-ivy-incremental-dom-and-virtual-dom-243be844bf36" title="Understanding Angular Ivy: Incremental DOM and Virtual DOM">Understanding Angular Ivy: Incremental DOM and Virtual DOM</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Angular/" rel="tag">#Angular</a>
+          
+            <a href="/tags/%E5%8F%98%E6%9B%B4%E6%A3%80%E6%B5%8B/" rel="tag">#变更检测</a>
+          
+            <a href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">#前端</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/08/10/http-and-https-content/" rel="next" title="解决HTTPS应用访问HTTP图片被禁止的问题">
+                <i class="fa fa-chevron-left"></i> 解决HTTPS应用访问HTTP图片被禁止的问题
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/09/27/angular-immutable-js/" rel="prev" title="Angular集成immutable-js以提高性能">
+                Angular集成immutable-js以提高性能 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是变更检测"><span class="nav-number">1.</span> <span class="nav-text">什么是变更检测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#变更检测如何工作的"><span class="nav-number">2.</span> <span class="nav-text">变更检测如何工作的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Zone-js"><span class="nav-number">3.</span> <span class="nav-text">Zone.js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#性能"><span class="nav-number">4.</span> <span class="nav-text">性能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#变更检测策略"><span class="nav-number">5.</span> <span class="nav-text">变更检测策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Default（默认的变更检测策略）"><span class="nav-number">5.1.</span> <span class="nav-text">Default（默认的变更检测策略）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OnPush"><span class="nav-number">5.2.</span> <span class="nav-text">OnPush</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#避免循环变更检测和-ExpressionChangedAfterCheckedError-错误"><span class="nav-number">6.</span> <span class="nav-text">避免循环变更检测和 ExpressionChangedAfterCheckedError 错误</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运行代码而不进行变更检测"><span class="nav-number">7.</span> <span class="nav-text">运行代码而不进行变更检测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#停用变更检测"><span class="nav-number">8.</span> <span class="nav-text">停用变更检测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ivy"><span class="nav-number">9.</span> <span class="nav-text">Ivy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">10.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#推荐文章"><span class="nav-number">11.</span> <span class="nav-text">推荐文章</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

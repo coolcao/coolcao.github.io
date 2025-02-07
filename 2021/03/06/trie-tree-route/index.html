@@ -1,0 +1,733 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="算法与数据结构,前缀树," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="不管是做前端还是后端，都可能会遇到路由匹配的需求。如果是静态路由，可以直接用哈希表进行存储，查找时直接从哈希表查即可，速度非常快，复杂度 O(1)。但在实际场景中，更多的是动态路由的匹配，动态路由直接用哈希表就有点力不从心了。动态路由可以用前缀树这个结构。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前缀树结构做路由匹配">
+<meta property="og:url" content="http://coolcao.com/2021/03/06/trie-tree-route/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="不管是做前端还是后端，都可能会遇到路由匹配的需求。如果是静态路由，可以直接用哈希表进行存储，查找时直接从哈希表查即可，速度非常快，复杂度 O(1)。但在实际场景中，更多的是动态路由的匹配，动态路由直接用哈希表就有点力不从心了。动态路由可以用前缀树这个结构。">
+<meta property="og:locale">
+<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1672977233_20230106110544490_319631237.png">
+<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1672977235_20230106114139823_1185599112.png">
+<meta property="article:published_time" content="2021-03-06T02:34:27.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.960Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="算法与数据结构">
+<meta property="article:tag" content="前缀树">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1672977233_20230106110544490_319631237.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2021/03/06/trie-tree-route/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> 前缀树结构做路由匹配 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                前缀树结构做路由匹配
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2021-03-06T10:34:27+08:00" content="2021-03-06">
+              2021-03-06
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>不管是做前端还是后端，都可能会遇到路由匹配的需求。如果是静态路由，可以直接用哈希表进行存储，查找时直接从哈希表查即可，速度非常快，复杂度 O(1)。<br>但在实际场景中，更多的是动态路由的匹配，动态路由直接用哈希表就有点力不从心了。动态路由可以用<em>前缀树</em>这个结构。</p>
+<span id="more"></span>
+
+<h2 id="前缀树"><a href="#前缀树" class="headerlink" title="前缀树"></a>前缀树</h2><p>前缀树（Trie 树）是一种树形结构，经常被用作单词前缀补全以及动态路由的匹配实现。</p>
+<p>前缀树的特点：</p>
+<ul>
+<li>根节点不包含字符，除根节点外的每一个子节点都包含一个字符。</li>
+<li>从根节点到某一节点，路径上经过的字符连接起来，为该节点对应的字符串</li>
+<li>每个节点包含的所有子节点包含的字符不同</li>
+<li>从第一字符开始有连续重复的字符只占用一个节点</li>
+</ul>
+<p><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1672977233_20230106110544490_319631237.png"><br>上图是一棵前缀树，表示了关键字集合 {“a”, “to”, “tea”, “ten”, “i”, “in”, “inn”}。</p>
+<h3 id="前缀树的基本实现"><a href="#前缀树的基本实现" class="headerlink" title="前缀树的基本实现"></a>前缀树的基本实现</h3><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Trie节点</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TrieNode</span> &#123;</span><br><span class="line">  <span class="attr">isWord</span>: <span class="built_in">boolean</span>;</span><br><span class="line">  <span class="attr">next</span>: <span class="title class_">Map</span>&lt;<span class="built_in">string</span>, <span class="title class_">TrieNode</span>&gt;;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">isWord</span> = <span class="literal">false</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">next</span> = <span class="keyword">new</span> <span class="title class_">Map</span>();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TrieTree</span> &#123;</span><br><span class="line">  <span class="attr">root</span>: <span class="title class_">TrieNode</span>;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">root</span> = <span class="keyword">new</span> <span class="title class_">TrieNode</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">insert</span>(<span class="params">word: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> cur = <span class="variable language_">this</span>.<span class="property">root</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> c <span class="keyword">of</span> word) &#123;</span><br><span class="line">      <span class="keyword">if</span> (!cur.<span class="property">next</span>.<span class="title function_">has</span>(c)) &#123;</span><br><span class="line">        cur.<span class="property">next</span>.<span class="title function_">set</span>(c, <span class="keyword">new</span> <span class="title class_">TrieNode</span>());</span><br><span class="line">      &#125;</span><br><span class="line">      cur = cur.<span class="property">next</span>.<span class="title function_">get</span>(c);</span><br><span class="line">    &#125;</span><br><span class="line">    cur.<span class="property">isWord</span> = <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">search</span>(<span class="params">word: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> cur = <span class="variable language_">this</span>.<span class="property">root</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> c <span class="keyword">of</span> word) &#123;</span><br><span class="line">      <span class="keyword">if</span> (!cur.<span class="property">next</span>.<span class="title function_">has</span>(c)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      cur = cur.<span class="property">next</span>.<span class="title function_">get</span>(c);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> cur.<span class="property">isWord</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> tree = <span class="keyword">new</span> <span class="title class_">TrieTree</span>();</span><br><span class="line">tree.<span class="title function_">insert</span>(<span class="string">&#x27;abc&#x27;</span>);</span><br><span class="line">tree.<span class="title function_">insert</span>(<span class="string">&#x27;adc&#x27;</span>);</span><br><span class="line">tree.<span class="title function_">insert</span>(<span class="string">&#x27;abcd&#x27;</span>);</span><br><span class="line"></span><br><span class="line">tree.<span class="title function_">search</span>(<span class="string">&#x27;ad&#x27;</span>);  <span class="comment">// false</span></span><br><span class="line">tree.<span class="title function_">search</span>(<span class="string">&#x27;abc&#x27;</span>); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="动态路由实现"><a href="#动态路由实现" class="headerlink" title="动态路由实现"></a>动态路由实现</h2><p>基于前缀树这个结构，我们可以应用于路由的匹配。<br>比如下面这张图可以匹配如下的路由规则：</p>
+<ul>
+<li>GET &#x2F;users</li>
+<li>GET &#x2F;users&#x2F;:id</li>
+<li>GET &#x2F;about</li>
+<li>GET &#x2F;blogs</li>
+<li>GET &#x2F;blogs&#x2F;:id<br><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/1672977235_20230106114139823_1185599112.png"></li>
+</ul>
+<p>其中根节点是 http 请求方法，每个子节点都是路由中的一部分。<br>后面两个 <code>:id</code> 节点是通配符，可以匹配动态路由。</p>
+<p>所以每个节点的结构如下：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RouterNode</span> &#123;</span><br><span class="line">  <span class="attr">path</span>: <span class="built_in">string</span>; <span class="comment">// 完整路径，只存于最后一个节点，表示一个完整的路径</span></span><br><span class="line">  <span class="attr">part</span>: <span class="built_in">string</span>; <span class="comment">// 路由中由 &#x27;/&#x27; 分隔的部分</span></span><br><span class="line">  <span class="attr">children</span>: <span class="title class_">Map</span>&lt;<span class="built_in">string</span>, <span class="title class_">RouterNode</span>&gt;; <span class="comment">// 子节点</span></span><br><span class="line">  <span class="attr">isWild</span>: <span class="built_in">boolean</span>; <span class="comment">// 是否是通配符节点</span></span><br><span class="line">  <span class="attr">level</span>: <span class="built_in">number</span>; <span class="comment">// 层级，从0开始</span></span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span></span><br><span class="line"><span class="params">    path?: <span class="built_in">string</span>,</span></span><br><span class="line"><span class="params">    part?: <span class="built_in">string</span>,</span></span><br><span class="line"><span class="params">    isWild?: <span class="built_in">boolean</span>,</span></span><br><span class="line"><span class="params">    level: <span class="built_in">number</span> = <span class="number">0</span></span></span><br><span class="line"><span class="params">  </span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">part</span> = part;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">path</span> = path;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">isWild</span> = isWild;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">children</span> = <span class="keyword">new</span> <span class="title class_">Map</span>();</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">level</span> = level;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结构中，path 字段表示完整的路径，只存于最后一个节点，表示一个完整的路径。part 表示路径中由 <code>/</code> 分隔的每一部分。children 存储的是子节点。isWild 标识该节点是否是通配符，level 标识节点的层级，在进行路由匹配时，层级要和路由中的 part 层级一致。</p>
+<p>对于路由匹配功能来说，除了要存储路径这个前缀树，还要存储路由的处理函数，因此我们的路由 Router 大致结构如下：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Router</span> &#123;</span><br><span class="line">  <span class="comment">// 前缀树保存节点信息</span></span><br><span class="line">  <span class="attr">root</span>: <span class="title class_">Map</span>&lt;<span class="built_in">string</span>, <span class="title class_">RouterNode</span>&gt;;</span><br><span class="line">  <span class="comment">// 保存路由信息</span></span><br><span class="line">  <span class="attr">route</span>: <span class="title class_">Map</span>&lt;<span class="built_in">string</span>, <span class="title class_">Function</span>&gt;;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">root</span> = <span class="keyword">new</span> <span class="title class_">Map</span>();</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">route</span> = <span class="keyword">new</span> <span class="title class_">Map</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 添加路由</span></span><br><span class="line">  <span class="title function_">addRoute</span>(<span class="params">method: <span class="built_in">string</span>, path: <span class="built_in">string</span>, handler: <span class="built_in">Function</span></span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="variable language_">this</span>.<span class="property">root</span>.<span class="title function_">has</span>(method)) &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">root</span>.<span class="title function_">set</span>(method, <span class="keyword">new</span> <span class="title class_">RouterNode</span>());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> root = <span class="variable language_">this</span>.<span class="property">root</span>.<span class="title function_">get</span>(method);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> key = method + path;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> parts = <span class="title function_">parsePath</span>(path);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> [i, part] <span class="keyword">of</span> parts.<span class="title function_">entries</span>()) &#123;</span><br><span class="line">      <span class="keyword">if</span> (!root.<span class="property">children</span>.<span class="title function_">has</span>(part)) &#123;</span><br><span class="line">        root.<span class="property">children</span>.<span class="title function_">set</span>(</span><br><span class="line">          part,</span><br><span class="line">          <span class="keyword">new</span> <span class="title class_">RouterNode</span>(<span class="literal">null</span>, part, part[<span class="number">0</span>] == <span class="string">&quot;:&quot;</span> || part[<span class="number">0</span>] == <span class="string">&quot;*&quot;</span>, i + <span class="number">1</span>)</span><br><span class="line">        );</span><br><span class="line">      &#125;</span><br><span class="line">      root = root.<span class="property">children</span>.<span class="title function_">get</span>(part);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// path只存于路径的最后一个节点</span></span><br><span class="line">    root.<span class="property">path</span> = path;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">route</span>.<span class="title function_">set</span>(key, handler);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 查找路由，返回对应的节点和参数字典</span></span><br><span class="line">  <span class="title function_">getRoute</span>(<span class="params">method: <span class="built_in">string</span>, path: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> params = <span class="keyword">new</span> <span class="title class_">Map</span>();</span><br><span class="line">    <span class="keyword">const</span> searchParts = <span class="title function_">parsePath</span>(path);</span><br><span class="line">    <span class="keyword">if</span> (!<span class="variable language_">this</span>.<span class="property">root</span>.<span class="title function_">has</span>(method)) <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> node = <span class="variable language_">this</span>.<span class="property">root</span>.<span class="title function_">get</span>(method);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> [i, part] <span class="keyword">of</span> searchParts.<span class="title function_">entries</span>()) &#123;</span><br><span class="line">      <span class="keyword">let</span> tmp = <span class="string">&quot;&quot;</span>;</span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">const</span> child <span class="keyword">of</span> node.<span class="property">children</span>.<span class="title function_">values</span>()) &#123;</span><br><span class="line">        <span class="comment">// 只匹配相同层级的</span></span><br><span class="line">        <span class="keyword">if</span> (child.<span class="property">level</span> == i + <span class="number">1</span>) &#123;</span><br><span class="line">          <span class="comment">// 路由匹配上，或者遇到通配符</span></span><br><span class="line">          <span class="keyword">if</span> (child.<span class="property">part</span> == part || child.<span class="property">isWild</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (child.<span class="property">isWild</span> &amp;&amp; child.<span class="property">part</span>[<span class="number">0</span>] == <span class="string">&quot;:&quot;</span>)</span><br><span class="line">              params[child.<span class="property">part</span>.<span class="title function_">slice</span>(<span class="number">1</span>)] = part;</span><br><span class="line">            tmp = child.<span class="property">part</span>;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (child.<span class="property">level</span> &gt; i + <span class="number">1</span>) &#123;</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// 星号通配符直接返回</span></span><br><span class="line">      <span class="keyword">if</span> (tmp[<span class="number">0</span>] == <span class="string">&quot;*&quot;</span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> key = method + node.<span class="property">children</span>.<span class="title function_">get</span>(tmp).<span class="property">path</span>;</span><br><span class="line">        <span class="keyword">return</span> &#123; <span class="attr">handler</span>: <span class="variable language_">this</span>.<span class="property">route</span>.<span class="title function_">get</span>(key), params &#125;;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      node = node.<span class="property">children</span>.<span class="title function_">get</span>(tmp);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> key = method + node.<span class="property">path</span>;</span><br><span class="line">    <span class="keyword">return</span> &#123; <span class="attr">handler</span>: <span class="variable language_">this</span>.<span class="property">route</span>.<span class="title function_">get</span>(key), params &#125;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如上就基于前缀树实现了简单地动态路由匹配功能。<br>在使用时先添加路由，然后通过<code>getRoute()</code>方法就能查询到该路由对应的处理函数以及路由中的参数。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">router.<span class="title function_">addRoute</span>(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;/blogs/*&quot;</span>, <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;这是请求博客所有内容接口&quot;</span>);</span><br><span class="line">&#125;);</span><br><span class="line">router.<span class="title function_">addRoute</span>(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;/users/:id&quot;</span>, <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;用户详情接口&quot;</span>);</span><br><span class="line">&#125;);</span><br><span class="line">router.<span class="title function_">addRoute</span>(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;/users&quot;</span>, <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;用户列表接口&quot;</span>);</span><br><span class="line">&#125;);</span><br><span class="line">router.<span class="title function_">addRoute</span>(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;/tasks&quot;</span>, <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;任务列表接口&quot;</span>);</span><br><span class="line">&#125;);</span><br><span class="line">router.<span class="title function_">addRoute</span>(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;/tasks/:id&quot;</span>, <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;任务详情接口&quot;</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> r = router.<span class="title function_">getRoute</span>(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;/blogs/5/4/3&quot;</span>);</span><br><span class="line"><span class="keyword">if</span> (r) &#123;</span><br><span class="line">  r.<span class="property">handler</span> ? r.<span class="title function_">handler</span>() : <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;未匹配到路由&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">#算法与数据结构</a>
+          
+            <a href="/tags/%E5%89%8D%E7%BC%80%E6%A0%91/" rel="tag">#前缀树</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/02/19/terminal/" rel="next" title="打造一款简洁高效且比较有颜的终端">
+                <i class="fa fa-chevron-left"></i> 打造一款简洁高效且比较有颜的终端
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/09/16/angular-http-interceptor/" rel="prev" title="Angular拦截器的一些妙用">
+                Angular拦截器的一些妙用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前缀树"><span class="nav-number">1.</span> <span class="nav-text">前缀树</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#前缀树的基本实现"><span class="nav-number">1.1.</span> <span class="nav-text">前缀树的基本实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态路由实现"><span class="nav-number">2.</span> <span class="nav-text">动态路由实现</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

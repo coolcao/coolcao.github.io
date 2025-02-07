@@ -1,0 +1,829 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="DNS解析,计算机网络," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="最近，新接触到了hexo这个博客工具，并利用它搭建了基于git hub pages静态页面的个人博客站，绑定了自己的域名，在绑定域名这个环节，逐步学习并理解了域名解析这个过程，想到之前有个有趣的面试题就是“当你在浏览器地址栏中输入一个网址，并按下回车键后，发生了什么”，于是就想把此记录下。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从搭建hexo个人博客过程中理解学习DNS解析">
+<meta property="og:url" content="http://coolcao.com/2016/10/19/%E4%BB%8E%E6%90%AD%E5%BB%BAhexo%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%90%86%E8%A7%A3%E5%AD%A6%E4%B9%A0DNS%E8%A7%A3%E6%9E%90/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="最近，新接触到了hexo这个博客工具，并利用它搭建了基于git hub pages静态页面的个人博客站，绑定了自己的域名，在绑定域名这个环节，逐步学习并理解了域名解析这个过程，想到之前有个有趣的面试题就是“当你在浏览器地址栏中输入一个网址，并按下回车键后，发生了什么”，于是就想把此记录下。">
+<meta property="og:locale">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/500pxAn_example_of_theoretical_DNS_recursion_svg.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/32648197_1.jpg">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90.jpg">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/aliyun_dns_o.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/conflict_mx_cname.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/dns_rules.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/dns_www.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/dns_a.png">
+<meta property="article:published_time" content="2016-10-18T16:42:21.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.961Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="DNS解析">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/500pxAn_example_of_theoretical_DNS_recursion_svg.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2016/10/19/从搭建hexo个人博客过程中理解学习DNS解析/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> 从搭建hexo个人博客过程中理解学习DNS解析 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                从搭建hexo个人博客过程中理解学习DNS解析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-10-19T00:42:21+08:00" content="2016-10-19">
+              2016-10-19
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近，新接触到了hexo这个博客工具，并利用它搭建了基于git hub pages静态页面的个人博客站，绑定了自己的域名，在绑定域名这个环节，逐步学习并理解了域名解析这个过程，想到之前有个有趣的面试题就是“当你在浏览器地址栏中输入一个网址，并按下回车键后，发生了什么”，于是就想把此记录下。</p>
+<span id="more"></span>
+
+<h2 id="DNS基础知识"><a href="#DNS基础知识" class="headerlink" title="DNS基础知识"></a>DNS基础知识</h2><h3 id="DNS-domain-name-system"><a href="#DNS-domain-name-system" class="headerlink" title="DNS(domain name system)"></a>DNS(domain name system)</h3><ul>
+<li>从概念上来说，Internet被分成200多个顶级域，每个域名有多个主机。顶级域有两种：<code>通用域</code>和<code>国家域</code>。</li>
+<li>域名不区分大小写</li>
+</ul>
+<h3 id="资源记录"><a href="#资源记录" class="headerlink" title="资源记录"></a>资源记录</h3><p>每个域都可以有一组与它相关联的资源记录。对于一台主机来说，最常见的资源记录就是他的IP地址，但除此之外，还存在许多其他种类的资源记录。因此DNS的基本功能是<code>将域名映射到资源记录上</code>。</p>
+<p>资源记录是一个五元组，使用如下格式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Domain_name(域名) Time_to_live(生存周期) Class(类别) Type(类型) Value(值)</span><br></pre></td></tr></table></figure>
+<p>Type(类型)指出了这是什么类型的记录。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>含义</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SOA</td>
+<td>授权的开始</td>
+<td>本区域的参数</td>
+</tr>
+<tr>
+<td>A</td>
+<td>一台主机的IP地址</td>
+<td>32位整数</td>
+</tr>
+<tr>
+<td>MX</td>
+<td>邮件交换</td>
+<td>优先级，希望接受该域电子邮件的机器</td>
+</tr>
+<tr>
+<td>NS</td>
+<td>名字服务器</td>
+<td>本域的服务器名称</td>
+</tr>
+<tr>
+<td>CNAME</td>
+<td>规范名</td>
+<td>域名</td>
+</tr>
+<tr>
+<td>PTR</td>
+<td>指针</td>
+<td>一个IP地址的别名</td>
+</tr>
+<tr>
+<td>HINFO</td>
+<td>主机的描述</td>
+<td>用ASCII表示的CPU和操作系统</td>
+</tr>
+<tr>
+<td>TXT</td>
+<td>文本</td>
+<td>未解释的ASCII文本</td>
+</tr>
+</tbody></table>
+<ul>
+<li>最重要的是A(Address，地址)记录，他包含了某一台主机的32位IP地址，每台Internet主机必须有一个IP地址，以便其他机器能与他进行通信。</li>
+<li>其次最重要的记录类型是MX记录，他也指定一台主机的名字，该主机将为这个特定的域接受电子邮件。之所以使用MX记录，是因为并非每台机器都做好了接受电子邮件的准备。</li>
+<li>NS记录指定名字服务器。</li>
+<li>CNAME记录允许创建别名。例如，如果一个人很熟悉Internet的常规命名规则，他打算给MIT计算机科学西的一个人发送一个消息，而且他只知道此人的登录名为paul，那么，他可能猜测此人的邮件地址是<a href="mailto:&#112;&#97;&#x75;&#x6c;&#x40;&#x63;&#115;&#46;&#109;&#105;&#x74;&#46;&#x65;&#100;&#117;">&#112;&#97;&#x75;&#x6c;&#x40;&#x63;&#115;&#46;&#109;&#105;&#x74;&#46;&#x65;&#100;&#117;</a>。事实上这个地址并不正常，因为MIT计算机科学系的域是lcs.mit.edu。但是，MIT可以创建一条CNAME记录，以便为那些不知情的人和程序指引到正确的方向上，这也算是为他们提供一项服务吧。</li>
+<li>与CNAME一样，PTR也指向了另一个名字。但是CNAME只是一个宏定义，而PTR与CNAME不同，它是一种正规的DNS数据类型，他的确切含义要取决于他所在的上下文。在实践中，PTR几乎总是被用来将一个名字与一个IP地址关联起来，以便能够查找IP地址并返回对应机器的名字，这种功能被称为反向查找（reverse lookups）</li>
+<li>HINFO 记录允许人们找到一个域对应于哪种操作机器和操作系统。</li>
+<li>TXT 记录，每个域可以按照任意的方式来标识自己。</li>
+<li>Value域，他的值可以是数字，域名或者ASCII字符串，其语义取决于记录的类型。</li>
+</ul>
+<h2 id="DNS域名称类型"><a href="#DNS域名称类型" class="headerlink" title="DNS域名称类型"></a>DNS域名称类型</h2><table>
+<thead>
+<tr>
+<th>名称类型</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>根域(Root domain)</td>
+<td>这是表示未命名的等级; 目录树的顶部它有时显示为两个空引号 (“”)，表示空值。 DNS 域名中使用时，它规定由尾部句点 (.) 来指定名称位于根或更高级别的域层次结构。 在此情况下，DNS 域名被认为是完整和点到准确的位置在树中的名称。</td>
+<td>单个句点 (.) 或句点用于末尾的名称，如”example.microsoft.com”</td>
+</tr>
+<tr>
+<td>顶级域(Top-level domain)</td>
+<td>用来指示某个国家&#x2F;地区或组织使用的名称的类型名称。</td>
+<td>“”.com”，表示一个名称注册为在 Internet 上的商业使用的业务。</td>
+</tr>
+<tr>
+<td>二级域(Second-level domain)</td>
+<td>可变长度的个体或组织，以便在 Internet 上使用的注册名称。 这些名称始终基于相应的顶级域，具体取决于组织或地理位置名称使用的位置的类型。</td>
+<td>“”microsoft.com。 “，这是由 Internet DNS 域的名称注册向 Microsoft 注册的二级域名称。</td>
+</tr>
+<tr>
+<td>子域(Subdomain)</td>
+<td>其他名称的组织可以创建从已注册的二级域名派生的。 这些功能包括添加到组织中的名称的 DNS 树的增长，并将其分为部门或地理位置的名称。</td>
+<td>“example.microsoft.com”。 “，这是由 Microsoft 指定文档名称示例中用于虚构子域。</td>
+</tr>
+<tr>
+<td>主机或资源名称(Host or resource name)</td>
+<td>代表名称的 DNS 树的叶节点并标识特定的资源的名称。 通常情况下，DNS 域名的最左侧的标签标识网络上的特定计算机。 例如，如果主机 (A) 资源记录中使用此级别的名称，则它用于查找基于其主机名的计算机的 IP 地址。</td>
+<td>“”主机-a.example.microsoft.com。”，其中第一个标签 （”主机-a”） 是网络上的特定计算机的 DNS 主机名。</td>
+</tr>
+</tbody></table>
+<h2 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h2><h3 id="域名解析过程"><a href="#域名解析过程" class="headerlink" title="域名解析过程"></a>域名解析过程</h3><ul>
+<li><strong>浏览器缓存</strong>：浏览器会首先检查缓存中有没有该域名的缓存记录，如果有，解析过程结束，如果没有，继续下一步。浏览器会缓存DNS记录一段时间，时间，大小等通过TTL设置。</li>
+<li><strong>系统缓存</strong>：在浏览器缓存里没有找到记录，浏览器会做一个系统调用，查找系统缓存里是否有DNS记录。Windows系统中可以通过<code>C:\Windows\System32\drivers\etc\hosts</code>文件来设置，linux上配置文件是<code>/etc/named.conf</code>。</li>
+<li><strong>路由器缓存</strong>：如果本地系统缓存也未找到，前面的查询请求发向路由器，路由器也会有自己的DNS缓存记录。</li>
+<li><strong>ISP DNS缓存</strong>：接下来要检查的就是网络服务提供商缓存DNS的服务器，在这一般都能找到相应的缓存记录。ISP专门的域名解析服务器（LDNS）一般都会缓存域名解析记录，缓存时间受域名的失效时间控制，大约80%的域名解析到这里就已经完成了，所以，LDNS主要承担了域名的解析工作。</li>
+<li><strong>递归搜索</strong>：从根域名服务器开始进行递归搜索，到顶级域名服务器，再到第二层域服务器。</li>
+</ul>
+<p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/500pxAn_example_of_theoretical_DNS_recursion_svg.png" alt="DNS递归查找"></p>
+<h3 id="域名解析示意图"><a href="#域名解析示意图" class="headerlink" title="域名解析示意图"></a>域名解析示意图</h3><p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/32648197_1.jpg" alt="域名解析"></p>
+<p>前面浏览器缓存，系统缓存及路由器缓存都是在本地完成的，所以，图中所示是从本地区的域名服务器LDNS开始的。<br>我们在网络配置中，都会有一个“DNS服务器地址”这一项，这个地址就是本地区域名服务器LDNS。这个DNS服务器通常是由提供给你网络服务的提供商提供，如联通或电信等。<br>如图中第三步，用户发起请求向LDNS查询，LDNS会查询其服务器上的缓存记录，如果有，返回，没有，继续。<br>如果LDNS没有查找到缓存记录，就直接到Root Server域名服务器请求解析。<br>根域名服务器返回给本地域名服务器一个所查询的主域名服务器(gTLD Server)地址，gTLD是国际顶级域名服务器，如.com,.cn,.org等，全球只有13台根域名服务器。<br>LDNS再向上一步返回的gTLD服务器发送请求。gTLD服务器查找并返回此域名对应的Name Server域名服务器的地址。<br>Name Server域名服务器会查询存储的域名和IP映射关系表，将ip连同一个TTL值返回给LDNS域名服务器<br>LDNS域名服务器会缓存这个域名和ip的对应关系，并将结果返回给用户。<br>用户本地根据TTL值缓存在本地系统中。<br>在实际DNS解析过程中，Name Server也可能有很多级，或者有一个GTM负载均衡控制，这都有可能会影响到域名解析过程。</p>
+<p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90.jpg" alt="域名解析示意图"><br>解析 <a target="_blank" rel="noopener" href="http://www.163.com示例/">www.163.com示例</a></p>
+<h2 id="hexo绑定域名过程"><a href="#hexo绑定域名过程" class="headerlink" title="hexo绑定域名过程"></a>hexo绑定域名过程</h2><h3 id="阿里云DNS解析"><a href="#阿里云DNS解析" class="headerlink" title="阿里云DNS解析"></a>阿里云DNS解析</h3><p>在阿里云解析域名的时候还遇到了小问题呢，一一记录下，也算是学习过程吧。</p>
+<h4 id="CNAME的-记录和MX的-记录不能共存"><a href="#CNAME的-记录和MX的-记录不能共存" class="headerlink" title="CNAME的@记录和MX的@记录不能共存"></a>CNAME的@记录和MX的@记录不能共存</h4><p>由于我的域名coolcao.com开通的时候，自动开通了企业邮箱，因此，在域名解析那里，阿里云自动生成了几条和邮件相关的解析记录，如下图：<br><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/aliyun_dns_o.png" alt="阿里云域名解析"><br>从上图中可以看出，由于开通了企业邮箱，默认开启5条记录，两条不同优先级的MX记录，三条CNAME记录，当我添加解析到我的github pages的记录时报错了：<br><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/conflict_mx_cname.png" alt="MX和CNAME冲突"><br>点开冲突记录规则，有如下规则：<br><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/dns_rules.png" alt="冲突记录规则"><br>也就是说，MX记录和CNAME在主机记录为 <code>@</code>时不能共存，那该怎么办，企业邮箱和www站不能同时解析拥有么？<br>当然不是，经过上网查找资料，大致有下面两个办法：</p>
+<ul>
+<li>采用Link类型解析<br>首先添加一条CNAME类型的www记录，解析到github pages地址。<br><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/dns_www.png" alt="www解析"><br>然后再添加一条Link类型的@解析，这里解析到带www的完整地址，这里我的是：<code>www.coolcao.com</code><br>但这里有个要求，是域名必须要经过备案，即<code>coolcao.com</code>要必须备案，才能添加。由于我的还未备案，无从验证实验结果。如果有备案的，可以验证一下是否有效。</li>
+<li>采用A类型解析<br>我的域名没有备案，因此用不了Link类型，可以采用A类型解析。<br>首先使用ping命令看一下自己的github pages的IP是多少。我这里查到的是：<code>151.101.100.133</code>,因此添加如下记录：<br><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/dns_a.png" alt="A记录解析"><br>同时添加一条CNAME类型的www解析，这样，可以通过<code>coolcao.com</code>或<code>www.coolcao.com</code>都能访问到我的小站。<br><em>但这种方式也有个问题，如果github的IP地址变化了的话，得需要再改变A记录的值，可以说是一种不稳定的因素吧。但是域名没备案，没办法的办法。</em></li>
+</ul>
+<h4 id="github-pages项目下为什么还要添加CNAME文件"><a href="#github-pages项目下为什么还要添加CNAME文件" class="headerlink" title="github pages项目下为什么还要添加CNAME文件"></a>github pages项目下为什么还要添加CNAME文件</h4><p>最开始，在设置未开通邮箱服务的愉快绑定时，很简单，直接添加了两条CNAME记录，一条<code>@</code>，一条<code>www</code>两条均解析到了<code>coolcao.github.io</code><br>那时候还一直在想，为什么要在项目里添加CNAME文件呢？<br>我直接访问<code>coolcao.github.io</code>直接访问到我的github pages主页，那么，我将我的域名<code>coolcao.com</code>通过CNAME解析到<code>coolcao.github.io</code>不就可以了么，但是结果却是，github提示找不到页面。<br>当资料整理到这里，我才慢慢理解了原因：<br>所有的DNS解析最终都是将域名解析成IP，如果直接使用A记录直接解析到github的ip的话，在github上有成千上万的pages项目，那么，当你输入<code>coolcao.com</code>时，github怎么知道你的项目在哪里呢？这就是项目里CNAME文件的用处，把你的域名和项目进行绑定，当你访问<code>coolcao.com</code>，DNS解析到github的IP时，由于请求头中会带有<code>coolcao.com</code>，github通过CNAME的绑定，查询到了你具体的项目，才能正确找到你的项目。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/DNS%E8%A7%A3%E6%9E%90/" rel="tag">#DNS解析</a>
+          
+            <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag">#计算机网络</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/12/js%E4%B8%AD0-1-0-2%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E7%AD%89%E4%BA%8E0-3/" rel="next" title="js中0.1+0.2为什么不等于0.3">
+                <i class="fa fa-chevron-left"></i> js中0.1+0.2为什么不等于0.3
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/10/30/js%E6%95%B0%E7%BB%84%E6%8B%B7%E8%B4%9D/" rel="prev" title="js数组拷贝">
+                js数组拷贝 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#DNS基础知识"><span class="nav-number">1.</span> <span class="nav-text">DNS基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS-domain-name-system"><span class="nav-number">1.1.</span> <span class="nav-text">DNS(domain name system)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#资源记录"><span class="nav-number">1.2.</span> <span class="nav-text">资源记录</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DNS域名称类型"><span class="nav-number">2.</span> <span class="nav-text">DNS域名称类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#域名解析"><span class="nav-number">3.</span> <span class="nav-text">域名解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#域名解析过程"><span class="nav-number">3.1.</span> <span class="nav-text">域名解析过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#域名解析示意图"><span class="nav-number">3.2.</span> <span class="nav-text">域名解析示意图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo绑定域名过程"><span class="nav-number">4.</span> <span class="nav-text">hexo绑定域名过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#阿里云DNS解析"><span class="nav-number">4.1.</span> <span class="nav-text">阿里云DNS解析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CNAME的-记录和MX的-记录不能共存"><span class="nav-number">4.1.1.</span> <span class="nav-text">CNAME的@记录和MX的@记录不能共存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#github-pages项目下为什么还要添加CNAME文件"><span class="nav-number">4.1.2.</span> <span class="nav-text">github pages项目下为什么还要添加CNAME文件</span></a></li></ol></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

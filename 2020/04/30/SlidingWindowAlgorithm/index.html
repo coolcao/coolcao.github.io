@@ -1,0 +1,837 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="算法与数据结构,滑动窗口," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="滑动窗口算法思想是非常重要的一种思想，可以用来解决数组，字符串的子元素问题。它可以将嵌套循环的问题，转换为单层循环问题，降低时间复杂度，提高效率。 滑动窗口的思想非常简单，它将子数组（子字符串）理解成一个滑动的窗口，然后将这个窗口在数组上滑动，在窗口滑动的过程中，左边会出一个元素，右边会进一个元素，然后只需要计算当前窗口内的元素值即可。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="滑动窗口算法思想">
+<meta property="og:url" content="http://coolcao.com/2020/04/30/SlidingWindowAlgorithm/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="滑动窗口算法思想是非常重要的一种思想，可以用来解决数组，字符串的子元素问题。它可以将嵌套循环的问题，转换为单层循环问题，降低时间复杂度，提高效率。 滑动窗口的思想非常简单，它将子数组（子字符串）理解成一个滑动的窗口，然后将这个窗口在数组上滑动，在窗口滑动的过程中，左边会出一个元素，右边会进一个元素，然后只需要计算当前窗口内的元素值即可。">
+<meta property="og:locale">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/ccsite/Xnip2020-04-30_19-07-54.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/ccsite/slidingwindow/Xnip2020-05-01_00-11-35.png">
+<meta property="article:published_time" content="2020-04-30T10:51:31.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.951Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="算法与数据结构">
+<meta property="article:tag" content="滑动窗口">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/ccsite/Xnip2020-04-30_19-07-54.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2020/04/30/SlidingWindowAlgorithm/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> 滑动窗口算法思想 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                滑动窗口算法思想
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2020-04-30T18:51:31+08:00" content="2020-04-30">
+              2020-04-30
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>滑动窗口算法思想是非常重要的一种思想，可以用来解决数组，字符串的子元素问题。它可以将嵌套循环的问题，转换为单层循环问题，降低时间复杂度，提高效率。</p>
+<p>滑动窗口的思想非常简单，它将子数组（子字符串）理解成一个滑动的窗口，然后将这个窗口在数组上滑动，在窗口滑动的过程中，左边会出一个元素，右边会进一个元素，然后只需要计算当前窗口内的元素值即可。</p>
+<span id="more"></span>
+
+<p>可用滑动窗口思想解决的问题，一般有如下特点：</p>
+<ol>
+<li>窗口内元素是连续的。就是说，抽象出来的这个可滑动的窗口，在原数组或字符串上是连续的。</li>
+<li>窗口只能由左向右滑动，不能逆过来滑动。就是说，窗口的左右边界，只能从左到右增加，不能减少，即使局部也不可以。</li>
+</ol>
+<h2 id="算法思路"><a href="#算法思路" class="headerlink" title="算法思路"></a>算法思路</h2><ol>
+<li>使用双指针中的左右指针技巧，初始化 left &#x3D; right &#x3D; 0，把索引闭区间 [left, right] 称为一个「窗口」。</li>
+<li>先不断地增加 right 指针扩大窗口 [left, right]，直到窗口符合要求</li>
+<li>停止增加 right，转而不断增加 left 指针缩小窗口 [left, right]，直到窗口中的字符串不再符合要求。同时，每次增加 left，我们都要更新一轮结果。</li>
+<li>重复第 2 和第 3 步，直到 right 到达尽头。</li>
+</ol>
+<blockquote>
+<p>第 2 步相当于在寻找一个「可行解」，然后第 3 步在优化这个「可行解」，最终找到最优解。 左右指针轮流前进，窗口大小增增减减，窗口不断向右滑动。</p>
+</blockquote>
+<p><strong>代码模板</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">left,right := <span class="number">0</span>,<span class="number">0</span> <span class="comment">// 左右指针</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 窗口右边界滑动</span></span><br><span class="line"><span class="keyword">for</span> right &lt; length &#123;</span><br><span class="line">  window.add(arr[right])      <span class="comment">// 右元素进窗</span></span><br><span class="line">  right++                   <span class="comment">// 右指针增加</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 窗口满足条件</span></span><br><span class="line">  <span class="keyword">for</span> valid(window) &amp;&amp; left&lt;right &#123;</span><br><span class="line">    ...                      <span class="comment">// 满足条件后的操作</span></span><br><span class="line">    window.remove(arr[left]) <span class="comment">// 左元素出窗</span></span><br><span class="line">    left++                   <span class="comment">// 左指针移动，直到窗口不满足条件</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>注意:</p>
+<ul>
+<li>滑动窗口适用的题目一般具有单调性</li>
+<li>滑动窗口、双指针、单调队列和单调栈经常配合使用</li>
+</ul>
+<p>滑动窗口的思路很简单，但在 leetcode 上关于滑动窗口的题目一般都是 mid 甚至 hard 的题目。其难点在于，如何抽象窗口内元素的操作，验证窗口是否符合要求的过程。<br>即上面步骤 2，步骤 3 的两个过程。</p>
+<p>说的有点生涩。来两个例子说明一下。</p>
+<h2 id="连续子数组的最大和"><a href="#连续子数组的最大和" class="headerlink" title="连续子数组的最大和"></a>连续子数组的最大和</h2><blockquote>
+<p>给定一个整数数组，计算长度为 n 的连续子数组的最大和。</p>
+<p>比如，给定 arr&#x3D;[1,2,3,4]，n&#x3D;2，则其连续子数组的最大和为 7。其长度为 2 的连续子数组为[1,2],[2,3],[3,4]，和最大就是 3+4&#x3D;7。</p>
+</blockquote>
+<p>所有问题都可以用穷举法解决，比如这个。我们可以穷举出所有长度为 n 的子数组，然后计算每个子数组的和，再求最大值。穷举法能实现，但是效率非常低。因为在穷举的过程中会嵌套循环。</p>
+<p>滑动窗口的思想就是，把这个要求和的子数组当成一个窗口，然后在数组上滑动。如下图所示：</p>
+<p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/ccsite/Xnip2020-04-30_19-07-54.png" alt="滑动窗口"></p>
+<p>我们维护一个长度为 2 的窗口，然后依次滑动这个窗口直至结束。在滑动时，出一个左边元素，进一个右边元素，计算这个窗口内的元素和，然后和最大和比较。滑动结束，也就求出了最大和是多少。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">maxSubSum</span><span class="params">(nums []<span class="type">int</span>, n <span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(nums) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// sum标记窗口内元素和</span></span><br><span class="line">	<span class="comment">// maxSum标记sum的最大值</span></span><br><span class="line">	sum, maxSum := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// 窗口左右指针</span></span><br><span class="line">	left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> right &lt; <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">		<span class="comment">// 右侧入窗，增大窗口</span></span><br><span class="line">		sum += nums[right]</span><br><span class="line">		right++</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> maxSum &lt; sum &#123;</span><br><span class="line">			maxSum = sum</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 满足条件，左侧出窗，缩小窗口</span></span><br><span class="line">		<span class="keyword">for</span> right-left &gt;= n &amp;&amp; left &lt; right &#123;</span><br><span class="line">			sum -= nums[left]</span><br><span class="line">			left++</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> maxSum</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="和为-target-的连续正整数序列"><a href="#和为-target-的连续正整数序列" class="headerlink" title="和为 target 的连续正整数序列"></a>和为 target 的连续正整数序列</h2><blockquote>
+<p>输入一个正整数 target ，输出所有和为 target 的连续正整数序列（至少含有两个数）。</p>
+<p>序列内的数字由小到大排列，不同序列按照首个数字从小到大排列。</p>
+<p>示例 1：<br>输入：target &#x3D; 9<br>输出：<code>[[2,3,4],[4,5]]</code></p>
+<p>示例 2：<br>输入：target &#x3D; 15<br>输出：<code>[[1,2,3,4,5],[4,5,6],[7,8]]</code></p>
+<p>限制：<br><code>1 &lt;= target &lt;= 10^5</code></p>
+</blockquote>
+<p>这个题目初看上去，和滑动窗口没啥关系。上面说到了，滑动窗口一般解决的是数组或字符串，连续子元素相关的问题。这里没有数组啊？<br>虽然没有数组，但这里有一个很关键的点就是，输出要求是 <strong>连续正整数序列</strong>。这里的连续性是使用滑动窗口的关键点。</p>
+<p>我们可以将从 1 到 target 这个整数序列，抽象成一个数组，然后使用滑动窗口思想，在这个序列上进行滑动求解。</p>
+<p>对于滑动窗口思想，有一点需要记住：<strong>窗口只能从左到右，沿一个方向滑动。</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">findContinuousSequence</span><span class="params">(target <span class="type">int</span>)</span></span> [][]<span class="type">int</span> &#123;</span><br><span class="line">  result := [][]<span class="type">int</span>&#123;&#125;</span><br><span class="line">  <span class="keyword">if</span> target &lt; <span class="number">2</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  left, right := <span class="number">1</span>, <span class="number">1</span></span><br><span class="line">  <span class="comment">// sum标记窗口内元素的和</span></span><br><span class="line">  sum := <span class="number">0</span></span><br><span class="line">  <span class="comment">// window记录窗口内所有元素</span></span><br><span class="line">  window := []<span class="type">int</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> right &lt; target &#123;</span><br><span class="line">    <span class="comment">// 右侧元素进窗</span></span><br><span class="line">    window = <span class="built_in">append</span>(window, right)</span><br><span class="line">    sum += right</span><br><span class="line">    right++</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 当窗口内元素满足条件时，即元素和大于等于target时</span></span><br><span class="line">    <span class="comment">// 左侧元素出窗</span></span><br><span class="line">    <span class="keyword">for</span> sum &gt;= target &amp;&amp; left &lt; right &#123;</span><br><span class="line">      <span class="keyword">if</span> sum == target &#123;</span><br><span class="line">        result = <span class="built_in">append</span>(result, window)</span><br><span class="line">      &#125;</span><br><span class="line">      window = window[<span class="number">1</span>:]</span><br><span class="line">      sum -= left</span><br><span class="line">      left++</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="长度最小的子数组"><a href="#长度最小的子数组" class="headerlink" title="长度最小的子数组"></a>长度最小的子数组</h2><blockquote>
+<p>给定一个含有 n 个正整数的数组和一个正整数 s ，找出该数组中满足其和 ≥ s 的长度最小的连续子数组，并返回其长度。如果不存在符合条件的连续子数组，返回 0。</p>
+<p>示例:<br>输入: s &#x3D; 7, nums &#x3D; [2,3,1,2,4,3]<br>输出: 2<br>解释: 子数组 [4,3] 是该条件下的长度最小的连续子数组。</p>
+<p>进阶:<br>如果你已经完成了 O(n) 时间复杂度的解法, 请尝试 O(n log n) 时间复杂度的解法。</p>
+</blockquote>
+<p>这个问题可以说是上面一个题目的变形，上面一个是和正好等于 target，而这个是求和大于等于 target 的最小子序列长度。<br>上面这个题目窗口长度是固定的，这个是变长的。但其实利用滑动窗口的思想，难度也算简单。</p>
+<p>和上面一个题目一样，我们只需要一个 sum 变量来存储窗口内元素的和即可。</p>
+<p>当 sum&lt;s 时，我们要增大窗口。此时，窗口右边界增加。<br>当 sum&gt;&#x3D;s 时，此时说明这个窗口是满足条件的，我们要判断此时窗口的长度是否是最小。另外，窗口左边界增加，缩小窗口。<br>不断重复增大，缩小窗口的操作，直至窗口到数组末尾。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(s <span class="type">int</span>, nums []<span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	length := <span class="built_in">len</span>(nums)</span><br><span class="line">	left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">	sum := <span class="number">0</span></span><br><span class="line">	minLen := length</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> right &lt; length &#123;</span><br><span class="line">		sum += nums[right]</span><br><span class="line">		right++</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> sum &gt;= s &amp;&amp; left &lt; right &#123;</span><br><span class="line">			<span class="keyword">if</span> minLen &gt; right-left &#123;</span><br><span class="line">				minLen = right - left</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			sum -= nums[left]</span><br><span class="line">			left++</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> minLen</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="水果成篮"><a href="#水果成篮" class="headerlink" title="水果成篮"></a>水果成篮</h2><blockquote>
+<p>在一排树中，第 i 棵树产生 tree[i] 型的水果。<br>你可以从你选择的任何树开始，然后重复执行以下步骤：</p>
+<ol>
+<li>把这棵树上的水果放进你的篮子里。如果你做不到，就停下来。</li>
+<li>移动到当前树右侧的下一棵树。如果右边没有树，就停下来。<br>请注意，在选择一颗树后，你没有任何选择：你必须执行步骤 1，然后执行步骤 2，然后返回步骤 1，然后执行步骤 2，依此类推，直至停止。</li>
+</ol>
+<p>你有两个篮子，每个篮子可以携带任何数量的水果，但你希望每个篮子只携带一种类型的水果。<br>用这个程序你能收集的水果总量是多少？</p>
+<p>示例 1：<br>输入：[1,2,1]<br>输出：3<br>解释：我们可以收集 [1,2,1]。</p>
+<p>示例 2：<br>输入：[0,1,2,2]<br>输出：3<br>解释：我们可以收集 [1,2,2].<br>如果我们从第一棵树开始，我们将只能收集到 [0, 1]。</p>
+<p>示例 3：<br>输入：[1,2,3,2,2]<br>输出：4<br>解释：我们可以收集 [2,3,2,2].<br>如果我们从第一棵树开始，我们将只能收集到 [1, 2]。</p>
+<p>示例 4：<br>输入：[3,3,3,1,2,1,1,2,3,3,4]<br>输出：5<br>解释：我们可以收集 [1,2,1,1,2].<br>如果我们从第一棵树或第八棵树开始，我们将只能收集到 4 个水果。</p>
+<p>提示：</p>
+<p>1 &lt;&#x3D; tree.length &lt;&#x3D; 40000<br>0 &lt;&#x3D; tree[i] &lt; tree.length</p>
+</blockquote>
+<p>这个题目，看完描述，都看不明白说的个啥。</p>
+<p>其实这个题目很简单，就是说，给定的一个数组，表示果树上结的水果。数组中的每一个不同的值表示一种不同类型的水果。</p>
+<p>现在你有两个篮子，需要从前往后收集水果。每个篮子只能装一种水果。收集的时候，需要注意，一个篮子只能装一种水果，且不能丢失重新装。</p>
+<p>问最后你能最多装多少个水果。</p>
+<p>再说直白点，<strong>这个题就是要你从一个整数数组中，找到其只包含两个元素的最长子数组。</strong></p>
+<p>理解了题意，这个题就很简单了。</p>
+<p>我们定义一个滑动的窗口，表示收集水果的篮子。</p>
+<p>如果窗口内收集的水果小于等于两种，那么我们增大窗口。<br>如果窗口内收集的水果多于两种，那么我们减小窗口。<br>然后在滑动的过程中，取到窗口的最大长度即可。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">totalFruit</span><span class="params">(tree []<span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    length := <span class="built_in">len</span>(tree)</span><br><span class="line"></span><br><span class="line">    max := <span class="number">0</span></span><br><span class="line">    <span class="comment">// basketMap存储窗口内已收集的水果数量</span></span><br><span class="line">    basketMap := <span class="keyword">map</span>[<span class="type">int</span>]<span class="type">int</span>&#123;&#125;</span><br><span class="line">    left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 当窗口内元素个数小于等于2，增大窗口</span></span><br><span class="line">    <span class="keyword">for</span> right &lt; length &amp;&amp; <span class="built_in">len</span>(basketMap) &lt;= <span class="number">2</span> &#123;</span><br><span class="line">        rightItem := tree[right]</span><br><span class="line">        <span class="comment">// 增大窗口，右边元素入窗</span></span><br><span class="line">        basketMap[rightItem]++</span><br><span class="line">        right++</span><br><span class="line">        <span class="comment">// 如果窗口内元素已大于2个，减小窗口</span></span><br><span class="line">        <span class="keyword">for</span> <span class="built_in">len</span>(basketMap) &gt; <span class="number">2</span> &#123;</span><br><span class="line">            leftItem := tree[left]</span><br><span class="line">            basketMap[leftItem]--</span><br><span class="line">            <span class="comment">// 如果左边元素出窗后，该类水果数量已为0，则delete该key</span></span><br><span class="line">            <span class="keyword">if</span> basketMap[leftItem] == <span class="number">0</span> &#123;</span><br><span class="line">                <span class="built_in">delete</span>(basketMap, leftItem)</span><br><span class="line">            &#125;</span><br><span class="line">            left++</span><br><span class="line">        &#125;</span><br><span class="line">        current := right - left</span><br><span class="line">        <span class="keyword">if</span> max &lt; current &#123;</span><br><span class="line">            <span class="comment">// fmt.Printf(&quot;left: %d,right: %d\n&quot;, left, right)</span></span><br><span class="line">            max = current</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> max</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="最长不重复子串的长度"><a href="#最长不重复子串的长度" class="headerlink" title="最长不重复子串的长度"></a>最长不重复子串的长度</h2><blockquote>
+<p>给定一个字符串 str，找出其中不含有重复字符的最长子串的长度。</p>
+<p>例如，str&#x3D;”abcabcdd”，最长不重复子串”abcd”的长度为 4。</p>
+</blockquote>
+<p>这个问题和上面一个一样，也是窗口长度不定，需要变长移动窗口。</p>
+<p>不断增加窗口长度，如果在增加的过程中，遇到窗口中已经存在的字符，那么，将窗口左侧边界移动到当前已存在新入窗字符的位置。</p>
+<p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/ccsite/slidingwindow/Xnip2020-05-01_00-11-35.png" alt="示意图"></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lengthOfLongestSubstring</span><span class="params">(str <span class="type">string</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">  length := <span class="built_in">len</span>(str)</span><br><span class="line">  <span class="keyword">if</span> length == <span class="number">0</span> || length == <span class="number">1</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> length</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">  max := right - left</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 窗口，使用map保存在窗口中的子串</span></span><br><span class="line">  windowMap := <span class="keyword">map</span>[<span class="type">byte</span>]<span class="type">bool</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> right &lt; length &#123;</span><br><span class="line">    <span class="comment">// 窗口右侧边界是否在窗口内</span></span><br><span class="line">    <span class="keyword">if</span> !windowMap[str[right]] &#123;</span><br><span class="line">      <span class="comment">// 不在窗口内，右侧边界向右移动一格</span></span><br><span class="line">      windowMap[str[right]] = <span class="literal">true</span></span><br><span class="line">      right++</span><br><span class="line">      <span class="comment">// 判断当前窗口长度是否最大</span></span><br><span class="line">      <span class="keyword">if</span> right-left &gt; max &#123;</span><br><span class="line">        max = right - left</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// 如果在窗口内，遇到重复的，窗口左侧边界移动到重复字符位置</span></span><br><span class="line">      <span class="keyword">for</span> left &lt; right &#123;</span><br><span class="line">        <span class="comment">// 将左侧边界到重复位置的子串移出窗口</span></span><br><span class="line">        windowMap[str[left]] = <span class="literal">false</span></span><br><span class="line">        <span class="keyword">if</span> windowMap[str[left]] == windowMap[str[right]] &#123;</span><br><span class="line">          left++</span><br><span class="line">          <span class="keyword">break</span></span><br><span class="line">        &#125;</span><br><span class="line">        left++</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> max</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="字符串的排列"><a href="#字符串的排列" class="headerlink" title="字符串的排列"></a>字符串的排列</h2><blockquote>
+<p>给定两个字符串 s1 和 s2，写一个函数来判断 s2 是否包含 s1 的排列。</p>
+<p>换句话说，第一个字符串的排列之一是第二个字符串的子串。</p>
+<p>示例 1:<br>输入: s1 &#x3D; “ab” s2 &#x3D; “eidbaooo”<br>输出: True<br>解释: s2 包含 s1 的排列之一 (“ba”).</p>
+<p>示例 2:<br>输入: s1&#x3D; “ab” s2 &#x3D; “eidboaoo”<br>输出: False</p>
+<p>注意：<br>输入的字符串只包含小写字母<br>两个字符串的长度都在 [1, 10,000] 之间</p>
+</blockquote>
+<p>这个问题也可以用滑动窗口的思想来解决。因为我们在 s2 中判断子串是否是 s1 的排列时，这个子串在 s2 中一定是连续的。</p>
+<p>我们抽象一个窗口，用于记录 s1 中每个字符<strong>应该出现的次数</strong>，然后把这个窗口放到 s2 上滑动判断。</p>
+<p>当入窗时，次数减少。因为入窗相当于已经出现。<br>当出窗时，次数增加。出窗相当于入窗的逆操作。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkInclusion</span><span class="params">(s1 <span class="type">string</span>, s2 <span class="type">string</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">  l1, l2 := <span class="built_in">len</span>(s1), <span class="built_in">len</span>(s2)</span><br><span class="line">  <span class="keyword">if</span> l1 &gt; l2 &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  windowMap := <span class="keyword">map</span>[<span class="type">byte</span>]<span class="type">int</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; l1; i++ &#123;</span><br><span class="line">    windowMap[s1[i]]++</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">  <span class="keyword">for</span> right &lt; l2 &#123;</span><br><span class="line">    c := s2[right]</span><br><span class="line">    <span class="comment">// 入窗操作</span></span><br><span class="line">    windowMap[c]--</span><br><span class="line">    right++</span><br><span class="line">    <span class="comment">// 如果出现次数差值为负数，说明字符出现次数过多。即s2中的这个字符其实在s1中并不存在（或存在，但比s1中个数多）</span></span><br><span class="line">    <span class="keyword">for</span> left &lt; right &amp;&amp; windowMap[c] &lt; <span class="number">0</span> &#123;</span><br><span class="line">      <span class="comment">// 出窗操作</span></span><br><span class="line">      windowMap[s2[left]]++</span><br><span class="line">      left++</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 如果窗口长度等于s1长度，说明窗口内的这些字符，在s1中都存在，即窗口内字符是s1的一个组合。</span></span><br><span class="line">    <span class="keyword">if</span> right-left == l1 &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="最小覆盖子串"><a href="#最小覆盖子串" class="headerlink" title="最小覆盖子串"></a>最小覆盖子串</h2><blockquote>
+<p>给定一个字符串 S，一个字符串 T，请在 S 中找出：包含 T 所有字母的最小子串。<br>示例：<br>输入：S&#x3D;”ADOBECODEBANC”,T&#x3D;”ABC”<br>输出：”BANC”<br>说明：<br>如果 S 中不存在这样的子串，返回空字符串””<br>如果 S 中存在这样的子串，我们保证它是唯一的答案。</p>
+</blockquote>
+<p>定义两个变量 left,right，区间[left,right]表示窗口。</p>
+<p>滑动窗口的 right 边界，直到窗口内已包含 T 中所有字符，此时停止 right 的滑动。</p>
+<p>滑动窗口的 left 边界，直到窗口内不包含 T 中所有的字符，此时停止 left 的滑动。</p>
+<p>继续上面两个步骤，直接窗口滑动到 S 的末尾。</p>
+<p>滑动 left，right 边界简单。怎么判断窗口内是否包含 T 中所有字符呢？</p>
+<p>我们可以使用和上面一样的方法。记录字符应该出现的次数。当 T 的所有字符，在窗口内的次数都大于 1 时，则说明窗口内已包含 T 的所有字符。</p>
+<p>那么，怎么判断窗口内是否包含 T 中所有的字符呢？</p>
+<p>我们可以使用<strong>出现次数</strong>来判断，如同上一个题一样。先将 T 中所有字符出现次数放入哈希表，表示窗口中各个字符应该出现的次数。</p>
+<p>当窗口在滑动过程中，遇到 T 中的字符，那么说明这个字符已经出现，次数减一。当 T 中所有字符出现次数为 0 时，说明窗口内已经包含了 T 中所有的字符。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minWindow</span><span class="params">(s <span class="type">string</span>, t <span class="type">string</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">  ls, lt := <span class="built_in">len</span>(s), <span class="built_in">len</span>(t)</span><br><span class="line">  <span class="keyword">if</span> ls &lt; lt &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 窗口里存的是t中字符应该出现的次数</span></span><br><span class="line">  <span class="comment">// 正数表示该字符还缺的出现次数，0表示刚好出现，负数表示s中字符出现的次数多于t中字符出现次数</span></span><br><span class="line">  windowMap := <span class="keyword">map</span>[<span class="type">byte</span>]<span class="type">int</span>&#123;&#125;</span><br><span class="line">  <span class="comment">// 初始化窗口</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; lt; i++ &#123;</span><br><span class="line">    windowMap[t[i]]++</span><br><span class="line">  &#125;</span><br><span class="line">  windowSize := <span class="built_in">len</span>(windowMap)</span><br><span class="line">  <span class="comment">// 其实在go语言里map有零值的概念，这块代码可以不要</span></span><br><span class="line">  <span class="comment">// 在其他语言，比如Java的HashMap没有零值概念，需要先初始化一下所有s中的字符出现次数</span></span><br><span class="line">  <span class="comment">// for i := 0; i &lt; ls; i++ &#123;</span></span><br><span class="line">  <span class="comment">// 	if _, ok := windowMap[s[i]]; !ok &#123;</span></span><br><span class="line">  <span class="comment">// 		windowMap[s[i]] = 0</span></span><br><span class="line">  <span class="comment">// 	&#125;</span></span><br><span class="line">  <span class="comment">// &#125;</span></span><br><span class="line"></span><br><span class="line">  left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">  <span class="comment">// 窗口中已经包含T的不同字符的种类</span></span><br><span class="line">  c := <span class="number">0</span></span><br><span class="line">  ans := <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> right &lt; ls &#123;</span><br><span class="line">    <span class="comment">// 窗口右边界移动，扩大窗口</span></span><br><span class="line">    windowMap[s[right]]--</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 统计窗口中已经包含的T中的不同字符的种类</span></span><br><span class="line">    <span class="keyword">if</span> windowMap[s[right]] == <span class="number">0</span> &#123;</span><br><span class="line">      c++</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// c==windowSize说明窗口已经包含所有T中的字符</span></span><br><span class="line">    <span class="keyword">for</span> c == windowSize &amp;&amp; windowMap[s[left]] &lt; <span class="number">0</span> &#123;</span><br><span class="line">      windowMap[s[left]]++</span><br><span class="line">      left++</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> c == windowSize &#123;</span><br><span class="line">      <span class="keyword">if</span> <span class="built_in">len</span>(ans) == <span class="number">0</span> || right-left+<span class="number">1</span> &lt; <span class="built_in">len</span>(ans) &#123;</span><br><span class="line">        ans = s[left : right+<span class="number">1</span>]</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    right++</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> ans</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="滑动窗口最大值"><a href="#滑动窗口最大值" class="headerlink" title="滑动窗口最大值"></a>滑动窗口最大值</h2><blockquote>
+<p>给定一个数组 nums，有一个大小为 k 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k 个数字。滑动窗口每次只向右移动一位。</p>
+<p>返回滑动窗口中的最大值。</p>
+<p>进阶：<br>你能在线性时间复杂度内解决此题吗？</p>
+<p>示例:</p>
+<p>输入: nums &#x3D; [1,3,-1,-3,5,3,6,7], 和 k &#x3D; 3<br>输出: [3,3,5,5,6,7]<br>解释:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> 滑动窗口的位置                最大值</span><br><span class="line">---------------               -----</span><br><span class="line">[1  3  -1] -3  5  3  6  7      3</span><br><span class="line">1 [3  -1  -3] 5  3  6  7       3</span><br><span class="line">1  3 [-1  -3  5] 3  6  7       5</span><br><span class="line">1  3  -1 [-3  5  3] 6  7       5</span><br><span class="line">1  3  -1  -3 [5  3  6] 7       6</span><br><span class="line">1  3  -1  -3  5 [3  6  7]      7</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p>提示：<br>1 &lt;&#x3D; nums.length &lt;&#x3D; 10^5<br>-10^4 &lt;&#x3D; nums[i] &lt;&#x3D; 10^4<br>1 &lt;&#x3D; k &lt;&#x3D; nums.length</p>
+</blockquote>
+<p>这个从题目上就说的很直白，滑动窗口的最大值。输入一个数组和一个窗口的长度，然后输出这个窗口依次从左滑动到右时，窗口内的最大值。</p>
+<p>这个题目从理解上，比上面这些题目要简单（除了第一个）。因为窗口的长度是固定的，我们在移动时同步移动左右指针即可。唯一的难点在于，怎么选择窗口内的最大值。</p>
+<p>循环窗口内所有元素，选择最大值么？当然不是，如果是循环选择最大值的话，那复杂度不就是 O(n*k)了么。</p>
+<p>除了同步滑动窗口的左右边界，剩下的就是如何在常数时间内获得窗口内的最大值，这个有点像 leetcode 155 最小栈那个类似，那个是实现一个最小栈，即支持栈的操作，然后可以在常数时间内获取栈内的最小值。这个的话，应该是实现一个最大队列，即支持队列的入队出队，然后在常数时间内获得队列里的最大值。因为这个窗口的滑动本身就是一个队列的操作，滑动一次，就是一个入队出队操作。</p>
+<p>这里我们使用双端队列来实现。由于 golang 中没有原生实现双端队列这个结构，因此这里自己简单用链表实现一个。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// -----双端队列实现 begin-------</span></span><br><span class="line"><span class="comment">// QueueNode 队列节点</span></span><br><span class="line"><span class="keyword">type</span> QueueNode <span class="keyword">struct</span> &#123;</span><br><span class="line">    Val  <span class="type">int</span></span><br><span class="line">    Next *QueueNode</span><br><span class="line">    Pre  *QueueNode</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// DoubleQueue 双端队列</span></span><br><span class="line"><span class="keyword">type</span> DoubleQueue <span class="keyword">struct</span> &#123;</span><br><span class="line">    Left  *QueueNode</span><br><span class="line">    Right *QueueNode</span><br><span class="line">    Size  <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// LeftPeek 获取左端元素值</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(dq *DoubleQueue)</span></span> LeftPeek() <span class="type">int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> dq.Left.Val</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// LeftPush 从左端插入新元素</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(dq *DoubleQueue)</span></span> LeftPush(num <span class="type">int</span>) &#123;</span><br><span class="line">    node := <span class="built_in">new</span>(QueueNode)</span><br><span class="line">    node.Val = num</span><br><span class="line">    <span class="keyword">if</span> dq.Left == <span class="literal">nil</span> &amp;&amp; dq.Right == <span class="literal">nil</span> &#123;</span><br><span class="line">        dq.Left = node</span><br><span class="line">        dq.Right = node</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        current := dq.Left</span><br><span class="line">        current.Pre = node</span><br><span class="line">        node.Next = current</span><br><span class="line">        dq.Left = node</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dq.Size++</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// LeftPop 从左端弹出元素</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(dq *DoubleQueue)</span></span> LeftPop() <span class="type">int</span> &#123;</span><br><span class="line">    current := dq.Left</span><br><span class="line">    dq.Left = current.Next</span><br><span class="line">    <span class="keyword">if</span> dq.Left != <span class="literal">nil</span> &#123;</span><br><span class="line">        dq.Left.Pre = <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    dq.Size--</span><br><span class="line">    <span class="keyword">if</span> dq.Size == <span class="number">0</span> &#123;</span><br><span class="line">        dq.Right = <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> current.Val</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// RightPeek 获取右端元素值</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(dq *DoubleQueue)</span></span> RightPeek() <span class="type">int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> dq.Right.Val</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// RightPush 从右端插入新元素</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(dq *DoubleQueue)</span></span> RightPush(num <span class="type">int</span>) &#123;</span><br><span class="line">    node := <span class="built_in">new</span>(QueueNode)</span><br><span class="line">    node.Val = num</span><br><span class="line">    <span class="keyword">if</span> dq.Left == <span class="literal">nil</span> &amp;&amp; dq.Right == <span class="literal">nil</span> &#123;</span><br><span class="line">        dq.Left = node</span><br><span class="line">        dq.Right = node</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        current := dq.Right</span><br><span class="line">        current.Next = node</span><br><span class="line">        node.Pre = current</span><br><span class="line">        dq.Right = node</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dq.Size++</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// RightPop 从右端弹出元素</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(dq *DoubleQueue)</span></span> RightPop() <span class="type">int</span> &#123;</span><br><span class="line">    current := dq.Right</span><br><span class="line">    dq.Right = current.Pre</span><br><span class="line">    <span class="keyword">if</span> dq.Right != <span class="literal">nil</span> &#123;</span><br><span class="line">        dq.Right.Next = <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    dq.Size--</span><br><span class="line">    <span class="keyword">if</span> dq.Size == <span class="number">0</span> &#123;</span><br><span class="line">        dq.Left = <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> current.Val</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// -----双端队列实现 end-------</span></span><br><span class="line"><span class="comment">// -----题目解答 begin------</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">maxSlidingWindow</span><span class="params">(nums []<span class="type">int</span>, k <span class="type">int</span>)</span></span> []<span class="type">int</span> &#123;</span><br><span class="line">    length := <span class="built_in">len</span>(nums)</span><br><span class="line">    res := []<span class="type">int</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化一个双端队列，用于存储窗口内的最大值</span></span><br><span class="line">    dq := <span class="built_in">new</span>(DoubleQueue)</span><br><span class="line"></span><br><span class="line">    left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> right &lt; length &#123;</span><br><span class="line">        rightNum := nums[right]</span><br><span class="line">        <span class="keyword">if</span> dq.Size == <span class="number">0</span> &#123;</span><br><span class="line">            dq.RightPush(rightNum)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> dq.Size &gt; <span class="number">0</span> &amp;&amp; rightNum &gt; dq.RightPeek() &#123;</span><br><span class="line">                dq.RightPop()</span><br><span class="line">            &#125;</span><br><span class="line">            dq.RightPush(rightNum)</span><br><span class="line">        &#125;</span><br><span class="line">        right++</span><br><span class="line">        <span class="keyword">if</span> right-left == k &#123;</span><br><span class="line">            res = <span class="built_in">append</span>(res, dq.LeftPeek())</span><br><span class="line">            <span class="keyword">if</span> dq.Size &gt; <span class="number">0</span> &amp;&amp; nums[left] == dq.LeftPeek() &#123;</span><br><span class="line">                dq.LeftPop()</span><br><span class="line">            &#125;</span><br><span class="line">            left++</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// -----题目解答 end------</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">#算法与数据结构</a>
+          
+            <a href="/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/" rel="tag">#滑动窗口</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/23/sql-test/" rel="next" title="一道SQL练习题">
+                <i class="fa fa-chevron-left"></i> 一道SQL练习题
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/29/traefik-middlewares/" rel="prev" title="traefik自定义中间件">
+                traefik自定义中间件 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#算法思路"><span class="nav-number">1.</span> <span class="nav-text">算法思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#连续子数组的最大和"><span class="nav-number">2.</span> <span class="nav-text">连续子数组的最大和</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#和为-target-的连续正整数序列"><span class="nav-number">3.</span> <span class="nav-text">和为 target 的连续正整数序列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#长度最小的子数组"><span class="nav-number">4.</span> <span class="nav-text">长度最小的子数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#水果成篮"><span class="nav-number">5.</span> <span class="nav-text">水果成篮</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最长不重复子串的长度"><span class="nav-number">6.</span> <span class="nav-text">最长不重复子串的长度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字符串的排列"><span class="nav-number">7.</span> <span class="nav-text">字符串的排列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最小覆盖子串"><span class="nav-number">8.</span> <span class="nav-text">最小覆盖子串</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#滑动窗口最大值"><span class="nav-number">9.</span> <span class="nav-text">滑动窗口最大值</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

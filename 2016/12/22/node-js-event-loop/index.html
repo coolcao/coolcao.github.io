@@ -1,0 +1,808 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="nodejs,事件循环," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="事件循环机制是nodejs非常非常重要的知识，从网上找的各种资料，却又各种“不同”。有的文章，从js的执行栈，到事件机制，异步调用，一直讲到事件循环，但是到了事件循环本身的时候，却讲解的又十分含糊，扔张图上去，配两行文字说明，完了。而且，有的图还都不怎么相同，导致看完下来，还是十分模糊，这都说了些啥。。。我将这些资料整理一遍，梳理了一下，加上自己的理解，成此文。至于准不准确，其实，我也没底，真的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="理解nodejs的事件循环">
+<meta property="og:url" content="http://coolcao.com/2016/12/22/node-js-event-loop/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="事件循环机制是nodejs非常非常重要的知识，从网上找的各种资料，却又各种“不同”。有的文章，从js的执行栈，到事件机制，异步调用，一直讲到事件循环，但是到了事件循环本身的时候，却讲解的又十分含糊，扔张图上去，配两行文字说明，完了。而且，有的图还都不怎么相同，导致看完下来，还是十分模糊，这都说了些啥。。。我将这些资料整理一遍，梳理了一下，加上自己的理解，成此文。至于准不准确，其实，我也没底，真的。">
+<meta property="og:locale">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/20160922091924733.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/nodejs_event_loop.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/the-Node-js-event-loop.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/event-loop.png">
+<meta property="article:published_time" content="2016-12-21T16:11:50.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.958Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="nodejs">
+<meta property="article:tag" content="事件循环">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/20160922091924733.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2016/12/22/node-js-event-loop/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> 理解nodejs的事件循环 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                理解nodejs的事件循环
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-22T00:11:50+08:00" content="2016-12-22">
+              2016-12-22
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>事件循环机制是nodejs非常非常重要的知识，从网上找的各种资料，却又各种“不同”。<br>有的文章，从js的执行栈，到事件机制，异步调用，一直讲到事件循环，但是到了事件循环本身的时候，却讲解的又十分含糊，扔张图上去，配两行文字说明，完了。而且，有的图还都不怎么相同，导致看完下来，还是十分模糊，这都说了些啥。。。<br>我将这些资料整理一遍，梳理了一下，加上自己的理解，成此文。<br>至于准不准确，其实，我也没底，真的。如果有哪位大神看到有错误的地方，劳烦指出，不胜感激。</p>
+<span id="more"></span>
+
+<h2 id="什么是事件循环"><a href="#什么是事件循环" class="headerlink" title="什么是事件循环"></a>什么是事件循环</h2><p>js是单线程的，但是js的运行时底层的C++ API却是多线程的。<br>对于浏览器而言，是web API，对于nodejs而言，是libuv库。</p>
+<p>先理解几个概念：</p>
+<h3 id="栈："><a href="#栈：" class="headerlink" title="栈："></a>栈：</h3><p>函数调用形成了一个堆栈帧。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">f</span>(<span class="params">b</span>)&#123;</span><br><span class="line">  <span class="keyword">var</span> a = <span class="number">12</span>;</span><br><span class="line">  <span class="keyword">return</span> a+b+<span class="number">35</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">g</span>(<span class="params">x</span>)&#123;</span><br><span class="line">  <span class="keyword">var</span> m = <span class="number">4</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="title function_">f</span>(m*x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">g</span>(<span class="number">21</span>);</span><br></pre></td></tr></table></figure>
+<p>调用 g 的时候，创建了第一个 堆栈帧 ，包含了 g 的参数和局部变量。当 g 调用 f 的时候，第二个 堆栈帧 就被创建、并置于第一个 堆栈帧 之上，包含了 f 的参数和局部变量。当 f 返回时，最上层的 堆栈帧 就出栈了（剩下 g 函数调用的 堆栈帧 ）。当 g 返回的时候，栈就空了。</p>
+<p><a target="_blank" rel="noopener" href="https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/">运行动画</a></p>
+<h3 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h3><p>对象被分配在一个堆中，一个用以表示一个内存中大的未被组织的区域。</p>
+<h3 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h3><p>一个 JavaScript 运行时包含了一个待处理的消息队列。每一个消息都与一个函数相关联。当栈为空时，从队列中取出一个消息进行处理。这个处理过程包含了调用与这个消息相关联的函数（以及因而创建了一个初始堆栈帧）。当栈再次为空的时候，也就意味着消息处理结束。</p>
+<h3 id="事件循环"><a href="#事件循环" class="headerlink" title="事件循环"></a>事件循环</h3><p>js运行时至少有两个线程：主线程，工作线程<br>主线程用于解释执行你写的js代码，工作线程用于循环的从消息队列取消息并执行。</p>
+<h3 id="简单的事件循环模型图"><a href="#简单的事件循环模型图" class="headerlink" title="简单的事件循环模型图"></a>简单的事件循环模型图</h3><p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/20160922091924733.png" alt="chrome"></p>
+<p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/nodejs_event_loop.png" alt="nodejs"></p>
+<p>好了，这是最简单的关于事件循环的介绍。<br>可是，看完依然很蒙圈。<br>异步事件，包括，网络请求，异步IO，定时器，浏览器的话还有用户的事件，比如点击，拖拽事件等，nodejs经常被面试的两个是：nextProcess和setImmediate</p>
+<p>那么这些事件的所有回调任务，都扔到同一个队列吗？<br>当然不是，实际上，针对不同的事件，有不同的任务队列。比如，会有io队列，定时器队列，等等等等。</p>
+<p>同时，任务还分为宏任务，微任务。</p>
+<p>微任务的例子：</p>
+<ul>
+<li>process.nextTick</li>
+<li>promise</li>
+<li>Object.observe</li>
+</ul>
+<p>宏任务的例子：</p>
+<ul>
+<li>setTimeout</li>
+<li>setInterval</li>
+<li>setImmediate</li>
+<li>I&#x2F;O</li>
+</ul>
+<blockquote>
+<p>One go-around of the event loop will have exactly one task being processed from the macrotask queue (this queue is simply called the task queue in the WHATWG specification). After this macrotask has finished, all available microtasks will be processed, namely within the same go-around cycle. While these microtasks are processed, they can queue even more microtasks, which will all be run one by one, until the microtask queue is exhausted.</p>
+</blockquote>
+<blockquote>
+<p>What are the practical consequences of this?</p>
+</blockquote>
+<blockquote>
+<p>If a microtask recursively queues other microtasks, it might take a long time until the next macrotask is processed. This means, you could end up with a blocked UI, or some finished I&#x2F;O idling in your application.</p>
+</blockquote>
+<blockquote>
+<p>However, at least concerning Node.js’s process.nextTick function (which queues microtasks), there is an inbuilt protection against such blocking by means of process.maxTickDepth. This value is set to a default of 1000, cutting down further processing of microtasks after this limit is reached which allows the next macrotask to be processed)</p>
+</blockquote>
+<blockquote>
+<p>So when to use what?</p>
+</blockquote>
+<blockquote>
+<p>Basically, use microtasks when you need to do stuff asynchronously in a synchronous way (i.e. when you would say perform this (micro-)task in the most immediate future). Otherwise, stick to macrotasks.</p>
+</blockquote>
+<blockquote>
+<p>Examples</p>
+</blockquote>
+<blockquote>
+<p>macrotasks: setTimeout, setInterval, setImmediate, I&#x2F;O, UI rendering<br>microtasks: process.nextTick, Promises, Object.observe, MutationObserver</p>
+</blockquote>
+<p>这是<a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/25915634/difference-between-microtask-and-macrotask-within-an-event-loop-context">stackoverflow</a>上一个关于这个问题的一个回答。</p>
+<p>根据WHATVG规范，在事件循环的一个周期中，应该从宏任务队列中处理正好一个（宏）任务。 在所述宏任务完成之后，所有可用的微任务将在相同的周期内被处理。 当这些微任务正在被处理时，它们可以入队更多的微任务，这些微任务将一个接一个地运行，直到微任务队列耗尽。</p>
+<p>这里的宏任务，就是我们经常提到的任务队列中的任务，而微任务，提之甚少。<br>在《你不知道的js》这本书中，作者有提到，ES6规范新提了一个<code>Job Queue</code>工作队列的概念，这个概念和微任务很相似。</p>
+<p>因此，这里的再补一个图：<br><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/the-Node-js-event-loop.png" alt="宏任务/微任务"></p>
+<p>具体的代码实例，可以参看<a target="_blank" rel="noopener" href="http://localhost:4000/2016/12/18/nodejs_at_scale/understanding-the-nodejs-event-loop/">我的博客中翻译的一篇文章</a></p>
+<p>到这里，可能深入点了，但是还不够。<br>事件循环取队列中任务时，顺序如何？具体怎么取，怎么执行呢？</p>
+<p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/event-loop.png" alt="event-loop"></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/nodejs/node/blob/master/doc/topics/event-loop-timers-and-nexttick.md">https://github.com/nodejs/node/blob/master/doc/topics/event-loop-timers-and-nexttick.md</a></p>
+<p>这张图简单说明了事件循环中操作的顺序 。<br>图中每个盒子都是一个阶段。</p>
+<p>阶段说明：</p>
+<ul>
+<li>timers 阶段: 这个阶段执行setTimeout(callback) and setInterval(callback)预定的callback;</li>
+<li>I&#x2F;O callbacks 阶段: 执行除了 close事件的callbacks、被timers(定时器，setTimeout、setInterval等)设定的callbacks、setImmediate()设定的callbacks之外的callbacks;</li>
+<li>idle, prepare 阶段: 仅node内部使用;</li>
+<li>poll 阶段: 获取新的I&#x2F;O事件, 适当的条件下node将阻塞在这里;</li>
+<li>check 阶段: 执行setImmediate() 设定的callbacks;</li>
+<li>close callbacks 阶段: 比如socket.on(‘close’, callback)的callback会在这个阶段执行.</li>
+</ul>
+<p>每一个阶段都有一个装有callbacks的fifo queue(队列)，当event loop运行到一个指定阶段时，<br>node将执行该阶段的fifo queue(队列)，当队列callback执行完或者执行callbacks数量超过该阶段的上限时，<br>event loop会转入下一下阶段.</p>
+<blockquote>
+<p>注意上面六个阶段都不包括 process.nextTick()</p>
+</blockquote>
+<p>阶段说明：</p>
+<ul>
+<li>timers:一个定时器指定了一个时间阀值，过了这个值执行提供的回调函数，而不是一个人们希望它执行的确切时间。当指定的时间已过，定时器的回调函数会尽早执行，然后，操作系统的其他定时任务或者正在执行其他回调将会延迟它们的执行。</li>
+</ul>
+<blockquote>
+<p>注：技术上，poll轮询阶段控制定时器何时执行。</p>
+</blockquote>
+<p>举个例子，你指定一个定时器100ms后执行，然后你的代码异步读取一个文件，耗费95ms:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">someAsyncOperation</span> (callback) &#123;</span><br><span class="line">  <span class="comment">// Assume this takes 95ms to complete</span></span><br><span class="line">  fs.<span class="title function_">readFile</span>(<span class="string">&#x27;/path/to/file&#x27;</span>, callback);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> timeoutScheduled = <span class="title class_">Date</span>.<span class="title function_">now</span>();</span><br><span class="line"></span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> delay = <span class="title class_">Date</span>.<span class="title function_">now</span>() - timeoutScheduled;</span><br><span class="line"></span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(delay + <span class="string">&quot;ms have passed since I was scheduled&quot;</span>);</span><br><span class="line">&#125;, <span class="number">100</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// do someAsyncOperation which takes 95 ms to complete</span></span><br><span class="line"><span class="title function_">someAsyncOperation</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> startCallback = <span class="title class_">Date</span>.<span class="title function_">now</span>();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// do something that will take 10ms...</span></span><br><span class="line">  <span class="keyword">while</span> (<span class="title class_">Date</span>.<span class="title function_">now</span>() - startCallback &lt; <span class="number">10</span>) &#123;</span><br><span class="line">    ; <span class="comment">// do nothing</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>这里例子中，定时器打印时，已经是105ms了。<br>因为读取文件耗费95ms，当文件读物完后，执行callback，callback中又耗费10ms啥也没干，干耗着不放CPU资源。当定时器到达100ms时，将会被扔到定时器队列中。然而这时由于文件读取事件还未完成，因此定时器任务只能等待。等105ms后，文件读取任务完成，取出定时器队列中的回调执行。</p>
+<p>poll阶段：<br>在node.js里，任何异步方法（除timer,close,setImmediate之外）完成时，都会将其callback加到poll queue里,并立即执行。<br>poll 阶段有两个主要的功能：</p>
+<ul>
+<li>处理poll队列（poll quenue）的事件(callback);</li>
+<li>执行timers的callback,当到达timers指定的时间时;</li>
+</ul>
+<p>如果event loop进入了 poll阶段，且代码未设定timer，将会发生下面情况：</p>
+<ul>
+<li>如果poll queue不为空，event loop将同步的执行queue里的callback,直至queue为空，或执行的callback到达系统上限;</li>
+<li>如果poll queue为空，将会发生下面情况：<ul>
+<li>如果代码已经被setImmediate()设定了callback, event loop将结束poll阶段进入check阶段，并执行check阶段的queue (check阶段的queue是 setImmediate设定的)</li>
+<li>如果代码没有设定setImmediate(callback)，event loop将阻塞在该阶段等待callbacks加入poll queue;</li>
+</ul>
+</li>
+</ul>
+<p>如果event loop进入了 poll阶段，且代码设定了timer：</p>
+<ul>
+<li>如果poll queue进入空状态时（即poll 阶段为空闲状态），event loop将检查timers,如果有1个或多个timers时间时间已经到达，event loop将按循环顺序进入 timers 阶段，并执行timer queue.</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/nodejs/" rel="tag">#nodejs</a>
+          
+            <a href="/tags/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF/" rel="tag">#事件循环</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/13/difference-of-node-mongodb-native-and-shell-in-capped-collection/" rel="next" title="node-mongodb-native原生驱动在固定集合上的坑">
+                <i class="fa fa-chevron-left"></i> node-mongodb-native原生驱动在固定集合上的坑
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/05/writing-native-nodejs-modules/" rel="prev" title="使用C/C++编写nodejs原生模块">
+                使用C/C++编写nodejs原生模块 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是事件循环"><span class="nav-number">1.</span> <span class="nav-text">什么是事件循环</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#栈："><span class="nav-number">1.1.</span> <span class="nav-text">栈：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#堆"><span class="nav-number">1.2.</span> <span class="nav-text">堆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#队列"><span class="nav-number">1.3.</span> <span class="nav-text">队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#事件循环"><span class="nav-number">1.4.</span> <span class="nav-text">事件循环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#简单的事件循环模型图"><span class="nav-number">1.5.</span> <span class="nav-text">简单的事件循环模型图</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

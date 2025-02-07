@@ -1,0 +1,772 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="js,计算机系统," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="前两天看了小胡子哥写了一篇js中浮点数运算的一个比较特殊的0.1+0.2的问题，揭秘 0.1 + 0.2 !&#x3D; 0.3,略感小胡子哥写的还是稍微粗略，于是查各种资料，将包括IEEE754关于浮点数二进制的只是又整理一下，做此记录。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="js中0.1+0.2为什么不等于0.3">
+<meta property="og:url" content="http://coolcao.com/2016/10/12/js%E4%B8%AD0-1-0-2%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E7%AD%89%E4%BA%8E0-3/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="前两天看了小胡子哥写了一篇js中浮点数运算的一个比较特殊的0.1+0.2的问题，揭秘 0.1 + 0.2 !&#x3D; 0.3,略感小胡子哥写的还是稍微粗略，于是查各种资料，将包括IEEE754关于浮点数二进制的只是又整理一下，做此记录。">
+<meta property="og:locale">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/ieee754.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/IEEE754_1.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/float.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/case1.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/case2.png">
+<meta property="og:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/case3.png">
+<meta property="article:published_time" content="2016-10-12T13:24:27.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.956Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="js">
+<meta property="article:tag" content="计算机系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/ieee754.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2016/10/12/js中0-1-0-2为什么不等于0-3/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> js中0.1+0.2为什么不等于0.3 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                js中0.1+0.2为什么不等于0.3
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-10-12T21:24:27+08:00" content="2016-10-12">
+              2016-10-12
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前两天看了小胡子哥写了一篇js中浮点数运算的一个比较特殊的<code>0.1+0.2</code>的问题，<a target="_blank" rel="noopener" href="http://www.barretlee.com/blog/2016/09/28/ieee754-operation-in-js/?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io">揭秘 0.1 + 0.2 !&#x3D; 0.3</a>,略感小胡子哥写的还是稍微粗略，于是查各种资料，将包括IEEE754关于浮点数二进制的只是又整理一下，做此记录。</p>
+<span id="more"></span>
+
+<h2 id="IEEE754浮点数二进制表示"><a href="#IEEE754浮点数二进制表示" class="headerlink" title="IEEE754浮点数二进制表示"></a>IEEE754浮点数二进制表示</h2><p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/ieee754.png" alt="IEEE754浮点数"></p>
+<p>上图是IEEE对浮点数表示的说明，这里分单精度与双精度之分，如下图：<br><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/IEEE754_1.png" alt="单精度与双精度"></p>
+<p>对于单精度浮点数，采用32位存储，最高的1位是符号位s，接着的8位是指数E，剩下的23位为有效数字M。<br>对于双精度浮点数，采用64位存储，最高的1位是符号位S，接着的11位是指数E，剩下的52位为有效数字M。<br>在单精度浮点格式中，s、exp和frac字段分别为 1 位、k &#x3D; 8 位和 n &#x3D; 23 位，得到一个 32 位的表示。 在双精度浮点格式(C 语言中的 double)中，s、exp 和 frac 字段分别为 1 位、k &#x3D; 11 位和 n &#x3D; 52 位，得到一个 64 位的表示。</p>
+<p>根据 exp 的值，被编码的值可以分成三种不同的情况(最后一种情况有两 个变种)。下图说明了对单精度格式的情况。<br><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/float.png" alt="单精度浮点数"></p>
+<h3 id="情况1-格式化的值"><a href="#情况1-格式化的值" class="headerlink" title="情况1:格式化的值"></a>情况1:格式化的值</h3><p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/case1.png" alt="格式化的值"></p>
+<h3 id="情况2-非格式化的值"><a href="#情况2-非格式化的值" class="headerlink" title="情况2:非格式化的值"></a>情况2:非格式化的值</h3><p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/case2.png" alt="非格式化的值"></p>
+<h3 id="情况3-特殊值"><a href="#情况3-特殊值" class="headerlink" title="情况3:特殊值"></a>情况3:特殊值</h3><p><img src="https://img001-10042971.cos.ap-shanghai.myqcloud.com/blog/case3.png" alt="特殊值"></p>
+<p>好了，下面我们重点关注一下情况1，并举例来看，不然实在头大啊。以单精度举例。</p>
+<h2 id="浮点数转换为二进制"><a href="#浮点数转换为二进制" class="headerlink" title="浮点数转换为二进制"></a>浮点数转换为二进制</h2><p>浮点数转换成二进制，我们要将整数部分和小数部分分开，整数部分采用除2取余，小数部分采用乘2取整。<br>例如，13.125 转换为二进制：<br>1.整数部分</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">        13</span><br><span class="line">    ÷   2</span><br><span class="line">--------------       ↑</span><br><span class="line">        6    1       |</span><br><span class="line">    ÷   2            |</span><br><span class="line">--------------       |</span><br><span class="line">        3    0       |</span><br><span class="line">    ÷   2            |</span><br><span class="line">--------------       |</span><br><span class="line">        1    1       |    </span><br><span class="line">    ÷   2            |</span><br><span class="line">--------------       |</span><br><span class="line">        0    1    ----</span><br></pre></td></tr></table></figure>
+<p>逆序将余数拼上得到13的二进制：1101</p>
+<p>2.小数部分</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">        0.125</span><br><span class="line">    x       2        ----</span><br><span class="line">-----------------       |</span><br><span class="line">        0.25    0       |</span><br><span class="line">    x      2            |</span><br><span class="line">-----------------       |</span><br><span class="line">        0.5     0       |</span><br><span class="line">    x     2             |</span><br><span class="line">-----------------       |</span><br><span class="line">        1.0     1       ↓</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>得到小数部分的二进制：0.001</p>
+<p>两部分相加，得到13.125的二进制：<code>1101.001</code></p>
+<p>好了，到现在，我们知道了如何将浮点数转换为二进制表示，也知道了IEEE中浮点数的存储方式，那么，我们接下来用13.125这个例子来看看计算机中具体是如何表示的呢。</p>
+<p>二进制 <code>1101.001</code>可以写成 <code>1.101001 * 2^3</code>，即这里 M 为 1.101001,E为3,s为0。<br>单精度下，符号位s即为0,阶码字段exp的值e&#x3D;E+127，即e&#x3D;3+127&#x3D;130，130的二进制表示为<code>10000010</code><br>小数字段，frac为尾数M的二进制，即1.101001<br>那么，在单精度下，计算机中的表示为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0  10000010  101001 00000000000000000</span><br><span class="line">-------------------------------------</span><br><span class="line">s  exp       frac</span><br></pre></td></tr></table></figure>
+
+<h2 id="0-1-0-2"><a href="#0-1-0-2" class="headerlink" title="0.1+0.2"></a>0.1+0.2</h2><p>好了，关于浮点数转换二进制，以及浮点数的表示我们都知道了，那么，现在我们来看看，为什么 <code>0.1+0.2!=0.3</code>的吧。首先，我们还是先看看js里到底输出多少吧：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; 0.1+0.2</span><br><span class="line">0.30000000000000004</span><br></pre></td></tr></table></figure>
+
+<h3 id="0-1的二进制"><a href="#0-1的二进制" class="headerlink" title="0.1的二进制"></a>0.1的二进制</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">    0.1</span><br><span class="line">x     2</span><br><span class="line">-------</span><br><span class="line">    0.2     0</span><br><span class="line">x     2</span><br><span class="line">-------</span><br><span class="line">    0.4     0</span><br><span class="line">x     2</span><br><span class="line">-------</span><br><span class="line">    0.8     0</span><br><span class="line">x     2</span><br><span class="line">-------</span><br><span class="line">    0.6     1</span><br><span class="line">x     2</span><br><span class="line">-------</span><br><span class="line">    0.2     1</span><br><span class="line">------- 又从0.2开始循环了</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>于是，我们得到了0.1的二进制表示，即为<code>0.0001100110011(0011循环)</code>，即<code>1.100110011(0011)*2^-4</code><br>即，M 1.100110011(0011),E -4,<br>那么，s&#x3D;0,e&#x3D;-4+1023&#x3D;1019,<br>那么，js中由于是双精度的，那么0.1的表示为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0  01111111011  1001100110011001100110011001100110011001100110011001</span><br><span class="line">--------------------------------------------------------------------</span><br><span class="line">s  exp(11位)     frac(52位)</span><br></pre></td></tr></table></figure>
+
+<h3 id="0-2的二进制"><a href="#0-2的二进制" class="headerlink" title="0.2的二进制"></a>0.2的二进制</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">    0.2</span><br><span class="line">x     2</span><br><span class="line">-------</span><br><span class="line">    0.4     0</span><br><span class="line">x     2</span><br><span class="line">-------</span><br><span class="line">    0.8     0</span><br><span class="line">x     2</span><br><span class="line">-------</span><br><span class="line">    0.6     1</span><br><span class="line">x     2</span><br><span class="line">-------</span><br><span class="line">    0.2     1</span><br><span class="line">------- 又从0.2开始循环了</span><br></pre></td></tr></table></figure>
+<p>0.2的二进制表示：<code>0.001100110011(0011循环)</code>，即<code>1.100110011(0011)*2^-3</code><br>那么，js双精度0.2的表示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0  01111111100  1001100110011001100110011001100110011001100110011001</span><br></pre></td></tr></table></figure>
+
+<h2 id="浮点数运算"><a href="#浮点数运算" class="headerlink" title="浮点数运算"></a>浮点数运算</h2><p>浮点数的加减运算一般由以下五个步骤完成：</p>
+<ul>
+<li>对阶</li>
+<li>尾数运算</li>
+<li>结果规格化</li>
+<li>舍入处理</li>
+<li>溢出判断</li>
+</ul>
+<h3 id="1-对阶"><a href="#1-对阶" class="headerlink" title="1.对阶"></a>1.对阶</h3><p>将两个进行运算的浮点数的阶码对齐的操作。对阶的目的是为使两个浮点数的尾数能够进行加减运算。因为，当进行Mx·2Ex与My·2Ey加减运算时，只有使两浮点数的指数值部分相同，才能将相同的指数值作为公因数提出来，然后进行尾数的加减运算。<br>对阶的具体方法是：首先求出两浮点数阶码的差，即⊿E＝Ex-Ey，将小阶码加上⊿E，使之与大阶码相等，同时将小阶码对应的浮点数的尾数右移相应位数，以保证该浮点数的值不变。几点注意：   </p>
+<p>（1）对阶的原则是小阶对大阶，之所以这样做是因为若大阶对小阶，则尾数的数值部分的高位需移出，而小阶对大阶移出的是尾数的数值部分的低位，这样损失的精度更小。   </p>
+<p>（2）若⊿E＝0，说明两浮点数的阶码已经相同，无需再做对阶操作了。  </p>
+<p>（3）采用补码表示的尾数右移时，符号位保持不变。   </p>
+<p>（4）由于尾数右移时是将最低位移出，会损失一定的精度，为减少误差，可先保留若干移出的位，供以后舍入处理用。</p>
+<h3 id="2-尾数运算"><a href="#2-尾数运算" class="headerlink" title="2. 尾数运算"></a>2. 尾数运算</h3><p>尾数运算就是进行完成对阶后的尾数相加减。这里采用的就是我们前面讲过的纯小数的定点数加减运算。</p>
+<h3 id="3-结果规格化"><a href="#3-结果规格化" class="headerlink" title="3. 结果规格化"></a>3. 结果规格化</h3><p>在机器中，为保证浮点数表示的唯一性，浮点数在机器中都是以规格化形式存储的。对于IEEE754标准的浮点数来说，就是尾数必须是1.M的形式。由于在进行上述两个定点小数的尾数相加减运算后，尾数有可能是非规格化形式，为此必须进行规格化操作。    规格化操作包括左规和右规两种情况。    左规操作：将尾数左移，同时阶码减值，直至尾数成为1.M的形式。例如，浮点数0.0011·25是非规格化的形式，需进行左规操作，将其尾数左移3位，同时阶码减3，就变成1.1100·22规格化形式了。    右规操作：将尾数右移1位，同时阶码增1，便成为规格化的形式了。要注意的是，右规操作只需将尾数右移一位即可，这种情况出现在尾数的最高位（小数点前一位）运算时出现了进位，使尾数成为10.xxxx或11.xxxx的形式。例如，10.0011·25右规一位后便成为<br>1.00011·26的规格化形式了。</p>
+<h3 id="4-舍入处理"><a href="#4-舍入处理" class="headerlink" title="4. 舍入处理"></a>4. 舍入处理</h3><p>浮点运算在对阶或右规时，尾数需要右移，被右移出去的位会被丢掉，从而造成运算结果精度的损失。为了减少这种精度损失，可以将一定位数的移出位先保留起来，称为保护位，在规格化后用于舍入处理。   IEEE754标准列出了四种可选的舍入处理方法：   </p>
+<p>（1）就近舍入（round to nearest） 这是标准列出的默认舍入方式，其含义相当于我们日常所说的“四舍五入”。例如，对于32位单精度浮点数来说，若超出可保存的23位的多余位大于等于100…01，则多余位的值超过了最低可表示位值的一半，这种情况下，舍入的方法是在尾数的最低有效位上加1；若多余位小于等于011…11，则直接舍去；若多余位为100…00，此时再判断尾数的最低有效位的值，若为0则直接舍去，若为1则再加1。   </p>
+<p>（2）朝+∞舍入（round toward +∞） 对正数来说，只要多余位不为全0，则向尾数最低有效位进1；对负数来说，则是简单地舍去。   </p>
+<p>（3）朝-∞舍入（round toward -∞） 与朝+∞舍入方法正好相反，对正数来说，只是简单地舍去；对负数来说，只要多余位不为全0，则向尾数最低有效位进1。   </p>
+<p>（4）朝0舍入（round toward 0）    即简单地截断舍去，而不管多余位是什么值。这种方法实现简单，但容易形成累积误差，且舍入处理后的值总是向下偏差。</p>
+<h3 id="5-溢出判断"><a href="#5-溢出判断" class="headerlink" title="5. 溢出判断"></a>5. 溢出判断</h3><p>与定点数运算不同的是，浮点数的溢出是以其运算结果的阶码的值是否产生溢出来判断的。若阶码的值超过了阶码所能表示的最大正数，则为上溢，进一步，若此时浮点数为正数，则为正上溢，记为+∞，若浮点数为负数，则为负上溢，记为-∞；若阶码的值超过了阶码所能表示的最小负数，则为下溢，进一步，若此时浮点数为正数，则为正下溢，若浮点数为负数，则为负下溢。正下溢和负下溢都作为0处理。</p>
+<h2 id="计算0-1-0-2"><a href="#计算0-1-0-2" class="headerlink" title="计算0.1+0.2"></a>计算0.1+0.2</h2><p>0.1的阶码-4,0.2的阶码-3,对阶阶段，将0.1的阶码变为-3，然后0.1的尾数部分：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1100110011001100110011001100110011001100110011001100</span><br></pre></td></tr></table></figure>
+<p>可能会有人问，这里最高位怎么是1，移位后不应该是0么，别忘了，尾数部分我们隐含了一个最高位是1的条件，因此，移位后，会将该位一并移过来。<br>将其与0.2的尾数部分进行相加：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">    1100110011001100110011001100110011001100110011001100</span><br><span class="line">+   1001100110011001100110011001100110011001100110011001</span><br><span class="line">    ----------------------------------------------------</span><br><span class="line">  100110011001100110011001100110011001100110011001100111</span><br></pre></td></tr></table></figure>
+
+<p>注意，这里计算时，进位2位，去除原来最高位默认的1，相当于阶码部分加1，即由原来的-3变为-2，那么，阶码部分的表示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1111111101</span><br></pre></td></tr></table></figure>
+<p>而尾数部分，去除最高位1，最后一位1，进行舍入，得到52位新的二进制表示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0011001100110011001100110011001100110011001100110100</span><br></pre></td></tr></table></figure>
+<p>即，最后计算的结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0  01111111101  0011001100110011001100110011001100110011001100110100</span><br></pre></td></tr></table></figure>
+<p>该数表示的即0.1+0.2的结果 <code>2^-2 * 1.0011001100110011001100110011001100110011001100110100</code><br>将其转换成十进制数为：<code>0.3000000000000000444089209850062616169452667236328125</code><br>由于精度问题，只取到<code>0.30000000000000004</code></p>
+<p>到这里，就把所有的推演过程所需要的知识补充完整了，在推演的过程中，真心觉得，人工推演二进制真累啊，十分感谢计算机前辈，设计出方案并实践于计算机，感谢。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/js/" rel="tag">#js</a>
+          
+            <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F/" rel="tag">#计算机系统</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/19/js%E5%AF%B9%E8%B1%A1%E7%9A%84toString-%E6%96%B9%E6%B3%95%E5%92%8CvalueOf-%E6%96%B9%E6%B3%95/" rel="next" title="js对象的toString()方法和valueOf()方法">
+                <i class="fa fa-chevron-left"></i> js对象的toString()方法和valueOf()方法
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/10/19/%E4%BB%8E%E6%90%AD%E5%BB%BAhexo%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%90%86%E8%A7%A3%E5%AD%A6%E4%B9%A0DNS%E8%A7%A3%E6%9E%90/" rel="prev" title="从搭建hexo个人博客过程中理解学习DNS解析">
+                从搭建hexo个人博客过程中理解学习DNS解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#IEEE754浮点数二进制表示"><span class="nav-number">1.</span> <span class="nav-text">IEEE754浮点数二进制表示</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#情况1-格式化的值"><span class="nav-number">1.1.</span> <span class="nav-text">情况1:格式化的值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#情况2-非格式化的值"><span class="nav-number">1.2.</span> <span class="nav-text">情况2:非格式化的值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#情况3-特殊值"><span class="nav-number">1.3.</span> <span class="nav-text">情况3:特殊值</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#浮点数转换为二进制"><span class="nav-number">2.</span> <span class="nav-text">浮点数转换为二进制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0-1-0-2"><span class="nav-number">3.</span> <span class="nav-text">0.1+0.2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0-1的二进制"><span class="nav-number">3.1.</span> <span class="nav-text">0.1的二进制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0-2的二进制"><span class="nav-number">3.2.</span> <span class="nav-text">0.2的二进制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#浮点数运算"><span class="nav-number">4.</span> <span class="nav-text">浮点数运算</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-对阶"><span class="nav-number">4.1.</span> <span class="nav-text">1.对阶</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-尾数运算"><span class="nav-number">4.2.</span> <span class="nav-text">2. 尾数运算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-结果规格化"><span class="nav-number">4.3.</span> <span class="nav-text">3. 结果规格化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-舍入处理"><span class="nav-number">4.4.</span> <span class="nav-text">4. 舍入处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-溢出判断"><span class="nav-number">4.5.</span> <span class="nav-text">5. 溢出判断</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#计算0-1-0-2"><span class="nav-number">5.</span> <span class="nav-text">计算0.1+0.2</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

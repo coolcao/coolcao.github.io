@@ -1,0 +1,741 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Angular,前端,RxJS," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="How to RxJS in Angular  经过几年的 Angular 前端开发和 RxJS 的大量使用，我决定把我个人的一些关键经验写成一篇简洁的文章。在这篇文章中，我假设你已经对 Observable-streams 以及不同的 Subject-types 的工作方式有了一些基本的了解。如果是这样的话，这可能会帮助你掌握 Angular 中 RxJS 的最常见的使用情况。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Angular中使用RxJS的几种常用方法（翻译）">
+<meta property="og:url" content="http://coolcao.com/2022/09/27/how-to-rxjs-in-angular/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="How to RxJS in Angular  经过几年的 Angular 前端开发和 RxJS 的大量使用，我决定把我个人的一些关键经验写成一篇简洁的文章。在这篇文章中，我假设你已经对 Observable-streams 以及不同的 Subject-types 的工作方式有了一些基本的了解。如果是这样的话，这可能会帮助你掌握 Angular 中 RxJS 的最常见的使用情况。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2022-09-27T08:41:41.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.956Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="Angular">
+<meta property="article:tag" content="前端">
+<meta property="article:tag" content="RxJS">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2022/09/27/how-to-rxjs-in-angular/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> Angular中使用RxJS的几种常用方法（翻译） | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Angular中使用RxJS的几种常用方法（翻译）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2022-09-27T16:41:41+08:00" content="2022-09-27">
+              2022-09-27
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%BF%BB%E8%AF%91/" itemprop="url" rel="index">
+                    <span itemprop="name">翻译</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.matthiasmeier.io/blog/how-to-rxjs-in-angular/">How to RxJS in Angular</a></p>
+</blockquote>
+<p>经过几年的 Angular 前端开发和 RxJS 的大量使用，我决定把我个人的一些关键经验写成一篇简洁的文章。在这篇文章中，我假设你已经对 Observable-streams 以及不同的 Subject-types 的工作方式有了一些基本的了解。如果是这样的话，这可能会帮助你掌握 Angular 中 RxJS 的最常见的使用情况。</p>
+<span id="more"></span>
+
+<p>当你的组件输入的值随时间变化时，你可能想在你的组件内对这些数据做一些处理。所以你通常做的是实现 <code>NgOnChanges</code> 方法来对这些变化做出反应。现在，当你依赖其他异步数据时，这就变得有点模糊了，这正是 RxJS 出现的地方。不幸的是，目前还不支持组件的输入流。</p>
+<p>因此，每当我需要 RxJS 在改变组件输入上的能力时，我就会使用这种模式。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Input</span>() <span class="keyword">public</span> <span class="attr">amount</span>: <span class="built_in">number</span>;</span><br><span class="line"><span class="keyword">public</span> amount$ = <span class="keyword">new</span> <span class="title class_">Subject</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="title function_">ngOnChanges</span>(<span class="attr">changes</span>: <span class="title class_">SimpleChanges</span>): <span class="built_in">void</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (changes.<span class="property">amount</span> &amp;&amp; changes.<span class="property">amount</span>.<span class="property">currentValue</span> !== <span class="literal">undefined</span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">amount$</span>.<span class="title function_">next</span>(changes.<span class="property">amount</span>.<span class="property">currentValue</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="按钮点击（Button-Click）"><a href="#按钮点击（Button-Click）" class="headerlink" title="按钮点击（Button Click）"></a>按钮点击（Button Click）</h2><p>假设你有一些基于 RxJS 的计数器，你想在点击 “重置 “按钮时重置这个计数器。最直接的方法（我知道）是，创建一个新的<code>onReset$</code>主题，然后你可以把它编入你的计数器流设置。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">button</span> (<span class="attr">click</span>)=<span class="string">&quot;onReset$.next()&quot;</span>&gt;</span>Reset<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Http-Requests"><a href="#Http-Requests" class="headerlink" title="Http Requests"></a>Http Requests</h2><p>对于数据服务的基本设置，你可以遵循 <a target="_blank" rel="noopener" href="https://angular.io/guide/http">Angular 指南</a>。<br>但通常情况下，有些用例中，检索数据并不那么简单。很多时候，你要依靠其他的异步数据。所以这方面的心理模型可以是。</p>
+<blockquote>
+<p>一旦我得到数据 X，我想加载数据 Y（它与 X 有关）。</p>
+</blockquote>
+<p>很多时候，你可以用以下方式来扩展上述语句</p>
+<blockquote>
+<p>如果仍有一个开放的 Y 请求（与<strong>之前的</strong>X 有关），我想取消那个请求。</p>
+</blockquote>
+<p>如果是这样，那么 RxJS 的 <code>switchMap</code> 操作符正是你想要找的。考虑一下下面的例子，检索我们当前用户的书签。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> bookmarks$ = <span class="variable language_">this</span>.<span class="property">currentUser$</span>.<span class="title function_">pipe</span>(</span><br><span class="line">  <span class="title function_">switchMap</span>(<span class="function"><span class="params">user</span> =&gt;</span> <span class="variable language_">this</span>.<span class="property">bookmarksService</span>.<span class="title function_">getBookmarks</span>(user.<span class="property">id</span>)),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h2 id="Async-Pipe"><a href="#Async-Pipe" class="headerlink" title="Async Pipe"></a>Async Pipe</h2><p>Angular 包含了一个非常有用的 <code>async-pipe</code>，这使得在模板中消费你的可观察流变得容易。因此，与其在你的 TypeScript 组件中订阅并将值分配给一个公共属性，你可以直接使用 <code>async-pipe</code> 来检索你的异步值。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">li</span> *<span class="attr">ngFor</span>=<span class="string">&quot;let bookmark of bookmarks$|async&quot;</span>&gt;</span>&#123;&#123;bookmark&#125;&#125;<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Sharing-Expensive-Data"><a href="#Sharing-Expensive-Data" class="headerlink" title="Sharing Expensive Data"></a>Sharing Expensive Data</h2><p>使用上面提到的技术，你可以继续使用 <code>async-pipe</code> 多次订阅你的 bookmarks$流。当看一下你的网络控制台时，你很快就会意识到，多个请求正在进行。这不是我们想要的。相反，我们希望与任何对它感兴趣的人分享响应。</p>
+<p>有多种方法可以实现这一点。其中之一是 <code>publishReplay</code>操作符，它将源流作为 ReplaySubject 发布，然后是 <code>refCount</code>操作符，它处理（取消）订阅，只要有至少一个监听器。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> bookmarks$ = <span class="variable language_">this</span>.<span class="property">currentUser$</span>.<span class="title function_">pipe</span>(</span><br><span class="line">  <span class="title function_">switchMap</span>(<span class="function"><span class="params">user</span> =&gt;</span> <span class="variable language_">this</span>.<span class="property">bookmarksService</span>.<span class="title function_">getBookmarks</span>(user.<span class="property">id</span>)),</span><br><span class="line">  <span class="title function_">publishReplay</span>(<span class="number">1</span>),</span><br><span class="line">  <span class="title function_">refCount</span>(),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h2 id="Unsubscribing"><a href="#Unsubscribing" class="headerlink" title="Unsubscribing"></a>Unsubscribing</h2><p>关于这篇文章的最后一点。如果你总是使用 <code>async-pipe</code>，就不需要担心取消订阅的问题，因为管道会自己处理这个问题。所以，当然，尽可能地使用它是非常有意义的。但在某些情况下，你可能需要手动订阅可观察流。在这些情况下，重要的是你要正确地取消订阅，否则你会遇到内存泄漏。使用 <code>takeUntil</code>操作符 是我发现的完成这个任务的最干净的方法。</p>
+<p>前面的设置看起来像这样。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> unsubscribe$ = <span class="keyword">new</span> <span class="title class_">Subject</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="title function_">ngOnDestroy</span>(): <span class="built_in">void</span> &#123;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">unsubscribe$</span>.<span class="title function_">next</span>();</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">unsubscribe$</span>.<span class="title function_">complete</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因此，在任何需要关闭的流上，你可以在调用 “subscribe “之前使用 <code>takeUntil</code>，当你的组件即将被销毁时，你的订阅就会被关闭。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">this</span>.<span class="property">bookmarks$</span>.<span class="title function_">pipe</span>(<span class="title function_">takeUntil</span>(<span class="variable language_">this</span>.<span class="property">unsubscribe$</span>)).<span class="title function_">subscribe</span>(<span class="function">(<span class="params">bookmarks</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// do something</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>我真的希望这能帮助你们中的一些人开始进入 Angular 和 RxJS 的世界，因为一开始它可能是相当吓人的。</p>
+<p>我们非常欢迎任何问题和建议。更多的内容将陆续推出。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Angular/" rel="tag">#Angular</a>
+          
+            <a href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">#前端</a>
+          
+            <a href="/tags/RxJS/" rel="tag">#RxJS</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/09/27/angular-loading/" rel="next" title="Angular使用RxJS实现全局loading">
+                <i class="fa fa-chevron-left"></i> Angular使用RxJS实现全局loading
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/09/29/angular-2-what-is-unidirectional-data-flow-development-mode/" rel="prev" title="深入理解Angular2的单向数据流（翻译）">
+                深入理解Angular2的单向数据流（翻译） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#按钮点击（Button-Click）"><span class="nav-number">1.</span> <span class="nav-text">按钮点击（Button Click）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Http-Requests"><span class="nav-number">2.</span> <span class="nav-text">Http Requests</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Async-Pipe"><span class="nav-number">3.</span> <span class="nav-text">Async Pipe</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sharing-Expensive-Data"><span class="nav-number">4.</span> <span class="nav-text">Sharing Expensive Data</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Unsubscribing"><span class="nav-number">5.</span> <span class="nav-text">Unsubscribing</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>

@@ -1,0 +1,766 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Angular,前端," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="Angular 16 为我们带来了 Signals，为 Angular 带来更细粒度的响应式能力。 熟悉 Solid.js 的朋友应该知道 Signals 的概念，意为“信号”，是 Solid.js 响应式的基础。Angular 16 将 Signals 添加进来，使得Angular在响应式方面更胜一筹。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Angular16新特性-Signals初体验">
+<meta property="og:url" content="http://coolcao.com/2023/05/21/angular16-signals/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="Angular 16 为我们带来了 Signals，为 Angular 带来更细粒度的响应式能力。 熟悉 Solid.js 的朋友应该知道 Signals 的概念，意为“信号”，是 Solid.js 响应式的基础。Angular 16 将 Signals 添加进来，使得Angular在响应式方面更胜一筹。">
+<meta property="og:locale">
+<meta property="og:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/blog/20230731182651.png">
+<meta property="article:published_time" content="2023-05-21T08:36:43.000Z">
+<meta property="article:modified_time" content="2024-09-25T03:46:44.953Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="Angular">
+<meta property="article:tag" content="前端">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/blog/20230731182651.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2023/05/21/angular16-signals/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> Angular16新特性-Signals初体验 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Angular16新特性-Signals初体验
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2023-05-21T16:36:43+08:00" content="2023-05-21">
+              2023-05-21
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Angular 16 为我们带来了 <code>Signals</code>，为 Angular 带来更细粒度的响应式能力。</p>
+<p>熟悉 <code>Solid.js</code> 的朋友应该知道 <code>Signals</code> 的概念，意为“信号”，是 <code>Solid.js</code> 响应式的基础。Angular 16 将 Signals 添加进来，使得Angular在响应式方面更胜一筹。</p>
+<span id="more"></span>
+
+<h2 id="Angular-Signals基础"><a href="#Angular-Signals基础" class="headerlink" title="Angular Signals基础"></a>Angular Signals基础</h2><h3 id="signal"><a href="#signal" class="headerlink" title="signal()"></a><code>signal()</code></h3><p>Angular 通过 <code>signal()</code> 函数定义一个Signal。 一个Signal便是一个getter函数，直接通过函数调用取值。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> counter = <span class="title function_">signal</span>(<span class="number">0</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">counter</span>());</span><br></pre></td></tr></table></figure>
+
+<p>要修改Signal的值，可以通过三个函数： <code>set()</code>, <code>update()</code>, <code>mutate()</code></p>
+<ul>
+<li><code>set()</code>: 直接传入新值，新值覆盖旧值</li>
+<li><code>update()</code>: 传入一个更新函数，入参是当前值，返回修改后的值</li>
+<li><code>mutate()</code>: 传入一个更新函数，但没有返回值，直接修改入参的对象（一般用于数组和对象）</li>
+</ul>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">counter = <span class="title function_">signal</span>(<span class="number">0</span>);</span><br><span class="line"><span class="comment">// set</span></span><br><span class="line"><span class="variable language_">this</span>.<span class="property">counter</span>.<span class="title function_">set</span>(<span class="number">1</span>);</span><br><span class="line"><span class="comment">// update</span></span><br><span class="line"><span class="variable language_">this</span>.<span class="property">counter</span>.<span class="title function_">update</span>(<span class="function"><span class="params">val</span> =&gt;</span> val + <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<p><code>signal()</code> 函数还可以传入一个equal函数，来指定判断相等的依据。</p>
+<p>比如，对于一个用户，我们指定其id属性用来判断是否相等的依据。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">IUser</span> &#123;</span><br><span class="line">  <span class="attr">id</span>: <span class="built_in">string</span>;</span><br><span class="line">  <span class="attr">name</span>: <span class="built_in">string</span>;</span><br><span class="line">  <span class="attr">age</span>: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 传入equal函数，指定判断用户是否相等的判断函数</span></span><br><span class="line">user = <span class="title function_">signal</span>(&#123; <span class="attr">id</span>: <span class="string">&#x27;&#x27;</span>, <span class="attr">name</span>: <span class="string">&#x27;&#x27;</span>, <span class="attr">age</span>: <span class="number">0</span> &#125;, &#123;</span><br><span class="line">    <span class="attr">equal</span>: <span class="function">(<span class="params">a: IUser, b: IUser</span>) =&gt;</span> a.<span class="property">id</span> == b.<span class="property">id</span>,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="title function_">updateUser</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">user</span>.<span class="title function_">set</span>(&#123; <span class="attr">id</span>: <span class="string">&#x27;1&#x27;</span>, <span class="attr">name</span>: <span class="string">&#x27;coolcao&#x27;</span>, <span class="attr">age</span>: <span class="number">23</span> &#125;);</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">user</span>.<span class="title function_">set</span>(&#123; <span class="attr">id</span>: <span class="string">&#x27;1&#x27;</span>, <span class="attr">name</span>: <span class="string">&#x27;Jack&#x27;</span>, <span class="attr">age</span>: <span class="number">30</span> &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如上，我们指定根据id判断是否相等，当执行完 <code>this.user.set(&#123; id: &#39;1&#39;, name: &#39;coolcao&#39;, age: 23 &#125;);</code>后，紧接着再执行 <code>this.user.set(&#123; id: &#39;1&#39;, name: &#39;Jack&#39;, age: 30 &#125;);</code>，此时由于id未发生变化，因此，第二个set并不能成功执行，最后的user是 <code>&#123; id: &#39;1&#39;, name: &#39;coolcao&#39;, age: 23 &#125;</code>。</p>
+<h3 id="computed"><a href="#computed" class="headerlink" title="computed()"></a><code>computed()</code></h3><p>Angular使用 <code>computed()</code> 函数定义计算式 signal， 其结果是由其他 signal 计算而来，而且其会根据计算的signal变化而发生变化。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> num = <span class="title function_">signal</span>(<span class="number">1</span>);</span><br><span class="line"><span class="keyword">const</span> double = <span class="title function_">computed</span>(<span class="function">() =&gt;</span> <span class="title function_">num</span>() * <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
+<p>当num发生变化时，double也会随之发生变化，double永远是num的2倍。</p>
+<h3 id="effect"><a href="#effect" class="headerlink" title="effect()"></a><code>effect()</code></h3><p>定义signal的副作用函数。<br>副作用是什么？就是signal发生变化时的副作用。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">num = <span class="title function_">signal</span>(<span class="number">0</span>);</span><br><span class="line">double = <span class="title function_">computed</span>(<span class="function">() =&gt;</span> <span class="variable language_">this</span>.<span class="title function_">num</span>() * <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line"><span class="title function_">effect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="title function_">num</span>());</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="title function_">double</span>());</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;---&#x27;</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>每当num发生变化时，都会触发effect()函数，从而打印出num和double的值。</p>
+<h2 id="Signals实例与其他方式实现对比"><a href="#Signals实例与其他方式实现对比" class="headerlink" title="Signals实例与其他方式实现对比"></a>Signals实例与其他方式实现对比</h2><p>我们通过一个简单的TODO项目，来实验一下Signals以及与原来Angular方式的不同。</p>
+<p>大致界面如下：<br><img src="https://img-vnote-1251075307.cos.ap-beijing.myqcloud.com/blog/20230731182651.png"></p>
+<p>上半部分是一个输入表单，用来输入TODO的标题与详细信息。<br>下半部分是未完成与已完成的TODO列表。其中，点击未完成事项前的复选框可以将其选中，标记为已完成。</p>
+<h3 id="Angular原来的方式"><a href="#Angular原来的方式" class="headerlink" title="Angular原来的方式"></a>Angular原来的方式</h3><p>对应模板：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">nz-divider</span>&gt;</span><span class="tag">&lt;/<span class="name">nz-divider</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">nz-space</span> <span class="attr">nzDirection</span>=<span class="string">&quot;vertical&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> *<span class="attr">nzSpaceItem</span> <span class="attr">nz-input</span> <span class="attr">placeholder</span>=<span class="string">&quot;代办标题&quot;</span> [(<span class="attr">ngModel</span>)]=<span class="string">&quot;todo.title&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">nz-textarea-count</span> *<span class="attr">nzSpaceItem</span> [<span class="attr">nzMaxCharacterCount</span>]=<span class="string">&quot;100&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">textarea</span> <span class="attr">rows</span>=<span class="string">&quot;4&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;代办详细信息&quot;</span> <span class="attr">name</span>=<span class="string">&quot;comment&quot;</span> <span class="attr">nz-input</span> [(<span class="attr">ngModel</span>)]=<span class="string">&quot;todo.desc&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">nz-textarea-count</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">button</span> *<span class="attr">nzSpaceItem</span> (<span class="attr">click</span>)=<span class="string">&quot;addTodo()&quot;</span> <span class="attr">nz-button</span>&gt;</span>添加代办<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">nz-space</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">nz-divider</span>&gt;</span><span class="tag">&lt;/<span class="name">nz-divider</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">nz-space</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">nz-list</span> *<span class="attr">nzSpaceItem</span> <span class="attr">nzBordered</span> <span class="attr">nzHeader</span>=<span class="string">&quot;❌ 未完成&quot;</span> <span class="attr">style</span>=<span class="string">&quot;width: 400px;&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">nz-list-item</span> *<span class="attr">ngFor</span>=<span class="string">&quot;let todo of this.unDone()&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">label</span> <span class="attr">nz-checkbox</span> [(<span class="attr">ngModel</span>)]=<span class="string">&quot;todo.done&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">span</span> <span class="attr">nz-typography</span> <span class="attr">class</span>=<span class="string">&quot;todo-title&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">mark</span>&gt;</span>&#123;&#123;todo.title&#125;&#125;<span class="tag">&lt;/<span class="name">mark</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">      &#123;&#123;todo.desc&#125;&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">nz-list-item</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">nz-list</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">nz-list</span> *<span class="attr">nzSpaceItem</span> <span class="attr">nzBordered</span> <span class="attr">nzHeader</span>=<span class="string">&quot;✅ 已完成&quot;</span> <span class="attr">style</span>=<span class="string">&quot;width: 400px;&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">nz-list-item</span> *<span class="attr">ngFor</span>=<span class="string">&quot;let todo of this.done()&quot;</span> <span class="attr">style</span>=<span class="string">&quot;text-decoration:line-through;&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">label</span> <span class="attr">nz-checkbox</span> [(<span class="attr">ngModel</span>)]=<span class="string">&quot;todo.done&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">span</span> <span class="attr">nz-typography</span> <span class="attr">class</span>=<span class="string">&quot;todo-title&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">mark</span>&gt;</span>&#123;&#123;todo.title&#125;&#125;<span class="tag">&lt;/<span class="name">mark</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">      &#123;&#123;todo.desc&#125;&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">nz-list-item</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">nz-list</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">nz-space</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>组件类：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">TodoListComponent</span> &#123;</span><br><span class="line">  <span class="attr">todos</span>: <span class="title class_">ITodo</span>[] = [];</span><br><span class="line">  todo = &#123;</span><br><span class="line">    <span class="attr">title</span>: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    <span class="attr">desc</span>: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">  &#125;;</span><br><span class="line">  <span class="title function_">addTodo</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="variable language_">this</span>.<span class="property">todo</span>.<span class="property">title</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">todos</span>.<span class="title function_">push</span>(&#123;</span><br><span class="line">      <span class="attr">id</span>: <span class="variable language_">this</span>.<span class="property">todos</span>.<span class="property">length</span>,</span><br><span class="line">      <span class="attr">done</span>: <span class="literal">false</span>,</span><br><span class="line">      ...<span class="variable language_">this</span>.<span class="property">todo</span>,</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">todo</span> = &#123; <span class="attr">title</span>: <span class="string">&#x27;&#x27;</span>, <span class="attr">desc</span>: <span class="string">&#x27;&#x27;</span> &#125;;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">doneTodo</span>(<span class="params">id: <span class="built_in">number</span></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">todos</span>[id].<span class="property">done</span> = <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">done</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">todos</span>.<span class="title function_">filter</span>(<span class="function"><span class="params">todo</span> =&gt;</span> todo.<span class="property">done</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">unDone</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">todos</span>.<span class="title function_">filter</span>(<span class="function"><span class="params">todo</span> =&gt;</span> !todo.<span class="property">done</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们直接定义一个todos数组，添加TODO就是直接push新项目到todos数组。<br>标记为已完成与未完成，直接使用ngModel双向绑定到具体每个todo的done属性上。</p>
+<p>在已完成与未完成两个列表，通过两个函数<code>done()</code>和<code>unDone()</code>对所有todos进行过滤已完成和未完成两个列表。</p>
+<h3 id="signals方式"><a href="#signals方式" class="headerlink" title="signals方式"></a>signals方式</h3><p>html模板：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">nz-divider</span>&gt;</span><span class="tag">&lt;/<span class="name">nz-divider</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">nz-space</span> <span class="attr">nzDirection</span>=<span class="string">&quot;vertical&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> *<span class="attr">nzSpaceItem</span> <span class="attr">nz-input</span> <span class="attr">placeholder</span>=<span class="string">&quot;代办标题&quot;</span> [(<span class="attr">ngModel</span>)]=<span class="string">&quot;todo.title&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">nz-textarea-count</span> *<span class="attr">nzSpaceItem</span> [<span class="attr">nzMaxCharacterCount</span>]=<span class="string">&quot;100&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">textarea</span> <span class="attr">rows</span>=<span class="string">&quot;4&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;代办详细信息&quot;</span> <span class="attr">name</span>=<span class="string">&quot;comment&quot;</span> <span class="attr">nz-input</span> [(<span class="attr">ngModel</span>)]=<span class="string">&quot;todo.desc&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">nz-textarea-count</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">button</span> *<span class="attr">nzSpaceItem</span> (<span class="attr">click</span>)=<span class="string">&quot;addTodo()&quot;</span> <span class="attr">nz-button</span>&gt;</span>添加代办<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">nz-space</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">nz-divider</span>&gt;</span><span class="tag">&lt;/<span class="name">nz-divider</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">nz-space</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">nz-list</span> *<span class="attr">nzSpaceItem</span> <span class="attr">nzBordered</span> <span class="attr">nzHeader</span>=<span class="string">&quot;❌ 未完成&quot;</span> <span class="attr">style</span>=<span class="string">&quot;width: 400px;&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">nz-list-item</span> *<span class="attr">ngFor</span>=<span class="string">&quot;let todo of this.unDone()&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">label</span> <span class="attr">nz-checkbox</span> [(<span class="attr">ngModel</span>)]=<span class="string">&quot;todo.done&quot;</span> (<span class="attr">ngModelChange</span>)=<span class="string">&quot;doneTodo(todo.id)&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">span</span> <span class="attr">nz-typography</span> <span class="attr">class</span>=<span class="string">&quot;todo-title&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">mark</span>&gt;</span>&#123;&#123;todo.title&#125;&#125;<span class="tag">&lt;/<span class="name">mark</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">      &#123;&#123;todo.desc&#125;&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">nz-list-item</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">nz-list</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">nz-list</span> *<span class="attr">nzSpaceItem</span> <span class="attr">nzBordered</span> <span class="attr">nzHeader</span>=<span class="string">&quot;✅ 已完成&quot;</span> <span class="attr">style</span>=<span class="string">&quot;width: 400px;&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">nz-list-item</span> *<span class="attr">ngFor</span>=<span class="string">&quot;let todo of this.done()&quot;</span> <span class="attr">style</span>=<span class="string">&quot;text-decoration:line-through;&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">label</span> <span class="attr">nz-checkbox</span> [(<span class="attr">ngModel</span>)]=<span class="string">&quot;todo.done&quot;</span> (<span class="attr">ngModelChange</span>)=<span class="string">&quot;unDoneTodo(todo.id)&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">span</span> <span class="attr">nz-typography</span> <span class="attr">class</span>=<span class="string">&quot;todo-title&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">mark</span>&gt;</span>&#123;&#123;todo.title&#125;&#125;<span class="tag">&lt;/<span class="name">mark</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">      &#123;&#123;todo.desc&#125;&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">nz-list-item</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">nz-list</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">nz-space</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>组件类：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">TodoListComponent</span> &#123;</span><br><span class="line">  todos = signal&lt;<span class="title class_">ITodo</span>[]&gt;([]);</span><br><span class="line">  unDone = <span class="title function_">computed</span>(<span class="function">() =&gt;</span> <span class="variable language_">this</span>.<span class="title function_">todos</span>().<span class="title function_">filter</span>(<span class="function"><span class="params">todo</span> =&gt;</span> !todo.<span class="property">done</span>));</span><br><span class="line">  done = <span class="title function_">computed</span>(<span class="function">() =&gt;</span> <span class="variable language_">this</span>.<span class="title function_">todos</span>().<span class="title function_">filter</span>(<span class="function"><span class="params">todo</span> =&gt;</span> todo.<span class="property">done</span>));</span><br><span class="line"></span><br><span class="line">  todo = &#123;</span><br><span class="line">    <span class="attr">title</span>: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    <span class="attr">desc</span>: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">addTodo</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="variable language_">this</span>.<span class="property">todo</span>.<span class="property">title</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">todos</span>.<span class="title function_">mutate</span>(<span class="function"><span class="params">todos</span> =&gt;</span> &#123;</span><br><span class="line">      todos.<span class="title function_">push</span>(&#123;</span><br><span class="line">        <span class="attr">id</span>: todos.<span class="property">length</span>,</span><br><span class="line">        <span class="attr">done</span>: <span class="literal">false</span>,</span><br><span class="line">        ...<span class="variable language_">this</span>.<span class="property">todo</span>,</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">todo</span> = &#123; <span class="attr">title</span>: <span class="string">&#x27;&#x27;</span>, <span class="attr">desc</span>: <span class="string">&#x27;&#x27;</span> &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">doneTodo</span>(<span class="params">id: <span class="built_in">number</span></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">todos</span>.<span class="title function_">mutate</span>(<span class="function"><span class="params">todos</span> =&gt;</span> &#123;</span><br><span class="line">      todos[id].<span class="property">done</span> = <span class="literal">true</span>;</span><br><span class="line">      <span class="keyword">return</span> todos;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">unDoneTodo</span>(<span class="params">id: <span class="built_in">number</span></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">todos</span>.<span class="title function_">mutate</span>(<span class="function"><span class="params">todos</span> =&gt;</span> &#123;</span><br><span class="line">      todos[id].<span class="property">done</span> = <span class="literal">false</span>;</span><br><span class="line">      <span class="keyword">return</span> todos;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用signals的方式，定义一个ITodo[]数组类型的Signal，添加代办时通过<code>.mutate()</code>函数插入新的代办事项。<br>标记已完成和未完成，也是通过<code>.mutate()</code>函数来实现。<br>然后通过<code>computed()</code>函数定义两个计算signal，<code>done</code>和<code>unDone</code>，即已完成和未完成代办的signal。</p>
+<p>插入新代办与标记完成状态，都是对 <code>todos</code> 这个signal进行操作，而 <code>done</code> 和 <code>unDone</code> 两个signal是通过 <code>todos</code> 计算而来，是响应式的。</p>
+<p>在html模板中，直接通过 <code>done()</code> 和 <code>unDone()</code> 来访问已完成和未完成代办。</p>
+<h3 id="RxJs中BehaviorSubject实现"><a href="#RxJs中BehaviorSubject实现" class="headerlink" title="RxJs中BehaviorSubject实现"></a>RxJs中BehaviorSubject实现</h3><p>熟悉Angular的朋友可能会发现，如上Signals的方式，其实使用RxJS的<code>BehaviorSubject</code>也可以实现。</p>
+<blockquote>
+<p>RxJS 是响应式编程 <code>ReactiveX</code> 的JS实现，也是响应式编程的集大成者。Angular中已内置RxJS。</p>
+</blockquote>
+<p>模板文件：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">nz-divider</span>&gt;</span><span class="tag">&lt;/<span class="name">nz-divider</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">nz-space</span> <span class="attr">nzDirection</span>=<span class="string">&quot;vertical&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> *<span class="attr">nzSpaceItem</span> <span class="attr">nz-input</span> <span class="attr">placeholder</span>=<span class="string">&quot;代办标题&quot;</span> [(<span class="attr">ngModel</span>)]=<span class="string">&quot;todo.title&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">nz-textarea-count</span> *<span class="attr">nzSpaceItem</span> [<span class="attr">nzMaxCharacterCount</span>]=<span class="string">&quot;100&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">textarea</span> <span class="attr">rows</span>=<span class="string">&quot;4&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;代办详细信息&quot;</span> <span class="attr">name</span>=<span class="string">&quot;comment&quot;</span> <span class="attr">nz-input</span> [(<span class="attr">ngModel</span>)]=<span class="string">&quot;todo.desc&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">nz-textarea-count</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">button</span> *<span class="attr">nzSpaceItem</span> (<span class="attr">click</span>)=<span class="string">&quot;addTodo()&quot;</span> <span class="attr">nz-button</span>&gt;</span>添加代办<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">nz-space</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">nz-divider</span>&gt;</span><span class="tag">&lt;/<span class="name">nz-divider</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">nz-space</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">nz-list</span> *<span class="attr">nzSpaceItem</span> <span class="attr">nzBordered</span> <span class="attr">nzHeader</span>=<span class="string">&quot;❌ 未完成&quot;</span> <span class="attr">style</span>=<span class="string">&quot;width: 400px;&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">nz-list-item</span> *<span class="attr">ngFor</span>=<span class="string">&quot;let todo of this.unDone$ | async&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">label</span> <span class="attr">nz-checkbox</span> [(<span class="attr">ngModel</span>)]=<span class="string">&quot;todo.done&quot;</span> (<span class="attr">ngModelChange</span>)=<span class="string">&quot;doneTodo(todo.id)&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">span</span> <span class="attr">nz-typography</span> <span class="attr">class</span>=<span class="string">&quot;todo-title&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">mark</span>&gt;</span>&#123;&#123;todo.title&#125;&#125;<span class="tag">&lt;/<span class="name">mark</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">      &#123;&#123;todo.desc&#125;&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">nz-list-item</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">nz-list</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">nz-list</span> *<span class="attr">nzSpaceItem</span> <span class="attr">nzBordered</span> <span class="attr">nzHeader</span>=<span class="string">&quot;✅ 已完成&quot;</span> <span class="attr">style</span>=<span class="string">&quot;width: 400px;&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">nz-list-item</span> *<span class="attr">ngFor</span>=<span class="string">&quot;let todo of this.done$ | async&quot;</span> <span class="attr">style</span>=<span class="string">&quot;text-decoration:line-through;&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">label</span> <span class="attr">nz-checkbox</span> [(<span class="attr">ngModel</span>)]=<span class="string">&quot;todo.done&quot;</span> (<span class="attr">ngModelChange</span>)=<span class="string">&quot;unDoneTodo(todo.id)&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">span</span> <span class="attr">nz-typography</span> <span class="attr">class</span>=<span class="string">&quot;todo-title&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">mark</span>&gt;</span>&#123;&#123;todo.title&#125;&#125;<span class="tag">&lt;/<span class="name">mark</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">      &#123;&#123;todo.desc&#125;&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">nz-list-item</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">nz-list</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">nz-space</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>组件类：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">TodoListComponent</span> &#123;</span><br><span class="line">  todos$ = <span class="keyword">new</span> <span class="title class_">BehaviorSubject</span>&lt;<span class="title class_">ITodo</span>[]&gt;([]);</span><br><span class="line">  done$ = <span class="variable language_">this</span>.<span class="property">todos$</span>.<span class="title function_">pipe</span>(<span class="title function_">map</span>(<span class="function"><span class="params">todos</span> =&gt;</span> todos.<span class="title function_">filter</span>(<span class="function"><span class="params">todo</span> =&gt;</span> todo.<span class="property">done</span>)));</span><br><span class="line">  unDone$ = <span class="variable language_">this</span>.<span class="property">todos$</span>.<span class="title function_">pipe</span>(<span class="title function_">map</span>(<span class="function"><span class="params">todos</span> =&gt;</span> todos.<span class="title function_">filter</span>(<span class="function"><span class="params">todo</span> =&gt;</span> !todo.<span class="property">done</span>)));</span><br><span class="line"></span><br><span class="line">  todo = &#123;</span><br><span class="line">    <span class="attr">title</span>: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    <span class="attr">desc</span>: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">addTodo</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="variable language_">this</span>.<span class="property">todo</span>.<span class="property">title</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">const</span> todos = <span class="variable language_">this</span>.<span class="property">todos$</span>.<span class="property">value</span>;</span><br><span class="line">    todos.<span class="title function_">push</span>(&#123;</span><br><span class="line">      <span class="attr">id</span>: todos.<span class="property">length</span>,</span><br><span class="line">      <span class="attr">done</span>: <span class="literal">false</span>,</span><br><span class="line">      ...<span class="variable language_">this</span>.<span class="property">todo</span>,</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">todos$</span>.<span class="title function_">next</span>(todos);</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">todo</span> = &#123; <span class="attr">title</span>: <span class="string">&#x27;&#x27;</span>, <span class="attr">desc</span>: <span class="string">&#x27;&#x27;</span> &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">doneTodo</span>(<span class="params">id: <span class="built_in">number</span></span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> todos = <span class="variable language_">this</span>.<span class="property">todos$</span>.<span class="property">value</span>;</span><br><span class="line">    todos[id].<span class="property">done</span> = <span class="literal">true</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">todos$</span>.<span class="title function_">next</span>(todos);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">unDoneTodo</span>(<span class="params">id: <span class="built_in">number</span></span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> todos = <span class="variable language_">this</span>.<span class="property">todos$</span>.<span class="property">value</span>;</span><br><span class="line">    todos[id].<span class="property">done</span> = <span class="literal">false</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">todos$</span>.<span class="title function_">next</span>(todos);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>RxJS 通过定义BehaviorSubject实例，所有的更新操作都通过<code>.next()</code>方法将新的数据发射出去。<br>在模板中，通过<code>async</code>管道直接订阅异步流。<code>done$</code>和<code>unDone$</code>都是通过<code>todos$</code>流通过管道操作符组合而来成新的异步流。</p>
+<blockquote>
+<p>在RxJS中，定义异步流，约定俗成命名都会在最后加<code>$</code>，表示这是一个流。</p>
+</blockquote>
+<h3 id="Signals和RxJS"><a href="#Signals和RxJS" class="headerlink" title="Signals和RxJS"></a>Signals和RxJS</h3><p>我们可以发现，在之前版本的Angular，也可通过内置的RxJS的BehaviorSubject来实现更细粒度的响应式。<br>那为什么Angular16会引入Signals呢？是为了替代RxJS么？ </p>
+<p>显然不是。这两者本就不是一个层面的东西。</p>
+<p>Angular引入Signals更重要的是优化其变更检测机制，因为Angular利用zone.js来对浏览器进行猴子补丁，来实现其变更检测。</p>
+<p>在Angular引入Signals后，未来Angular很可能就不再需要zone.js，但这并不意味着其替代RxJS，实际上，RxJS依然是Angular社区中最热门的响应式编程方案，因为RxJS依然很强大。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Angular/" rel="tag">#Angular</a>
+          
+            <a href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">#前端</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2023/05/16/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E4%B9%8B%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D/" rel="next" title="动态规划之打家劫舍">
+                <i class="fa fa-chevron-left"></i> 动态规划之打家劫舍
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2023/07/07/%E5%89%8D%E7%BC%80%E5%92%8C%E5%BA%94%E7%94%A8%E4%B9%8B%E7%94%9F%E6%88%90%E5%8A%A0%E6%9D%83%E9%9A%8F%E6%9C%BA%E6%95%B0/" rel="prev" title="前缀和应用之生成加权随机数">
+                前缀和应用之生成加权随机数 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">88</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Angular-Signals基础"><span class="nav-number">1.</span> <span class="nav-text">Angular Signals基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#signal"><span class="nav-number">1.1.</span> <span class="nav-text">signal()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#computed"><span class="nav-number">1.2.</span> <span class="nav-text">computed()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#effect"><span class="nav-number">1.3.</span> <span class="nav-text">effect()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Signals实例与其他方式实现对比"><span class="nav-number">2.</span> <span class="nav-text">Signals实例与其他方式实现对比</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Angular原来的方式"><span class="nav-number">2.1.</span> <span class="nav-text">Angular原来的方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#signals方式"><span class="nav-number">2.2.</span> <span class="nav-text">signals方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RxJs中BehaviorSubject实现"><span class="nav-number">2.3.</span> <span class="nav-text">RxJs中BehaviorSubject实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Signals和RxJS"><span class="nav-number">2.4.</span> <span class="nav-text">Signals和RxJS</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>
