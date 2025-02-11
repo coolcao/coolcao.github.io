@@ -1,0 +1,733 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="obsidian,deepseek,ollama," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="我们在 使用ollama本地部署deepseek大模型 中已经使用 ollama 搭建了本地的 deepseek，虽然使用个人电脑搭建只能运行小参数的 deepseek 服务，其效果远远不及 deepseek 官网提供的服务那么好，但如果你不是需要一些联网服务以及深度思考的应用，只是用 AI 做一下简单的个人助理，本地搭建的服务也够用。 本文整理一下如何使用 obsidian 和 ollama 搭">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用ollama搭建本地大模型搭配obsidian搭建个人知识库">
+<meta property="og:url" content="http://coolcao.com/2025/02/11/obsidian-with-ollama/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="我们在 使用ollama本地部署deepseek大模型 中已经使用 ollama 搭建了本地的 deepseek，虽然使用个人电脑搭建只能运行小参数的 deepseek 服务，其效果远远不及 deepseek 官网提供的服务那么好，但如果你不是需要一些联网服务以及深度思考的应用，只是用 AI 做一下简单的个人助理，本地搭建的服务也够用。 本文整理一下如何使用 obsidian 和 ollama 搭">
+<meta property="og:locale">
+<meta property="og:image" content="https://s2.loli.net/2025/02/11/6wJQuf12jB9pqrH.png">
+<meta property="og:image" content="https://s2.loli.net/2025/02/11/fXe5n4OWtD3VSo9.png">
+<meta property="og:image" content="https://s2.loli.net/2025/02/11/Ad8OBhmboK5xUQR.png">
+<meta property="og:image" content="https://s2.loli.net/2025/02/11/8HP6DTKtLIVUvga.png">
+<meta property="og:image" content="https://s2.loli.net/2025/02/11/jcClmWgwzA45XrP.png">
+<meta property="og:image" content="https://s2.loli.net/2025/02/11/9rqCam8wcoQ4tpP.png">
+<meta property="article:published_time" content="2025-02-11T06:58:04.000Z">
+<meta property="article:modified_time" content="2025-02-11T07:36:51.674Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="obsidian">
+<meta property="article:tag" content="deepseek">
+<meta property="article:tag" content="ollama">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2025/02/11/6wJQuf12jB9pqrH.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2025/02/11/obsidian-with-ollama/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> 利用ollama搭建本地大模型搭配obsidian搭建个人知识库 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                利用ollama搭建本地大模型搭配obsidian搭建个人知识库
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2025-02-11T14:58:04+08:00" content="2025-02-11">
+              2025-02-11
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>我们在 <a href="/2025/02/07/deepseek-by-ollama/" title="使用ollama本地部署deepseek大模型">使用ollama本地部署deepseek大模型</a> 中已经使用 ollama 搭建了本地的 deepseek，虽然使用个人电脑搭建只能运行小参数的 deepseek 服务，其效果远远不及 deepseek 官网提供的服务那么好，但如果你不是需要一些联网服务以及深度思考的应用，只是用 AI 做一下简单的个人助理，本地搭建的服务也够用。</p>
+<p>本文整理一下如何使用 obsidian 和 ollama 搭建的本地大模型搭建个人知识库。</p>
+<span id="more"></span>
+
+<h2 id="ollama-服务搭建"><a href="#ollama-服务搭建" class="headerlink" title="ollama 服务搭建"></a>ollama 服务搭建</h2><p>这部分的内容可以参阅博客 <a href="/2025/02/07/deepseek-by-ollama/" title="使用ollama本地部署deepseek大模型">使用ollama本地部署deepseek大模型</a> 。</p>
+<h2 id="obsidian-插件安装配置"><a href="#obsidian-插件安装配置" class="headerlink" title="obsidian 插件安装配置"></a>obsidian 插件安装配置</h2><p>obsidian 需要下载第三方插件，以支持 ollama 服务。<br>这里推荐两个插件：</p>
+<ul>
+<li>Copilot<br><img src="https://s2.loli.net/2025/02/11/6wJQuf12jB9pqrH.png"></li>
+<li>Smart Connections<br><img src="https://s2.loli.net/2025/02/11/fXe5n4OWtD3VSo9.png"></li>
+</ul>
+<p>这两个插件都可以在 obsidian 中使用 ollama 服务，效果都差不多，这里我以 Copilot 为例。</p>
+<p>首先在 obsidian 的第三方插件管理处搜索并安装 Copilot 插件。</p>
+<p>安装完成后，启用并进入配置界面。</p>
+<p><img src="https://s2.loli.net/2025/02/11/Ad8OBhmboK5xUQR.png"></p>
+<p>这里，我们先点击 Model 进行模型的配置。</p>
+<p>Copilot 插件的需要设置两种类型的模型：聊天模型和嵌入模型。聊天模型就是我们与之对话的大语言模型，嵌入模型是将我们的知识库文档以向量数据的方式进行嵌入存储，提供给大模型做分析处理用。</p>
+<p><img src="https://s2.loli.net/2025/02/11/8HP6DTKtLIVUvga.png"></p>
+<p>我们将上面自带的模型都勾掉不用，自行添加我们的 ollama 模型。</p>
+<p><img src="https://s2.loli.net/2025/02/11/jcClmWgwzA45XrP.png"></p>
+<p>Provider 选择 ollama。Model Name 根据你部署的模型名，自行填写，需要注意的是名称不能差一个字符，可以用命令 <code>ollama list</code> 查看已安装部署的全部模型。<br>Base Url 这里填写 ollama 服务的地址即可。</p>
+<p>填写完点击验证，如果没问题，点击添加即可。</p>
+<p>然后添加嵌入模型，过程和添加聊天模型一致。</p>
+<blockquote>
+<p>嵌入模型也是 ollama 部署的，这里推荐使用 mxbai-embed-large 即可。</p>
+</blockquote>
+<p>添加完模型后，回到 obsidian，在最左侧边栏会添加一个 Copilot 的图标，点击即可打开对话框。</p>
+<p><img src="https://s2.loli.net/2025/02/11/9rqCam8wcoQ4tpP.png"></p>
+<p>如上图所示，我问他在一篇 md 文档中有多少个充电桩，他会将这篇文档中记录的各个属性罗列出来，然后针对问题进行分析，并给出结果。</p>
+<p>本地搭建的 deepseek 服务虽然在能力上相比官方服务差不少，但是在这种本地知识库，文档整理与分析这种场景下用，还是可以的，且不会联网，不会将你的文档散发到网络，安全性更高。<br>所以，如果可以，在本地部署一个 ollama 服务，用于个人知识库，也是一个不错的选择。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/obsidian/" rel="tag">#obsidian</a>
+          
+            <a href="/tags/deepseek/" rel="tag">#deepseek</a>
+          
+            <a href="/tags/ollama/" rel="tag">#ollama</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2025/02/07/deepseek-by-ollama/" rel="next" title="使用ollama本地部署deepseek大模型">
+                <i class="fa fa-chevron-left"></i> 使用ollama本地部署deepseek大模型
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">89</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">109</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ollama-服务搭建"><span class="nav-number">1.</span> <span class="nav-text">ollama 服务搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#obsidian-插件安装配置"><span class="nav-number">2.</span> <span class="nav-text">obsidian 插件安装配置</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>
