@@ -1,0 +1,786 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+<!-- 
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+-->
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="AI,长记忆,memobase," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="coolcao的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="随着 AI 的发展，AI 应用也越来越火爆，但随之而来也会有一些挑战，比如 AI 记忆。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Memobase：为你的AI应用注入长记忆">
+<meta property="og:url" content="http://coolcao.com/2025/02/26/memobase-long-mem/index.html">
+<meta property="og:site_name" content="coolcao的小站">
+<meta property="og:description" content="随着 AI 的发展，AI 应用也越来越火爆，但随之而来也会有一些挑战，比如 AI 记忆。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2025-02-26T02:01:29.000Z">
+<meta property="article:modified_time" content="2025-02-26T03:59:58.479Z">
+<meta property="article:author" content="coolcao">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="长记忆">
+<meta property="article:tag" content="memobase">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://coolcao.com/2025/02/26/memobase-long-mem/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/asciinema-player.css" />
+
+  <title> Memobase：为你的AI应用注入长记忆 | coolcao的小站 </title>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">coolcao的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">coolcao的code点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Memobase：为你的AI应用注入长记忆
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2025-02-26T10:01:29+08:00" content="2025-02-26">
+              2025-02-26
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">技术博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%8E%9F%E5%88%9B/" itemprop="url" rel="index">
+                    <span itemprop="name">原创</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>随着 AI 的发展，AI 应用也越来越火爆，但随之而来也会有一些挑战，比如 AI 记忆。</p>
+<span id="more"></span>
+
+<h2 id="AI-记忆"><a href="#AI-记忆" class="headerlink" title="AI 记忆"></a>AI 记忆</h2><p>为什么 AI 应用需要记忆？<br>所谓的 AI 记忆是指其存储和调用过往信息的能力，用于提升后续决策的连贯性和相关性。</p>
+<p>AI 记忆的类型：</p>
+<ul>
+<li>短期记忆（上下文窗口）<br>在单次交互中（如聊天对话），AI 通过固定长度的上下文窗口记住最近的输入。例如，GPT-4 可能保留约 8000 字的对话历史，但超出部分会被截断。</li>
+<li>长期记忆<br>通过外部数据库（如向量数据库）存储结构化信息，使 AI 能长期访问特定数据。例如，客服机器人调用用户历史订单记录。</li>
+<li>隐性知识记忆<br>预训练模型（如 BERT、GPT）通过海量数据训练获得的通用知识，类似人类的常识储备。</li>
+</ul>
+<p>由于 AI 上下文长度的限制，一般 AI 只能记住窗口上下文内的东西，也即我们上面说的短期记忆。<br>如果要实现长期记忆，需要借助外部数据库来存储，并通过数据库的访问调用，来为 AI 应用注入长记忆功能。</p>
+<h2 id="memobase-AI-应用长记忆解决方案"><a href="#memobase-AI-应用长记忆解决方案" class="headerlink" title="memobase: AI 应用长记忆解决方案"></a>memobase: AI 应用长记忆解决方案</h2><p>memobase 的官方地址： <a target="_blank" rel="noopener" href="https://www.memobase.io/">https://www.memobase.io/</a><br>github 地址：<a target="_blank" rel="noopener" href="https://github.com/memodb-io/memobase">https://github.com/memodb-io/memobase</a></p>
+<p>memobase 是一个基于用户信息的开源 AI 长记忆解决方案，它有如下特点：</p>
+<ul>
+<li>基于 UserProfile 架构<ul>
+<li>结构化存储，易于理解和检索： Memobase 围绕用户 profile 构建记忆，提供清晰的结构，便于存储和调用信息。</li>
+<li>量身定制： 你可以根据自己产品需要自定义 profile 结构。例如，健身应用可以存储用户的锻炼历史、饮食偏好和健身目标，而语言学习应用则可以记录词汇进度、语法熟练度和学习偏好。</li>
+<li>随用户成长动态调整: 随着 AI 对用户了解的深入，profile 内容可以动态更新和扩展，提供更个性化的体验。</li>
+</ul>
+</li>
+<li>隐私与安全<ul>
+<li>数据所有权： Memobase 让你完全掌控用户的数据。你来决定存储什么、怎么用以及保留多久。</li>
+<li>隐私至上： 内置的隐私保护功能确保符合 GDPR 等数据隐私法规。</li>
+<li>审计与监控： 提供了工具来监控记忆使用情况、跟踪变化并确保数据完整性。</li>
+</ul>
+</li>
+<li>可扩展性与高性能<ul>
+<li>可扩展性： Memobase 可以轻松支持数百万用户，并随你的应用扩展而无缝扩展。</li>
+<li>数据库级的效率： Memobase 借鉴成熟的数据库设计原则，确保快速、高效的信息存储和检索。</li>
+<li>最低延迟： 经过性能优化，确保 AI 能在毫秒级别访问所需信息。</li>
+</ul>
+</li>
+<li>开发者友好<ul>
+<li>简单易用的 API： Memobase 提供干净、直观的 API，方便与现有工作流集成。</li>
+<li>内置批量处理： 不用你自己构建异步更新机制，Memobase 已为你打包好所有必要功能。</li>
+<li>丰富的文档与支持： 我们提供详细的文档和支持社区，帮你快速上手。</li>
+</ul>
+</li>
+<li>内置记忆模板<ul>
+<li>利用最佳实践： Memobase 的模板融入了来自教育、虚拟伴侣、游戏等领域的最佳实践，为主流 AI 产品品类预设了一系列高效的记忆模板。</li>
+<li>快速开发，专注创新： 通过直接使用模板，你可以节省时间，将精力集中在打造应用的核心差异化功能上。</li>
+<li>示例： 比如，AI 伴侣模板可能会包含预定义的字段，像个性特征、用户兴趣（书籍、电影、音乐、爱好）、关系历史（重要日期、共享经历）、沟通风格偏好，甚至还有内部笑话。它还可以建议根据对话更新记忆的方法，比如情感分析来衡量用户的情绪状态，主题提取来识别关键讨论点。你可以直接使用这些模板，或者根据自己的特定需求进一步定制它们。</li>
+</ul>
+</li>
+</ul>
+<p>memobase 代码分为服务端和客户端。<br>服务端为核心，采用 python 编写，实现了对接 llm 大模型进行用户信息提取以及对其持久化，还有对外提供了一个 rest api 接口。<br>客户端代码有 python 的实现，go 的实现以及 typescript 的实现，方便不同语言的项目进行对接。</p>
+<blockquote>
+<p>即使你采用的不是 python, go, typescript，也可以直接通过其后端提供的 rest api 进行交互。</p>
+</blockquote>
+<h3 id="后端服务搭建"><a href="#后端服务搭建" class="headerlink" title="后端服务搭建"></a>后端服务搭建</h3><p>memobase 后端，采用 python 编写，外部依赖 pg 数据库和 redis。</p>
+<p>可以直接使用 docker-compose 一个脚本进行搭建，也可以直接使用 docker 镜像，对接已有的 pg 数据库和 redis。</p>
+<blockquote>
+<p>搭建过程还是很简单的，但需要解决网络问题，否则有可能因为网络导致安装依赖失败。</p>
+</blockquote>
+<ol>
+<li><p>使用 docker-compose 一键启动</p>
+<ul>
+<li>安装 docker-compose</li>
+<li>复制配置文件并根据需要修改</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd src/server</span><br><span class="line">cp .env.example .env</span><br><span class="line">cp ./api/config.yaml.example ./api/config.yaml</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>.env 文件为环境配置文件，里面配置了服务端口，数据库的配置，redis 的配置等<br>.&#x2F;api&#x2F;config.yaml 为后端服务 api 的配置，里面重要的需要配置 <code>llm_api_key</code>和<code>llm_base_url</code>即对接的大模型的 key 和 baseUrl</p>
+</blockquote>
+<ul>
+<li><code>docker-compose build &amp;&amp; docker-compose up</code>命令启动</li>
+</ul>
+</li>
+<li><p>单独启动 docker 镜像，对接已有服务</p>
+<ul>
+<li>如果你已经有 pg 数据库和 redis 数据库，可以直接使用 docker 镜像，然后对接上 pg 数据库和 redis 即可。</li>
+<li>拉取镜像 <code>docker pull ghcr.io/memodb-io/memobase:latest</code></li>
+<li>配置 config.yarml 和 env.list 文件</li>
+<li><code>docker run --env-file env.list ./api/config.yaml:/app/config.yaml -p 8019:8000 ghcr.io/memodb-io/memobase:main</code>启动镜像</li>
+</ul>
+</li>
+</ol>
+<h3 id="客户端服务测试"><a href="#客户端服务测试" class="headerlink" title="客户端服务测试"></a>客户端服务测试</h3><p>客户端官方已经实现了 python, golang, typescript 语言的客户端，这里我们看一下 typescript 的样例代码：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">MemoBaseClient</span>, <span class="title class_">Blob</span>, <span class="title class_">BlobType</span> &#125; <span class="keyword">from</span> <span class="string">&quot;@memobase/memobase&quot;</span>;</span><br><span class="line"><span class="comment">// 初始化客户端</span></span><br><span class="line"><span class="keyword">const</span> client = <span class="keyword">new</span> <span class="title class_">MemoBaseClient</span>(</span><br><span class="line">  process.<span class="property">env</span>[<span class="string">&quot;MEMOBASE_PROJECT_URL&quot;</span>],</span><br><span class="line">  process.<span class="property">env</span>[<span class="string">&quot;MEMOBASE_API_KEY&quot;</span>]</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">main</span> = <span class="keyword">async</span> (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  <span class="comment">// 检查后端服务是否联通</span></span><br><span class="line">  <span class="keyword">const</span> ping = <span class="keyword">await</span> client.<span class="title function_">ping</span>();</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(ping);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 添加用户，这里用户id为uuid</span></span><br><span class="line">  <span class="keyword">let</span> userId = <span class="keyword">await</span> client.<span class="title function_">addUser</span>();</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(userId);</span><br><span class="line">  <span class="comment">// 更新用户的额外信息</span></span><br><span class="line">  userId = <span class="keyword">await</span> client.<span class="title function_">updateUser</span>(userId, &#123; <span class="attr">name</span>: <span class="string">&quot;John Doe&quot;</span> &#125;);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Updated user id: &quot;</span>, userId);</span><br><span class="line">  <span class="comment">// 获取用户</span></span><br><span class="line">  <span class="keyword">let</span> user = <span class="keyword">await</span> client.<span class="title function_">getUser</span>(userId);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(user);</span><br><span class="line">  <span class="comment">// 向用户插入对话文档</span></span><br><span class="line">  <span class="keyword">const</span> blobId = <span class="keyword">await</span> user.<span class="title function_">insert</span>(</span><br><span class="line">    <span class="title class_">Blob</span>.<span class="title function_">parse</span>(&#123;</span><br><span class="line">      <span class="attr">type</span>: <span class="title class_">BlobType</span>.<span class="property">Enum</span>.<span class="property">chat</span>,</span><br><span class="line">      <span class="attr">messages</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">role</span>: <span class="string">&quot;user&quot;</span>,</span><br><span class="line">          <span class="attr">content</span>: <span class="string">&quot;Hello, how are you?&quot;</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">      ],</span><br><span class="line">    &#125;)</span><br><span class="line">  );</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(blobId);</span><br><span class="line">  <span class="comment">// 获取用户文档信息</span></span><br><span class="line">  <span class="keyword">const</span> blob = <span class="keyword">await</span> user.<span class="title function_">get</span>(blobId);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(blob);</span><br><span class="line">  <span class="comment">// 调用flush解析并持久化用户记忆</span></span><br><span class="line">  <span class="keyword">const</span> flushSuc = <span class="keyword">await</span> user.<span class="title function_">flush</span>(<span class="title class_">BlobType</span>.<span class="property">Enum</span>.<span class="property">chat</span>);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Flush success: &quot;</span>, flushSuc);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> blobs = <span class="keyword">await</span> user.<span class="title function_">getAll</span>(<span class="title class_">BlobType</span>.<span class="property">Enum</span>.<span class="property">chat</span>);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(blobs);</span><br><span class="line"></span><br><span class="line">  user = <span class="keyword">await</span> client.<span class="title function_">getOrCreateUser</span>(userId);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(user);</span><br><span class="line">  <span class="comment">// 获取用户的记忆信息</span></span><br><span class="line">  <span class="keyword">const</span> profiles = <span class="keyword">await</span> user.<span class="title function_">profile</span>();</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(profiles);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (profiles.<span class="property">length</span> &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> isDel = <span class="keyword">await</span> user.<span class="title function_">deleteProfile</span>(profiles[<span class="number">0</span>].<span class="property">topic</span>);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Delete profile success: &quot;</span>, isDel);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> isDel = <span class="keyword">await</span> client.<span class="title function_">deleteUser</span>(userId);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(isDel);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="title function_">main</span>();</span><br></pre></td></tr></table></figure>
+
+<h3 id="记忆标签自定义"><a href="#记忆标签自定义" class="headerlink" title="记忆标签自定义"></a>记忆标签自定义</h3><p>memobase 本身内置了一些记忆标签，英文的标签，分两级，大致如下格式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">interest:toys:user喜欢玩的玩具包括小兔子、小乌龟、小马宝莉、小狗、小跳舞、小燕、独角兽、小猫咪</span><br><span class="line">basic_info:age:user的年龄未明确提及，但提到玩具，可能暗示用户是儿童或青少年</span><br><span class="line">contact_info:weather:user提到天气很冷</span><br><span class="line">interest:animation:user&#x27;s favorite animation is 米小圈上学记</span><br><span class="line">basic_info:name:用户希望被称为西西</span><br><span class="line">interest:favorite_name:user likes the name &quot;独角兽&quot; and &quot;小白&quot;</span><br><span class="line">interest:nickname:user&#x27;s nickname is 小粉兔</span><br></pre></td></tr></table></figure>
+
+<p>在业务场景中，如果你需要中文的记忆标签，那么，可以在 api&#x2F;config.yaml 文件中使用<code>overwrite_user_profiles</code>重写：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">overwrite_user_profiles:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">topic:</span> <span class="string">&quot;基本信息&quot;</span></span><br><span class="line">    <span class="attr">sub_topics:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;生日&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;职业&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;性别&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;年龄&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;别名&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;地点&quot;</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">topic:</span> <span class="string">&quot;兴趣爱好&quot;</span></span><br><span class="line">    <span class="attr">sub_topics:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;娱乐与休闲&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;兴趣领域&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;喜欢的话题&quot;</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">topic:</span> <span class="string">&quot;衣食住行&quot;</span></span><br><span class="line">    <span class="attr">sub_topics:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;喜欢的食物&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;忌口&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;饮食习惯&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;喜欢的衣服&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;妆容打扮&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;交通工具&quot;</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">topic:</span> <span class="string">&quot;话题&quot;</span></span><br><span class="line">    <span class="attr">sub_topics:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;喜欢的话题&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;语气偏好&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;沟通方式&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;语言&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>这样大模型就会根据自定义的 topic 和 sub_topics 作为自定义的记忆标签，随即产出的记忆数据如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">兴趣爱好:喜欢的话题:用户喜欢小鸟，对小鸟有强烈的兴趣，喜欢听故事，包括猪大战的故事、萌鸡小队的小魔之战的故事和小蝌蚪找妈妈的故事。用户最喜欢的动画片是米小圈上学记，并且对春天的古诗感兴趣。</span><br><span class="line">兴趣爱好:娱乐与休闲:用户希望和助手一起聊天和玩游戏，喜欢娃娃，拥有二十个娃娃，最喜欢的小天鹅娃娃和独角兽，并且对故事和记忆书感兴趣。用户喜欢玩玩具，包括小兔子、小乌龟、小马宝莉、小狗、小燕、小独角兽和小猫咪。用户想要玩抓人游戏和真心话大冒险，还希望听一个睡前小故事。</span><br><span class="line">基本信息:家庭关系:用户提到父亲，暗示用户与家人有联系，包括爸爸、外婆、爷爷和奶奶。</span><br><span class="line">基本信息:地点:用户知道广州，并询问关于广州和北京的信息，且提到天气情况，暗示用户可能在一个寒冷的地方。</span><br><span class="line">衣食住行:喜欢的食物:用户提到喜欢吃屎</span><br><span class="line">交通工具:交通需求:用户询问从广州飞往北京的飞机</span><br><span class="line">话题:沟通方式:用户以提问的方式与助手交流</span><br><span class="line">基本信息:别名:用户希望被叫西西</span><br><span class="line">兴趣爱好:兴趣领域:用户对娃娃的种类和特点表现出浓厚的兴趣。</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/AI/" rel="tag">#AI</a>
+          
+            <a href="/tags/%E9%95%BF%E8%AE%B0%E5%BF%86/" rel="tag">#长记忆</a>
+          
+            <a href="/tags/memobase/" rel="tag">#memobase</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2025/02/11/obsidian-with-ollama/" rel="next" title="利用ollama搭建本地大模型搭配obsidian搭建个人知识库">
+                <i class="fa fa-chevron-left"></i> 利用ollama搭建本地大模型搭配obsidian搭建个人知识库
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.svg"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">90</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">111</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/coolcao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/1946282212" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#AI-记忆"><span class="nav-number">1.</span> <span class="nav-text">AI 记忆</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#memobase-AI-应用长记忆解决方案"><span class="nav-number">2.</span> <span class="nav-text">memobase: AI 应用长记忆解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#后端服务搭建"><span class="nav-number">2.1.</span> <span class="nav-text">后端服务搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#客户端服务测试"><span class="nav-number">2.2.</span> <span class="nav-text">客户端服务测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#记忆标签自定义"><span class="nav-number">2.3.</span> <span class="nav-text">记忆标签自定义</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  <script src="/js/coze.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@2.6.1/resources/public/js/asciinema-player.min.js"></script>
+
+  <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7369590614474145808',
+        },
+        componentProps: {
+          icon: 'https://coolcao.com/images/chat.svg',
+          title: 'coolcao的小站',
+        },
+      });
+  </script>
+
+
+</body>
+</html>
