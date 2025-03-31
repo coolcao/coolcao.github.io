@@ -95,9 +95,9 @@
 <meta property="og:description" content="最近 MCP 服务大热，我也是写过两篇关于 MCP 服务的博客 一文了解MCP协议 开发一个查询天气信息的MCP服务器，来介绍了一下 MCP 的主要概念，以及编写了一个 MCP 服务示例。 在这篇文章中，我将介绍一些 MCP 服务的使用技巧，以及如何使用 MCP 服务来开发一个简单的待办事项应用。">
 <meta property="og:locale">
 <meta property="og:image" content="https://img.coolcao.site/file/AgACAgUAAyEGAASKxe6JAAMnZ-n5V2HBu9NoSp0ZNxqeTtZugOgAAm7BMRvZCVFXviUVDrf86LcBAAMCAAN3AAM2BA.png">
-<meta property="og:image" content="https://img.coolcao.site/file/AgACAgUAAyEGAASKxe6JAAMoZ-n7PA40eI0x2Asuy3TZWH7Bij0AAnHBMRvZCVFXoa7hVTMIAu8BAAMCAAN3AAM2BA.png">
+<meta property="og:image" content="https://s2.loli.net/2025/03/31/HSFq8R2W7pby5fE.png">
 <meta property="article:published_time" content="2025-03-31T01:51:50.000Z">
-<meta property="article:modified_time" content="2025-03-31T08:11:47.282Z">
+<meta property="article:modified_time" content="2025-03-31T08:23:10.242Z">
 <meta property="article:author" content="coolcao">
 <meta property="article:tag" content="AI">
 <meta property="article:tag" content="MCP">
@@ -375,7 +375,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">你是一个AI智能助理，主要帮用户处理TODO待办事项，通过工具todo进行待办处理，todo工具有以下几个功能：</span><br><span class="line"></span><br><span class="line">- currentDateTime： 获取当前时间</span><br><span class="line">- addTodo: 添加待办事项</span><br><span class="line">- queryTodos: 查询所有待办事项</span><br><span class="line">- deleteTodo: 删除待办事项</span><br><span class="line">- updateTodo: 更新待办事项</span><br><span class="line">- toggleTodoStatus: 更新待办事项状态</span><br><span class="line"></span><br><span class="line">你可以通过这几个工具进行待办的管理。</span><br><span class="line"></span><br><span class="line">注意以下几点：</span><br><span class="line">1. 待办都涉及到时间，如果你不确定当前时间，可以通过工具来获取，切不可自行猜测时间</span><br><span class="line">2. 待办事项的标题，是唯一的，删除，更新待办等操作需要一字不差的根据标题进行操作</span><br><span class="line">3. 每通过一个接口处理完后，重新整理以下剩余待办给用户</span><br><span class="line">4. 待办事项，默认情况下只需要查询展示未完成的待办即可。除非特别说明，已完成的待办可以不展示。</span><br></pre></td></tr></table></figure>
 
 <p>然后我们就可以与大模型进行对话，要求大模型来管理我们的待办事项了。</p>
-<p>下图是我的一个测试的对话记录：<br><img src="https://img.coolcao.site/file/AgACAgUAAyEGAASKxe6JAAMoZ-n7PA40eI0x2Asuy3TZWH7Bij0AAnHBMRvZCVFXoa7hVTMIAu8BAAMCAAN3AAM2BA.png" alt="TODO MCP"></p>
+<p>下图是我的一个测试的对话记录：<br><img src="https://s2.loli.net/2025/03/31/HSFq8R2W7pby5fE.png" alt="202503311622300"></p>
 <p>从截图中可以看出，有了 MCP 服务的加持，大模型可以轻松的帮我们管理待办事项， 这也展示了 MCP 服务的强大功能。</p>
 <h2 id="MCP-服务使用技巧"><a href="#MCP-服务使用技巧" class="headerlink" title="MCP 服务使用技巧"></a>MCP 服务使用技巧</h2><p>MCP 服务解决了大模型的信息孤岛问题，使得大模型可以访问到更多的信息，从而提高了大模型的能力。如果我们希望更好的使用 MCP 服务，就需要一些技巧来提高使用效率。</p>
 <h3 id="编写提示词"><a href="#编写提示词" class="headerlink" title="编写提示词"></a>编写提示词</h3><p>有了 MCP 服务，提高了大模型对外部资源的访问，但<strong>MCP 服务并不能提高大模型的基础能力</strong>。对于一些特定的任务，我们需要编写提示词来帮助大模型明确的调用相关工具，来完成具体的任务。<br>比如上面我们这个 <code>todo-mcp-server</code> 这个例子中，我们通过提示词，来明确告诉大模型，要管理待办事项，使用 todo 工具来完成，且在提示词里还要告诉大模型，这个工具的一些注意事项，目的就是让大模型能够准确无误的调用工具，来完成任务。</p>
